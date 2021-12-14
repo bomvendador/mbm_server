@@ -38,7 +38,7 @@ class UserProfile(models.Model):
     check_after_temp_stop_refuse_by_date = models.BooleanField(default=False,
                                                                verbose_name=u"Требуется проверка отказа по сроку после возобновления")
     check_after_temp_stop_ez = models.BooleanField(default=False, verbose_name=u"Требуется проверка ЭЗ после возобновления")
-    user_added = models.OneToOneField(User, on_delete=models.CASCADE, related_name='userprofile_created_by', default=None, null=True)
+    user_added = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userprofile_created_by', default=None, null=True)
 
     def __str__(self):
         return self.user.username
