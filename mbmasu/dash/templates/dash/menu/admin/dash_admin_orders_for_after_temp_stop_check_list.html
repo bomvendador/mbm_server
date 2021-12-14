@@ -126,9 +126,9 @@
 
   $('#content').on('change', '.select-expertMBM', function(){
         if($(this).children(":selected").html() == '---'){
-          $('.appointExpertMBMToCheckPreliminaryDocs').prop("disabled", true);
+          $('.appointExpertMBMToCheckAfterTempStopDocs').prop("disabled", true);
         }else{
-           $('.appointExpertMBMToCheckPreliminaryDocs').prop("disabled", false);
+           $('.appointExpertMBMToCheckAfterTempStopDocs').prop("disabled", false);
         }
         ////////console.log($(this).children(":selected").html());
 
