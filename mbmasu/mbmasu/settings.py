@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'mbmasu.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mbm_server',
+        'NAME': 'mbm_db',
         'USER': 'postgres',
         'PASSWORD': 'gjkI87',
         'HOST': 'localhost',
