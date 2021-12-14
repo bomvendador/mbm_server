@@ -1108,7 +1108,7 @@ def save_ready_for_ok_orders(request):
 def appointed_for_ok_orders_list(request):
     context = dash_get_info(request)
     users_profiles = userprofile.objects.all()
-    orders = AppointedForOK.objects.filter(Q(marked_for_next_ok__isnull=False))
+    orders = AppointedForOK.objects.filter(Q(marked_for_next_ok=False))
     protocols = Protocol.objects.all()
     context.update({
         'big_title': 'Рассмотренные на ОК заявки',
