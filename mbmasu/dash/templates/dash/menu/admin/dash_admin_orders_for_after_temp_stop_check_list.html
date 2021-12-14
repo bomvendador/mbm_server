@@ -124,6 +124,15 @@
   add_hover_menu('#nav_new_orders_for_experts_to_check_after_temp_stop')
     $('#content').fadeIn('fast').removeClass('d-none')
 
+  $('#content').on('change', '.select-expertMBM', function(){
+        if($(this).children(":selected").html() == '---'){
+          $('.appointExpertMBMToCheckPreliminaryDocs').prop("disabled", true);
+        }else{
+           $('.appointExpertMBMToCheckPreliminaryDocs').prop("disabled", false);
+        }
+        ////////console.log($(this).children(":selected").html());
+
+      })
 
 
   $('.deleteAfterTempStopCheck').on('click', function () {
