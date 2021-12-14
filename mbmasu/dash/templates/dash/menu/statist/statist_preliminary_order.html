@@ -1,0 +1,248 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4>Документ получен от ответственного</h4>
+        <h5>Заявка - <i id="orderNumber">{{ order.number }}</i> | Заявитель - <i id="applierName">{{ order.company }}</i> | № ПП - <i id="ppNumber">{{ order.pp }}</i></h5>
+
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content" >
+
+  <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+          
+        
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title" id="title">Данные</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+          
+              <div class="card-body">
+
+                <div class="row col-md-12">
+                  <div class="form-group col-md-6 choose-order-appendedSelect" >
+                    <label for="rolesSelect">Уровень документа</label>
+                    <select class="custom-select input-to-fill-up" id="choose-document-type">
+                          <option>---</option>
+                          <option>Приостановка</option>
+                          <option>Отказ</option>
+                    </select>
+                    {% if order.type %}<small class="text-danger">Согласно первичным данным - <b>{{ order.type.name }}</b></small>{% else %}{% endif %}
+                  </div>
+
+                </div>
+
+                <div class="row col-md-12">
+  
+                  <div class="form-group col-md-6 d-none" id="document_received_date_div">
+                    <label for="document-received-date">Дата получения документов от исполнителя</label>
+                    <input id="document-received-date"  class="form-control date-time-picker input-to-fill-up" type="text" name="document-received-date">
+
+                  </div>
+                  <div class="form-group col-md-6 d-none" id="document_created_date_div">
+                    <label for="document-created-date">Дата составления ЭЗ</label>
+                    <input id="document-created-date"  class="form-control date-time-picker input-to-fill-up" type="text" name="document-created-date">
+
+                  </div>
+                </div>
+
+                <div class="row col-md-12 mt-2">
+                  <div class="col-md-12 form-group">
+                    <div class="alert alert-info" role="alert">
+                      
+                      В случае: <br> 
+                      <b>Приостановки - </b><b>Предэкспертиза</b> и <b>Уведомление о приостановке экспертизы</b> 
+                      <br> 
+
+                      <b>Отказа - </b>  
+                        <b>Отрицательное экспертное заключние</b> и <b>Уведомление об отказе</b>
+
+                    </div>
+  
+                  </div>
+                </div>
+
+
+
+
+
+
+              </div>
+              <!-- /.card-body -->
+            </div>
+
+       
+
+
+          </div>
+              <!-- /.card-body -->
+
+
+
+          <!-- /.card -->
+
+      
+
+   
+        <!-- /.card -->
+      </div>
+      <!--/.col (right) -->
+    </div>
+    <!-- /.row -->
+  </div>
+
+  
+  </section>
+  <button type="button" class="btn btn-primary btn-float" id="btn_add_document_static_boxes"><i class="fas fa-save"  style="font-size: 25px;"></i></button>
+
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+  $('#menu_lotki').addClass('menu-open')
+
+  $('#content').fadeIn(500).removeClass('d-none')
+
+
+  $('#content').on('change', '#choose-document-type', function() {
+    let docType = $(this).val()
+    if (docType !== '---') {
+      if (docType == 'Отказ') {
+        $('#document_created_date_div').removeClass('d-none').addClass('d-block');
+        $('#document_received_date_div').removeClass('d-none').addClass('d-block');
+
+      } else {
+        $('#document_received_date_div').removeClass('d-none').addClass('d-block');
+        $('#document_created_date_div').removeClass('d-block').addClass('d-none');
+
+      }
+    } else {
+      $('#document_created_date_div').removeClass('d-block').addClass('d-none');
+      $('#document_received_date_div').removeClass('d-block').addClass('d-none');
+
+    }
+
+  })
+
+    $('#btn_add_document_static_boxes').on('click', function(){
+      let data = {}
+      let testOK = false
+      let documentType = $('#choose-document-type').val()
+      let orderID = {{ order.id }}
+      let documentReceivedDate = $('#document-received-date').val()
+      let documentCreatedDate = $('#document-created-date').val()
+
+      data.orderID = orderID
+      data.documentType = documentType
+      data.documentReceivedDate = dateToDB(documentReceivedDate)
+
+      if(documentType !== '---'){
+          if(documentType === 'Отказ'){
+              if(documentReceivedDate !== '' && documentCreatedDate !== ''){
+                  testOK = true
+                  data.documentCreatedDate = dateToDB(documentCreatedDate)
+              }
+
+          }else{
+              if(documentReceivedDate !== ''){
+                  testOK = true
+              }
+
+          }
+      }
+
+      console.log(data)
+
+      // if(card_title == 'Отказ по сроку' || card_title == 'Отказ по документам'){
+      //     let documentReceivedDate = $('#document-received-date').val()
+      //     let documentCreatedDate = $('#conclusion-created-date').val()
+      //     data.card_title = card_title
+      //     data.documentType = 'Приостановка/Отказ'
+      //     data.documentCreatedDate = documentCreatedDate
+      //     data.documentReceivedDate = documentReceivedDate
+      //
+      //     if(documentReceivedDate !== '' && documentCreatedDate !== ''){
+      //         testOK = true
+      //     }
+      //
+      // }else{
+      //     let documentReceivedDate = $('#document-received-date').val()
+      //     let documentCreatedDate = $('#document-created-date').val()
+      //
+      //     data.documentReceivedDate = documentReceivedDate
+      //
+      //     if(documentType !== '---'){
+      //         if(documentType == 'Отказ'){
+      //             if(documentReceivedDate !== '' && documentCreatedDate !== ''){
+      //                 testOK = true
+      //                 data.documentCreatedDate = documentCreatedDate
+      //             }
+      //
+      //         }else{
+      //             if(documentReceivedDate !== ''){
+      //                 testOK = true
+      //             }
+      //
+      //         }
+      //     }
+      //
+      // }
+
+      if(testOK){
+          $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+          $(this).attr('disabled', true)
+          $.ajax({
+              headers: { "X-CSRFToken": '{{ csrf_token }}' },
+              url: "{% url 'save_data_preliminary_check_statist' %}",
+              type: 'POST',
+              data: data,
+              // processData: false,
+              // contentType: false,
+              error: function(data){
+                  toastr.error('Ошибка', data)
+              },
+              success:function (data) {
+                  console.log(data)
+                  window.location.href = "{% url 'dash_index' %}";
+                  // if (data === 'ok'){
+                  //   window.location.href = "{% url 'new_orders_ready_to_proceed_list' %}" + '/' + orderID;
+                  //
+                  // }else {
+                  //     toastr.error('Заявка назначена на другого исполнителя')
+                  // }
+              }
+          });
+
+
+
+      }else{
+          toastr.error('Все поля должны быть заполнены');
+      }
+    })
+
+
+
+
+
+
+
+</script>
+
+{% endblock %}

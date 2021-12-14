@@ -1,0 +1,134 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+{% block style %}
+
+{% endblock %}
+
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4>Предварительная проверка заявки</h4>
+        <h5>Заявка - <i id="orderNumber" data-orderid="{{ order.id }}">{{ order.number }}</i>  | Заявитель - <i id="applierName">{{ order.company }}</i> | № ПП - <i id="ppNumber">{{ order.pp }}</i></h5>
+
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content pl-2 pr-2">
+
+  <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">{{ title }}</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+
+              <div class="card-body">
+
+                <div class="row col-md-12 mt-2">
+                  <div class="form-group col-md-12">
+                    <label for="remadeorder_send_to_subcontractor_date">Дата отправки доработанной заявки подрядчику</label>
+                    <input id="remadeorder_send_to_subcontractor_date"  class="form-control date-time-picker input-to-fill-up" type="text" name="remadeorder_send_to_subcontractor_date">
+                  </div>
+
+                </div>
+
+              </div>
+              <!-- /.card-body -->
+          </div>
+
+        </div>
+              <!-- /.card-body -->
+
+
+
+          <!-- /.card -->
+
+
+
+
+        <!-- /.card -->
+      </div>
+      <!--/.col (right) -->
+    </div>
+    <!-- /.row -->
+  </div>
+
+
+  </section>
+  <button type="button" class="btn btn-primary btn-float" id="btn_remadeorder_send_to_subcontractor_date"><i class="fas fa-save" style="font-size: 25px;"></i></button>
+
+{% endblock %}
+
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+  <script>
+
+    setSummernote()
+    $('#new_orders_ready_to_proceed_list').addClass('menu-open')
+    $('#temp_stop_menu').addClass('menu-open')
+    $('#refuse_menu').addClass('menu-open')
+
+    setTextToHtml('#refuse_documents_inconsistency_comments')
+
+    $('#content').fadeIn('slow').removeClass('d-none')
+
+
+
+      $('#btn_remadeorder_send_to_subcontractor_date').on('click', function(){
+
+        var date = $('#remadeorder_send_to_subcontractor_date').val();
+
+        ////////console.log('date = ', date)
+        if(date === ''){
+          toastr.error('Заполните поле даты');
+        }else{
+          $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+          $(this).prop('disabled', true)
+          var data = {}
+          data.orderID = {{ order.id }};
+          data.remade_order_sent_to_subcontractor_date = date;
+          var dateSplit = date.split('.')
+          var dateForFunc = dateSplit[2] + '-' + dateSplit[1] + '-' + dateSplit[0]
+          let remade_order_subcontractor_end_date_for_docs = getWorkingDays(dateForFunc, 5,0)//крайняя дата отправки заявителю уведомления о приостановке
+
+          data.remade_order_subcontractor_end_date_for_docs = remade_order_subcontractor_end_date_for_docs
+
+          $.ajax({
+              headers: { "X-CSRFToken": '{{ csrf_token }}' },
+              url: "{% url 'save_remade_order_send_to_subcotractor_date' %}",
+              type: 'POST',
+              data: data,
+              // processData: false,
+              // contentType: false,
+              error: function(data){
+                  toastr.error('Ошибка', data)
+              },
+              success:function (response) {
+                    window.location.href = "{% url 'dash_index' %}";
+
+
+              }
+            });
+
+        }
+
+      })
+
+
+
+  </script>
+
+{% endblock %}

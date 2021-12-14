@@ -1,0 +1,168 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4>Документ получен от ответственного</h4>
+        <h5>Заявка - <i id="orderNumber">{{ order.number }}</i> | Заявитель - <i id="applierName">{{ order.company }}</i> | № ПП - <i id="ppNumber">{{ order.pp }}</i></h5>
+
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content" >
+
+  <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+          
+        
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title" id="title"><?=title?></h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+
+              <div class="card-body">
+
+                <div class="row col-md-12">
+
+                  <div class="form-group col-md-6" id="">
+                    <label for="document-received-date">Дата получения документа от исполнителя</label>
+                    <input id="document-received-date"  class="form-control date-time-picker input-to-fill-up" type="text" name="document-received-date">
+
+                  </div>
+                  <div class="form-group col-md-6" id="">
+                    <label for="conclusion-created-date">Дата составления отрицательного ЭЗ</label>
+                    <input id="document-created-date"  class="form-control date-time-picker input-to-fill-up" type="text" name="document-created-date">
+                    <small class="text-danger">Не позднее <b>{{ temp_stop.end_date_after_temp_stop|date:"d.m.Y" }}</b></small>
+
+                  </div>
+                </div>
+
+                <div class="row col-md-12 mt-2">
+                  <div class="col-md-12 form-group">
+                    <div class="alert alert-info" role="alert">
+
+                      Проверьте наличие: <br>
+                      <b>- Уведомления об отказе</b>
+                      <br>
+                      <b>- Отрицательного экспертного заключения</b>
+
+                    </div>
+  
+                  </div>
+                </div>
+
+
+
+
+
+
+              </div>
+              <!-- /.card-body -->
+            </div>
+
+       
+
+
+          </div>
+              <!-- /.card-body -->
+
+
+
+          <!-- /.card -->
+
+      
+
+   
+        <!-- /.card -->
+      </div>
+      <!--/.col (right) -->
+    </div>
+    <!-- /.row -->
+  </div>
+
+  
+  </section>
+  <button type="button" class="btn btn-primary btn-float" id="btn_add_document_static_boxes"><i class="fas fa-save"  style="font-size: 25px;"></i></button>
+
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+  $('#menu_lotki').addClass('menu-open')
+
+  $('#content').fadeIn(1000).removeClass('d-none')
+
+    $('#btn_add_document_static_boxes').on('click', function(){
+      let data = {}
+      let testOK = false
+      let orderID = {{ order.id }};
+      let documentReceivedDate = $('#document-received-date').val()
+      let documentCreatedDate = $('#document-created-date').val()
+
+
+      if(documentReceivedDate !== '' && documentCreatedDate !== ''){
+          testOK = true
+          data.documentCreatedDate = dateToDB(documentCreatedDate)
+          data.orderID = orderID
+          data.documentReceivedDate = dateToDB(documentReceivedDate)
+
+      }
+
+      console.log(data)
+
+
+      if(testOK){
+          $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+          $(this).attr('disabled', true)
+          $.ajax({
+              headers: { "X-CSRFToken": '{{ csrf_token }}' },
+              url: "{% url 'save_data_refuse_order_not_preliminary_statist' %}",
+              type: 'POST',
+              data: data,
+              // processData: false,
+              // contentType: false,
+              error: function(data){
+                  toastr.error('Ошибка', data)
+              },
+              success:function (data) {
+                  console.log(data)
+                  window.location.href = "{% url 'dash_index' %}";
+                  // if (data === 'ok'){
+                  //   window.location.href = "{% url 'new_orders_ready_to_proceed_list' %}" + '/' + orderID;
+                  //
+                  // }else {
+                  //     toastr.error('Заявка назначена на другого исполнителя')
+                  // }
+              }
+          });
+
+
+
+      }else{
+          toastr.error('Все поля должны быть заполнены');
+      }
+    })
+
+
+
+
+
+
+
+</script>
+
+{% endblock %}

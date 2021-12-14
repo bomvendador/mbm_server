@@ -1,0 +1,232 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4 id="big_title">{{ big_title }}</h4>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content" >
+
+
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-12">
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><?= title?></h3>
+
+            <div class="card-tools">
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body table-responsive p-4 pt-1">
+            <table class="table table-hover text-nowrap list-table" >
+              <thead>
+                <tr>
+                    <th></th>
+                    <th>Номер заявки</th>
+                    <th>Наименование МСП</th>
+                    <th>Дата подачи</th>
+                    <th>Номер ПП</th>
+                    <th>Крайний срок сдачи</th>
+                  <!--th></th-->
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                {% for new_order in new_orders %}
+                  <tr class="user-tr cursor-pointer prelimenaryCheck_new_order" id="orderID_{{ new_order.id }}">
+                      <td>
+                      {% if new_order.lotki_preliminary_temp_stop_date_received != None or new_order.lotki_preliminary_refuse_date_received != None %}
+                        {% if new_order.lotki_preliminary_temp_stop_date_signed != None or new_order.lotki_preliminary_refuse_date_signed != None%}
+
+                          <i class="fas fa-circle color-green"></i>
+                          <p class="d-none">1</p>
+
+                        {% else %}
+                          <i class="fas fa-circle color-yellow"></i>
+                          <p class="d-none">2</p>
+
+                        {% endif %}
+
+                      {% else %}
+                          <i class="fas fa-circle color-red"></i>
+                          <p class="d-none">3</p>
+                      {% endif %}
+
+                      </td>
+                      <td>{{ new_order.number }}</td>
+                      <td>{{ new_order.company }}</td>
+                      <td>{{ new_order.date_of_appliance|date:"d.m.Y" }}</td>
+                      <td>{{ new_order.pp }}</td>
+                      <td>{{ new_order.end_date_for_responsible|date:"d.m.Y" }}</td>
+<!--                      <?}?>-->
+<!--                    <? }?>-->
+                    <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                </tr>
+               {% endfor %}
+
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+
+</section>
+
+{% endblock %}
+
+{% block script %}
+
+  <script>
+
+    $('#new_orders_ready_to_proceed_list').addClass('menu-open')
+    $('#temp_stop_menu').addClass('menu-open')
+    $('#refuse_menu').addClass('menu-open')
+    add_hover_menu('#nav_new_orders_list_expert')
+      $('#content').on('click', '.prelimenaryCheck_new_order', function(){
+
+        showLoaderSpinnerContent();
+        let orderID = $(this).attr('id').split('_')[1];
+        console.log(orderID);
+        let data = {}
+        data.order_id = orderID
+          $.ajax({
+              headers: { "X-CSRFToken": '{{ csrf_token }}' },
+              url: "{% url 'check_if_user_appointed_for_order' %}",
+              type: 'POST',
+              data: data,
+              // processData: false,
+              // contentType: false,
+              error: function(data){
+                  toastr.error('Ошибка', data)
+              },
+              success:function (data) {
+                  console.log(data)
+                  if (data === 'ok'){
+                    window.location.href = "{% url 'new_orders_ready_to_proceed_list' %}" + '/' + orderID;
+
+                  }else {
+                      toastr.error('Заявка назначена на другого исполнителя')
+                  }
+              }
+          });
+
+
+
+        // hideLoaderSpinnerContent()
+
+        // data.orderID = orderID;
+        // data.orderNumber = orderNumber;
+        // data.applierName = applierName;
+
+        // showLoaderSpinner();
+        //
+        // google.script.run.withFailureHandler(function(error){
+        //   toastr.error(error);
+        // }).withSuccessHandler(function(html){
+        //   setInnerHtml('content', html)
+        //   var ppNumber = $('#ppNumber').html()
+        //   let refuseText = '<b>Отрицательное экспертное заключение</b> и <b>Уведомление об отказе </b>(номер и дата уведомления будут присвоены после передачи его на подпись)'
+        //
+        //
+        //
+        //   if($('#expect_for_docs').length){
+        //     var modal_info_data = {
+        //       title: "Информация для пользователя",
+        //       modal_body: '<b>Ожидайте возврата подписанного документа</b>',
+        //
+        //       headerClass: 'bg-info'
+        //     }
+        //
+        //   }
+        //   if($('#btnPrelimenaryCheckSuccess').length){
+        //     var modal_info_data = {
+        //       title: "Информация для пользователя",
+        //       modal_body: '<b>В случае:</b> <br>' +
+        //       '<ul class="mt-2">' +
+        //       '<li><b>Приостановки (несоответствие заявки) - </b> подготовьте <b>Предэкспертизу</b>, <b>Уведомление о приостановке экспертизы</b> и передайте их на подпись</li>' +
+        //       '<li><b>Отказа (несоответствие заявителя) - </b> подготовьте ' +
+        //       refuseText +
+        //       '</li>' +
+        //       '<li><b>Соответствия заявки всем требованиям - </b> добавьте категорию(и) и нажмите зеленую кнопку <b class="text-success">"Результат проверки - положительно"</b></li>' +
+        //       '<li><i class="far fa-square" style="color: red"></i> - все обязательные для заполнения поля выделены красными границами</li>' +
+        //       '</ul>',
+        //
+        //       headerClass: 'bg-info'
+        //     }
+        //
+        //   }
+        //   if($('#btnPrelimenaryCheckTempStop').length){
+        //     var modal_info_data = {
+        //       title: "Информация для пользователя",
+        //       modal_body: '<b>Необходимые действия:</b> <br>' +
+        //       '<ul class="mt-2">' +
+        //       '<li>добавьте катогорию заявки</li>' +
+        //       '<li>нажмите кнопку <b>"Приостановить"</b></li>' +
+        //       '<li><i class="far fa-square" style="color: red"></i> - все обязательные для заполнения поля выделены красными границами</li>' +
+        //       '</ul>',
+        //
+        //       headerClass: 'bg-info'
+        //     }
+        //
+        //   }
+        //   if($('#btnPrelimenaryCheckRefuse').length){
+        //     var modal_info_data = {
+        //       title: "Информация для пользователя",
+        //       modal_body: '<b>Необходимые действия:</b> <br>' +
+        //       '<ul class="mt-2">' +
+        //       '<li>добавьте катогорию заявки</li>' +
+        //       '<li>опишите причины отказа со ссылкой на пункты соответствующего постановления</li>' +
+        //       '<li>нажмите кнопку <b>"Отказ (несоответствие заявителя)"</b></li>' +
+        //       '<li><i class="far fa-square" style="color: red"></i> - все обязательные для заполнения поля выделены красными границами</li>' +
+        //       '</ul>',
+        //
+        //       headerClass: 'bg-info'
+        //     }
+        //
+        //   }
+        //   setInfoMesssage(modal_info_data)
+        //
+        //   /*
+        //   $('.summernote').summernote({
+        //
+        //     toolbar: [
+        //       // [groupName, [list of button]]
+        //       ['style', ['bold', 'italic', 'underline', 'clear']],
+        //       ['font', ['strikethrough', 'superscript', 'subscript']],
+        //       ['fontsize', ['fontsize']],
+        //       ['color', ['color']],
+        //       ['para', ['ul', 'ol', 'paragraph']],
+        //       ['height', ['height']]
+        //     ]
+        //   });
+        //
+        //   $('.note-editor').css('border-width', '1px').css('border-color', 'red').css('border-radius', '.25rem');
+        //   */
+        //   setSummernote()
+        //
+        //   hideLoaderSpinner();
+        //
+        // }).getPageHtml('main_panel/html/preminary_order_check_init', data, 'preminary_order_check_init');
+
+
+
+      })
+
+  </script>
+
+{% endblock %}

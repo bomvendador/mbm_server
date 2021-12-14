@@ -1,0 +1,453 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<section class="content" >
+
+
+<div class="container-fluid pt-4">
+  <div class="row">
+      <div class="col-12">
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Список пользователей</h3>
+
+            <div class="card-tools">
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body table-responsive p-4 pt-1">
+            <table class="table table-hover text-nowrap list-table">
+              <thead>
+                <tr>
+                    <th>ФИО</th>
+                    <th>Логин</th>
+                    <th>Роль</th>
+                    <th>Компания</th>
+                    <!--th></th-->
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                  {% for user_profile in users_profiles %}
+
+                  <tr class="user-tr user cursor-pointer" id="user_{{  user_profile.user.id }}">
+                      <td>{{ user_profile.user.first_name }} {{ user_profile.user.last_name }}</td>
+                      <td>{{ user_profile.user.username }}</td>
+                      <td>{{ user_profile.role.name }}</td>
+                      <td>{{ user_profile.company.name }}</td>
+                </tr>
+                {% endfor %}
+
+                <?}?>
+
+
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+
+
+
+
+</section>
+<button type="button" class="btn btn-primary btn-float" id="add_user"><i class="fas fa-user-plus"></i></button>
+
+    <div class="modal fade" id="modal-lg" style="display: none;" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="modal_title"></h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body" id="modal-large-body">
+
+
+            <div class="card-body">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Email (Логин)</label>
+                <input type="email" class="form-control" id="newUserEmail" placeholder="Введите Email" value="" required>
+              </div>
+              <div class="form-group">
+                <label for="exampleInputEmail1">Пароль</label>
+
+                <div class="row">
+                  <div class="col-6">
+                    <input type="text" class="form-control" id="newUserPassword" placeholder="Введите пароль" required>
+
+                  </div>
+                  <div class="col-6">
+                    <button type="button" class="btn btn-primary" id="passGenerate">Сгенерировать пароль</button>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="exampleInputEmail1">Фамилия</label>
+                <input type="text" class="form-control" id="newUserSurname" placeholder="Введите фамилию" value="" required>
+              </div>
+
+              <div class="form-group">
+                <label for="exampleInputPassword1">Имя</label>
+                <input type="text" class="form-control" id="newUserName" placeholder="Введите имя" value="" required>
+              </div>
+
+              <div class="form-group">
+                <label for="exampleInputPassword1">Телефон</label>
+                <input type="tel" class="form-control" id="newUserTel" placeholder="Введите телефон" required>
+              </div>
+              <div class="form-group">
+                <label for="inputGroupSelect02">Роль</label>
+                <select class="custom-select" id="rolesSelect">
+                        <option>---</option>
+
+                    {% for role in roles %}
+
+                        <option>{{ role.name }}</option>
+                    {% endfor %}
+
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="inputGroupSelect02">Компания</label>
+                <select class="custom-select" id="companiesSelect">
+                        <option>---</option>
+
+                    {% for company in companies %}
+
+                        <option>{{ company.name }}</option>
+                    {% endfor %}
+
+                </select>
+              </div>
+
+                <div class="form-group clearfix col-md-12">
+                      <label for="preliminary_refuse_check">
+                          Первичная проверка
+                      </label>
+
+                    <div class="icheck-primary">
+
+                      <input type="checkbox" id="preliminary_refuse_check" class="mr-2"> Требуется проверка первичного отказа
+                    </div>
+                </div>
+                <div class="form-group clearfix col-md-12">
+                    <div class="icheck-primary">
+
+                      <input type="checkbox" id="preliminary_ez_check" class="mr-2"> Требуется проверка первичного ЭЗ
+                    </div>
+                </div>
+                <div class="form-group clearfix col-md-12">
+                      <label for="temp_stop_check">
+                          Приостановка
+                      </label>
+
+                    <div class="icheck-primary">
+
+                      <input type="checkbox" id="temp_stop_check" class="mr-2"> Требуется проверка приостановки
+                    </div>
+                </div>
+                <div class="form-group clearfix col-md-12">
+                      <label for="after_temp_stop_refuse_check">
+                          Возобновление
+                      </label>
+
+                    <div class="icheck-primary">
+
+                      <input type="checkbox" id="after_temp_stop_refuse_check" class="mr-2"> Требуется проверка отказа по документам после возобновления
+                    </div>
+                </div>
+                <div class="form-group clearfix col-md-12">
+                    <div class="icheck-primary">
+
+                      <input type="checkbox" id="after_temp_stop_refuse_by_date_check" class="mr-2"> Требуется проверка отказа по сроку после возобновления
+                    </div>
+                </div>
+
+                <div class="form-group clearfix col-md-12">
+                    <div class="icheck-primary">
+
+                      <input type="checkbox" id="after_temp_stop_ez_check" class="mr-2"> Требуется проверка ЭЗ после возобновления
+                    </div>
+                </div>
+
+
+            </div>
+
+
+
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+
+            <button type="button" class="btn btn-primary" id="btn-submit-modal-large">Сохранить</button>
+
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="modal-lg-company" style="display: none;" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="modal_title"></h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body" id="modal-large-body">
+
+
+            <div class="card-body">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Email (Логин)</label>
+                <input type="email" class="form-control" id="newUserEmail" placeholder="Введите Email" value="" required>
+              </div>
+              <div class="form-group">
+                <label for="exampleInputEmail1">Пароль</label>
+
+                <div class="row">
+                  <div class="col-6">
+                    <input type="text" class="form-control" id="newUserPassword" placeholder="Введите пароль" required>
+
+                  </div>
+                  <div class="col-6">
+                    <button type="button" class="btn btn-primary" id="passGenerate">Сгенерировать пароль</button>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="exampleInputEmail1">Фамилия</label>
+                <input type="text" class="form-control" id="newUserSurname" placeholder="Введите фамилию" value="" required>
+              </div>
+
+              <div class="form-group">
+                <label for="exampleInputPassword1">Имя</label>
+                <input type="text" class="form-control" id="newUserName" placeholder="Введите имя" value="" required>
+              </div>
+
+              <div class="form-group">
+                <label for="exampleInputPassword1">Телефон</label>
+                <input type="tel" class="form-control" id="newUserTel" placeholder="Введите телефон" required>
+              </div>
+              <div class="form-group">
+                <label for="rolesSelect">Роль</label>
+                <select class="custom-select" id="rolesSelect">
+                        <option>---</option>
+
+                    {% for role in roles %}
+
+                        <option>{{ role.name }}</option>
+                    {% endfor %}
+
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="companiesSelect">Компания</label>
+                <select class="custom-select" id="companiesSelect">
+                        <option>---</option>
+
+                    {% for company in companies %}
+
+                        <option>{{ company.name }}</option>
+                    {% endfor %}
+
+                </select>
+              </div>
+
+
+
+
+
+
+            </div>
+
+
+
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+
+            <button type="button" class="btn btn-primary" id="btn-submit-modal-large">Сохранить</button>
+
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+
+{% endblock %}
+
+{% block script %}
+
+  <script>
+
+    $('.user').on('click', function(){
+
+        showLoaderSpinnerContent();
+        let userID = $(this).attr('id').split('_')[1];
+        window.location.href = "{% url 'users_list' %}" + '/' + userID;
+      });
+
+
+
+  (function ($) {
+  $.passGen = function (options) {
+    // Override default options with passed-in options
+    options = $.extend({}, $.passGen.options, options);
+
+    // Local varialbles declaration
+    var charsets, charset = '', password = '', index;
+
+    // Available character lists
+    charsets = {
+      'numeric'   : '0123456789',
+      'lowercase' : 'abcdefghijklmnopqrstuvwxyz',
+      'uppercase' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+      'special'   : '~!@#$%^&*()-+[]{}<>?'
+    };
+
+    // Defining merged character set
+    $.each(charsets, function(key, value) {
+      if (options[key]) {
+        charset += value;
+      }
+    });
+
+    // Generating the password
+    for (var i=0; i< options.length; i++) {
+      // defining random character index
+      index = Math.floor(Math.random() * (charset.length));
+      // adding the character to the password
+      password += charset[index];
+    }
+
+    // Returning generated password value
+    return password;
+  };
+
+  // Default options
+  $.passGen.options = {
+    'length' : 10,
+    'numeric' : true,
+    'lowercase' : true,
+    'uppercase' : true,
+    'special'   : false
+     };
+    }(jQuery));
+
+
+        $('#content').on('click', '#add_user', function(){
+            document.getElementById('add_user').innerHTML = "<div class=='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>"
+            document.getElementById('btn-submit-modal-large').innerHTML = "Сохранить";
+            var data = {}
+
+            $('#modal_title').html('Добавление пользователя');
+            $('#modal-lg').modal('show');
+            document.getElementById('add_user').innerHTML = '<i class="fas fa-user-plus"></i>';
+
+        /*
+        $('#modal-lg').on('shown.bs.modal', function() {
+          $('#modal-lg').find('.modal-body').append('<p>append some html here</p>');
+        });
+        */
+      });
+
+      //генерация пароля
+      $('#passGenerate').on('click', function(){
+        $('#newUserPassword').val($.passGen({'length' : 8, 'numeric' : true, 'lowercase' : true, 'uppercase' : true, 'special' : false}));
+      });
+
+    add_hover_menu('#nav_users')
+
+            //обработка btn-submit-modal-large
+      $('#btn-submit-modal-large').on('click', function(){
+        document.getElementById('btn-submit-modal-large').innerHTML = "<div class='d-flex justify-content-center' style='width:78px'><div class='spinner-border' style='width: 23px; height: 23px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>"
+
+        //сохранение нового пользователя
+
+
+          let data_check = [];
+          data_check.push($('#newUserEmail').val());
+          data_check.push($('#newUserPassword').val());
+          data_check.push($('#newUserSurname').val());
+          data_check.push($('#newUserName').val());
+          data_check.push($('#newUserTel').val());
+          data_check.push($('#rolesSelect').val());
+          data_check.push($('#companiesSelect').val());
+
+          var fields_check = true;
+          data_check.map(el => {
+              console.log(el)
+              if (el === '' || el === '---') {
+                  fields_check = false;
+              }
+          })
+
+          if (fields_check){
+            let data = {}
+            data.user_email = $('#newUserEmail').val()
+            data.user_password = $('#newUserPassword').val()
+            data.user_lastname = $('#newUserSurname').val()
+            data.user_firstname = $('#newUserName').val()
+            data.user_tel = $('#newUserTel').val()
+            data.user_role = $('#rolesSelect').val()
+            data.user_company = $('#companiesSelect').val()
+            data.preliminary_refuse_check = $('#preliminary_refuse_check')[0].checked
+            data.preliminary_ez_check = $('#preliminary_ez_check')[0].checked
+            data.temp_stop_check = $('#temp_stop_check')[0].checked
+            data.after_temp_stop_refuse_check = $('#after_temp_stop_refuse_check')[0].checked
+            data.after_temp_stop_refuse_by_date_check = $('#after_temp_stop_refuse_by_date_check')[0].checked
+            data.after_temp_stop_ez_check = $('#after_temp_stop_ez_check')[0].checked
+
+
+              $.ajax({
+                  headers: { "X-CSRFToken": '{{ csrf_token }}' },
+                  url: "{% url 'save_user' %}",
+                  type: 'POST',
+                  traditional: true,
+                  data: data,
+                  // processData: false,
+                  // contentType: false,
+                  error: function(data){
+                      toastr.error('Ошибка', data)
+                  },
+                  success:function (response) {
+                      console.log(response)
+                      if (response['success']){
+                        window.location.href = "{% url 'users_list' %}"
+
+                      }else {
+
+                      }
+                      console.log(data)
+
+
+                  }
+              });
+
+          }else{
+
+            toastr.error('Все поля должны быть заполнены');
+            document.getElementById('btn-submit-modal-large').innerHTML = "Сохранить";
+          }
+
+      });
+
+
+
+  </script>
+
+{% endblock %}

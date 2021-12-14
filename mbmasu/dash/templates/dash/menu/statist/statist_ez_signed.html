@@ -1,0 +1,264 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4>Подписанный документ получен</h4>
+        <h5>Заявка - <i id="orderNumber">{{ order.number }}</i> | Заявитель - <i id="applierName">{{ order.company }}</i> | № ПП - <i id="ppNumber">{{ order.pp }}</i></h5>
+
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+  <section class="content" >
+
+    <div class="container-fluid">
+        <div class="row">
+          <!-- left column -->
+          <div class="col-md-12">
+            <!-- general form elements -->
+
+
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Ввод данных</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+
+                <div class="card-body">
+
+
+                  <div class="row col-md-12">
+
+                    <div class="form-group col-md-4">
+                      <label for="signed_document_received_date">Дата получения подписанного документа (дата уведомления)</label>
+                      <input id="signed_document_received_date"  class="form-control date-time-picker input-to-fill-up" type="text" name="signed_document_received_date">
+
+                    </div>
+
+                    <div class="form-group col-md-4" >
+                      <label for="callback_date">Дата получения документа от исполнителя</label>
+                      <div class="non-editable-border-styled" >
+                          {{ order.lotki_ez_date_received|date:"d.m.Y" }}
+                        </div>
+                    </div>
+                    <div class="form-group col-md-4" >
+                      <label for="callback_date">Статус документа</label>
+                      <div class="non-editable-border-styled">{{ order.lotki_status.name }}</div>
+                    </div>
+
+                  </div>
+
+
+                  <div class="row col-md-12">
+                    <div class="form-group">
+                      <button type="button" class="btn btn-block btn-success mt-4" id="btn_signed_document_static_boxes">Документ получен</button>
+
+                    </div>
+                  </div>
+
+
+                </div>
+                <!-- /.card-body -->
+            </div>
+
+
+
+
+            </div>
+                <!-- /.card-body -->
+
+
+
+            <!-- /.card -->
+
+
+
+
+          <!-- /.card -->
+        </div>
+        <!--/.col (right) -->
+      </div>
+      <!-- /.row -->
+    </div>
+
+
+  </section>
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+  $('#menu_lotki').addClass('menu-open')
+  $('#nav_satist_boxes_temp_stop_for_singing').addClass('menu-open')
+
+  $('#content').fadeIn(1000).removeClass('d-none')
+
+
+    $('#btn_signed_document_static_boxes').on('click', function(){
+      let data = {}
+      let testOK = false
+      let documentType = $('#choose-document-type').val()
+      let orderID = {{ order.id }}
+
+        console.log('ez')
+
+      let signedDocumentReceivedDate = $('#signed_document_received_date').val()
+      data.signed_document_received_date = dateToDB(signedDocumentReceivedDate)
+      data.orderID = orderID
+
+      if(signedDocumentReceivedDate === ''){
+          toastr.error('Поле даты должно быть заполнено');
+      }else {
+        $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+
+
+        $(this).attr('disabled', true)
+        $.ajax({
+          headers: {"X-CSRFToken": '{{ csrf_token }}'},
+          url: "{% url 'save_data_documents_signed_statist' %}",
+          type: 'POST',
+          data: data,
+          // processData: false,
+          // contentType: false,
+          error: function (data) {
+            toastr.error('Ошибка', data)
+          },
+          success: function (response) {
+
+            window.location.href = "{% url 'dash_index' %}";
+            // if (data === 'ok'){
+            //   window.location.href = "{% url 'new_orders_ready_to_proceed_list' %}" + '/' + orderID;
+            //
+            // }else {
+            //     toastr.error('Заявка назначена на другого исполнителя')
+            // }
+          }
+        });
+
+      }
+
+
+
+
+
+
+
+
+
+
+      //     google.script.run.withFailureHandler(function(error){
+      //         toastr.error(error);
+      //         $('#btn_signed_document_static_boxes').html('Документ получен');
+      //
+      //     }).withSuccessHandler(function(response){
+      //         toastr.success('Данные сохранены');
+      //         //console.log('response', response)
+      //         let doc_type = $('#doc_signed_doc_type').html()
+      //         let bage_orders_for_signing_refuse = $('#bage_orders_for_signing_refuse').html()
+      //         let bage_orders_for_signing_temp_stop = $('#bage_orders_for_signing_temp_stop').html()
+      //         let bage_orders_for_signing_conclusion = $('#bage_orders_for_signing_conclusion').html()
+      //
+      //
+      //         switch (response.documentType) {
+      //             case 'Приостановка':
+      //                 let currTempStop = parseInt(bage_orders_for_signing_temp_stop) - 1
+      //                 if(currTempStop == 0){
+      //                     $('#bage_orders_for_signing_temp_stop').html('')
+      //                 }else{
+      //                     $('#bage_orders_for_signing_temp_stop').html(currTempStop)
+      //                 }
+      //                 break;
+      //             case 'Приостановка/Отказ':
+      //             case 'Отказ':
+      //                 let currRefuse = parseInt(bage_orders_for_signing_refuse) - 1
+      //                 if(currRefuse == 0){
+      //                     $('#bage_orders_for_signing_refuse').html('')
+      //                 }else{
+      //                     $('#bage_orders_for_signing_refuse').html(currRefuse)
+      //                 }
+      //                 break;
+      //             case 'Приостановка/ЭЗ':
+      //             case 'Приостановка/Отказ/ЭЗ':
+      //             case 'Отказ/ЭЗ':
+      //             case 'ЭЗ':
+      //                 let currConclusion = parseInt(bage_orders_for_signing_conclusion) - 1
+      //                 if(currConclusion == 0){
+      //                     $('#bage_orders_for_signing_conclusion').html('')
+      //                 }else{
+      //                     $('#bage_orders_for_signing_conclusion').html(currConclusion)
+      //                 }
+      //                 break;
+      //
+      //             default:
+      //                 break;
+      //         }
+      //
+      //
+      //         if(response.notificationNumber){
+      //             let title = ''
+      //             if(response.orderStatus == 'Отказ'){
+      //                 title = 'Данные для уведомления об отказе'
+      //                 // let bage_orders_for_signing_refuse = parseInt($('#bage_orders_for_signing_refuse').html()) - 1
+      //                 // if (bage_orders_for_signing_refuse == 0){
+      //                 //     $('#bage_orders_for_signing_refuse').html('')
+      //                 // }else{
+      //                 //     $('#bage_orders_for_signing_refuse').html(bage_orders_for_signing_refuse)
+      //                 // }
+      //
+      //
+      //             }else{
+      //                 title = 'Данные для уведомления о приостановке'
+      //                 // let bage_orders_for_signing_temp_stop = parseInt($('#bage_orders_for_signing_temp_stop').html()) - 1
+      //                 // if (bage_orders_for_signing_temp_stop == 0){
+      //                 //     $('#bage_orders_for_signing_temp_stop').html('')
+      //                 // }else{
+      //                 //     $('#bage_orders_for_signing_temp_stop').html(bage_orders_for_signing_temp_stop)
+      //                 // }
+      //
+      //             }
+      //             $('#modal-default-title').html(title)
+      //             if(!response.notificationAllreadyExists){
+      //                 $('#modal-large-body-common').html('Номер уведомления - <b>' + response.notificationNumber + '</b><br>Дата уведомления - <b>' + response.notificationDate + '</b>')
+      //             }else{
+      //                 $('#modal-large-body-common').html('<b style="color: red;">Номер уведомления уже существует</b><br><br>Номер уведомления - <b>' + response.notificationNumber + '</b><br>Дата уведомления - <b>' + response.notificationDate + '</b>')
+      //
+      //             }
+      //             $('#modal-lg-common').modal('show')
+      //         }else{
+      //             $('#nav_satistics').click()
+      //         }
+      //
+      //     }).saveDataStaticBoxesDocumentSigned(data);
+      //
+      //
+      // }
+      //
+      //
+
+
+
+
+
+
+
+
+    })
+
+
+
+
+
+
+
+</script>
+
+{% endblock %}

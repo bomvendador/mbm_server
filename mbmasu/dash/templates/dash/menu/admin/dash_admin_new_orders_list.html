@@ -1,0 +1,253 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+
+<section class="content" >
+
+
+<div class="container-fluid pt-4">
+  <div class="row">
+      <div class="col-12">
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><?= title1 ?></h3>
+
+            <div class="card-tools">
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body table-responsive p-4 pt-1">
+            <table class="table text-nowrap list-table" id="list_table">
+              <thead>
+                <tr>
+                  <? for (var i=0; i < data[0].length; i++) {?>
+                    <th>Номер</th>
+                    <th>Название МСП</th>
+                    <th>Номер ПП</th>
+                    <th>Дата подачи</th>
+                  <? }?>
+                    <th>Исполнитель</th>
+                    <th></th>
+                    <th>Назначить на ЭЗ</th>
+                    <!--th></th-->
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                  {% for new_order in new_orders %}
+
+                  <tr class="user-tr new_order" id="newOrderID_{{ new_order.id }}">
+                      <td>{{ new_order.number }}</td>
+                      <td>{{ new_order.company }}</td>
+                      <td>{{ new_order.pp }}</td>
+                    <td><p class="d-none">{{ new_order.date_of_appliance|date:"Y/m/d" }}</p>{{ new_order.date_of_appliance|date:"d-m-Y" }}</td>
+                    <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                    <td>
+                      <select class="select-expertMBM form-select">
+                        <option>---</option>
+                        {% for responsible in responsibles %}
+                        <option id="user_{{ responsible.id }}">{{ responsible.last_name }} {{ responsible.first_name }}</option>
+                        {% endfor %}
+                      </select>
+
+
+                    </td>
+                    <td>
+                      <button type="button" class="btn btn-primary appointExpertMBM" disabled style="width: 105px;">Назначить</button>
+                    </td>
+                    <td>
+                        <div class="form-check">
+                          <input type="checkbox" class="checkboxAppointExpertForConclusion form-check-input"> 
+                          
+                        </div>
+  
+                    </td>
+                </tr>
+                {% endfor %}
+
+                <?}?>
+
+
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="container-fluid pt-4">
+    <div class="row">
+        <div class="col-12">
+  
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><?= title2 ?></h3>
+  
+              <div class="card-tools">
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body table-responsive p-4 pt-1">
+              <table class="table text-nowrap list-table" id="">
+                <thead>
+                  <tr>
+                      <th>Фамилия</th>
+                      <th>Имя</th>
+                      <th>Логин</th>
+                      <th>В работе (982)</th>
+                      <th>В работе (741)</th>
+                      <th>В работе (343)</th>
+                      <th>В работе (ИТОГО)</th>
+                      <th>Приостановка (982)</th>
+                      <th>Приостановка (741)</th>
+                      <th>Приостановка (343)</th>
+                      <th>Приостановка (ИТОГО)</th>
+                      <th>Готово (982)</th>
+                      <th>Готово (741)</th>
+                      <th>Готово (343)</th>
+                      <th>Готово (ИТОГО)</th>
+                      <th>Отозванные</th>
+
+                      <!--th></th-->
+                  </tr>
+                </thead>
+                <tbody id="tbodyOrdersByExperts">
+                  <? for (var i =1; i < ordersByExperts.length; i++) {?>
+                    <tr class="">
+                      <td><?= ordersByExperts[i][1] ?></td>
+                      <td><?= ordersByExperts[i][2] ?></td>
+                      <td><?= ordersByExperts[i][0] ?></td>
+                      <!--td class="orders-cnt"  id="expertID_<?= ordersByExperts[i][4]?>"><?= ordersByExperts[i][3] ?></td-->
+                      <td class=""><?= ordersByExperts[i][3] ?></td>
+                      <td class=""><?= ordersByExperts[i][4] ?></td>
+                      <td class=""><?= ordersByExperts[i][5] ?></td>
+                      <td class="font-weight-bold" style="background: gainsboro;"><?= ordersByExperts[i][6] ?></td>
+                      <td class=""><?= ordersByExperts[i][7] ?></td>
+                      <td class=""><?= ordersByExperts[i][8] ?></td>
+                      <td class=""><?= ordersByExperts[i][9] ?></td>
+                      <td class="font-weight-bold" style="background: gainsboro;"><?= ordersByExperts[i][10] ?></td>
+                      <td class=""><?= ordersByExperts[i][11] ?></td>
+                      <td class=""><?= ordersByExperts[i][12] ?></td>
+                      <td class=""><?= ordersByExperts[i][13] ?></td>
+                      <td class="font-weight-bold" style="background: gainsboro;"><?= ordersByExperts[i][14] ?></td>
+                      <td class="font-weight-bold" style="background: gainsboro;"><?= ordersByExperts[i][15] ?></td>
+
+                      <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                  </tr>
+                  <?}?>
+  
+  
+                </tbody>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+
+</section>
+
+{% endblock %}
+{% block script %}
+    <script>
+     $('#content').fadeIn('fast').removeClass('d-none')
+
+      $('#content').on('change', '.select-expertMBM', function(){
+        if($(this).children(":selected").html() == '---'){
+          $(this).closest('tr').find('.appointExpertMBM').prop("disabled", true);
+        }else{
+           $(this).closest('tr').find('.appointExpertMBM').prop("disabled", false);
+        }
+        ////////console.log($(this).children(":selected").html());
+
+      })
+
+      $('.appointExpertMBM').on('click', function(){
+        var expertID = $(this).closest('tr').find('select').children(":selected").attr('id').split('_')[1];
+
+        var orderID = $(this).closest('tr').attr('id').split('_')[1];
+        var isExpertAppointedForConclusion = $(this).closest('tr').find('.checkboxAppointExpertForConclusion').is(":checked");
+        //////console.log(isExpertAppointedForConclusion)
+
+
+        var data = {};
+        data.orderID = orderID
+        data.responsibleID = expertID
+        data.isExpertAppointedForConclusion = isExpertAppointedForConclusion;
+        $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+        console.log(data)
+
+        $.ajax({
+            headers: { "X-CSRFToken": '{{ csrf_token }}' },
+            url: "{% url 'appoint_responsible_for_order' %}",
+            type: 'POST',
+            // data: data1,
+            data: data,
+            // processData: false,
+            // contentType: "application/json; charset=utf-8",
+            // dataType: "json",
+            error: function(data){
+              toastr.error('Ошибка', data)
+            },
+            success:function (response) {
+              toastr.success('Эксперт назначен');
+              {#$('#newOrderID_' + orderID).remove();#}
+                let table = $('#list_table').DataTable();
+
+                table.row($('#newOrderID_' + orderID)).remove().draw(false)
+
+
+              let bageNewOrdersCnt = parseInt($('.bage-new-orders').html()) - 1;
+
+
+              if(bageNewOrdersCnt == 0){
+                $('#bage_new_orders_admin').html('');
+              }else{
+                $('#bage_new_orders_admin').html(bageNewOrdersCnt);
+
+              }
+
+              // console.log(response)
+              //window.location.href = "{% url 'dash_index' %}";
+            }
+          });
+
+//         google.script.run.withFailureHandler(function(error){
+//             toastr.error(error);
+//         }).withSuccessHandler(function(response){
+//           toastr.success('Эксперт назначен');
+//           $('#newOrderID_' + response.orderID).remove();
+//           var bageNewOrdersCnt = parseInt($('.bage-new-orders').html()) - 1;
+//
+//
+//           if(bageNewOrdersCnt == 0){
+//             $('#bage_new_orders_admin').html('');
+//           }else{
+//             $('#bage_new_orders_admin').html(bageNewOrdersCnt);
+//
+//           }
+//
+//           $('#expertID_' + response.expertID).html(parseInt($('#expertID_' + response.expertID).html()) + 1);
+//           ////////console.log('fsdfdfdsf - ' + $('#expertID_' + response.expertID).html());
+//
+// //          //////console.log($('#ordersCnt_' + response.expertLogin).html());
+//
+//         }).appointExpertForNewOrder(data);
+
+
+      })
+
+
+    </script>
+
+{% endblock %}

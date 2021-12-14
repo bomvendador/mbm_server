@@ -1,0 +1,207 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+{% block style %}
+
+{% endblock %}
+
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4>Предварительная проверка заявки</h4>
+        <h5>Заявка - <i id="orderNumber" data-orderid="{{ order.id }}">{{ order.number }}</i>  | Заявитель - <i id="applierName">{{ order.company }}</i> | № ПП - <i id="ppNumber">{{ order.pp }}</i></h5>
+
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content pl-2 pr-2">
+  <div class="container-fluid">
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card card-primary">
+            <div class="card-header">
+
+              <h3 class="card-title">Данные об уведомлении</h3>
+            </div>
+              <div class="card-body">
+                <div class="row col-md-12 mt-2">
+                  <div class="form-group col-md-6">
+                    <label for="refuse_notification_to_dpiir_send_date">Дата отправки уведомления согласно ИАС</label>
+                    <input id="refuse_notification_to_dpiir_send_date" class="form-control date-time-picker input-to-fill-up" type="text" name="refuse_notification_to_dpiir_send_date">
+                    <small class="text-danger">Не позднее <b>{{ order.end_date|date:"d.m.Y" }}</b></small>
+
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="refuse_notification_to_dpiir_comments">Номер уведомления об отказе</label>
+                    <div class="form-control">{{ notification.notification_number }}</div>
+                  </div>
+
+                </div>
+                <div class="row col-md-12 mt-2">
+                  <div class="form-group col-md-12">
+                    <label for="refuse_notification_to_dpiir_comments">Комментарии по отказу</label>
+                    <div id="refuse_notification_to_dpiir_comments" class="form-control  heihgt-auto" name="refuse_notification_to_dpiir_comments" >{{ refuse.description }}</div>
+                  </div>
+                </div>
+              </div>
+          </div>
+          <div class="card card-warning">
+            <div class="card-header">
+              <h3 class="card-title">Загрузка файлов</h3>
+            </div>
+            <div class="card-body">
+              <div class="row col-md-12">
+                  <div class="form-group col-md-6">
+                    <label for="preconclusion-file">Файл отрицательного ЭЗ</label>
+                    <div class="input-group mb-1">
+                        <input type="file" class="form-control input-to-fill-up" id="refuse-prelimenary-conclusion-file" name="refuse-prelimenary-conclusion-file">
+                    </div>
+                    <small class="text-danger">Тип файла - <cite title="Source Title">PDF</cite></small>
+                    <div><small class="text-danger">Имя файла - <cite title="Source Title">любое</cite></small></div>
+                    <div><small class="text-danger">Содержание файла - <cite title="Source Title">Подписанный уполномоченными лицами документ</cite></small></div>
+
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="notification-file">Файл уведомления</label>
+                    <div class="input-group mb-1">
+                        <input type="file" class="form-control input-to-fill-up" id="refuse-prelimenary-notification-file" name="refuse-prelimenary-notification-file">
+                    </div>
+                    <small class="text-danger">Тип файла - <cite title="Source Title">PDF</cite></small>
+                    <div><small class="text-danger">Имя файла - <cite title="Source Title">любое</cite></small></div>
+                    <div><small class="text-danger">Содержание файла - <cite title="Source Title">Подписанный уполномоченными лицами документ</cite></small></div>
+
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <button type="button" class="btn btn-primary btn-float" id="btn_add_refuse_prelimenary_conclusion_notification"><i class="fas fa-save" style="font-size: 25px;"></i></button>
+
+{% endblock %}
+
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+  <script>
+
+
+    $('#new_orders_ready_to_proceed_list').addClass('menu-open')
+    $('#temp_stop_menu').addClass('menu-open')
+    $('#refuse_menu').addClass('menu-open')
+
+    setTextToHtml('#refuse_notification_to_dpiir_comments')
+
+    $('#content').fadeIn('slow').removeClass('d-none')
+
+
+
+    $('#btn_add_refuse_prelimenary_conclusion_notification').on('click', function(){
+
+
+      var refusePrelimenaryConclusionFile = $('#refuse-prelimenary-conclusion-file');
+      var refusePrelimenaryConclusionFileVal = refusePrelimenaryConclusionFile.val();
+      var refusePrelimenaryNotificationFile = $('#refuse-prelimenary-notification-file');
+      var refusePrelimenaryNotificationFileVal = refusePrelimenaryNotificationFile.val();
+
+      let refusePrelimenaryConclusionFileValSplit = refusePrelimenaryConclusionFileVal.split('.')
+      let refusePrelimenaryConclusionFileValFileType = refusePrelimenaryConclusionFileValSplit[refusePrelimenaryConclusionFileValSplit.length - 1].toLowerCase()
+      let refusePrelimenaryNotificationFileValSplit = refusePrelimenaryNotificationFileVal.split('.')
+      let refusePrelimenaryNotificationFileValFileType = refusePrelimenaryNotificationFileValSplit[refusePrelimenaryNotificationFileValSplit.length - 1].toLowerCase()
+
+
+      var refuseNotificationToDPIIRsendDateEl = $('#refuse_notification_to_dpiir_send_date')
+      var refuseNotificationToDPIIRsendDate = refuseNotificationToDPIIRsendDateEl.val()
+      ////////console.log(preconclusionFile.get(0).length);
+
+      let testIsOk = false
+      let dateIsNeeded = false
+      let fileTypeError = false
+
+
+      if(refusePrelimenaryConclusionFile.get(0).files.length > 0 && refusePrelimenaryNotificationFile.get(0).files.length > 0){
+        if(refuseNotificationToDPIIRsendDateEl.length){
+          dateIsNeeded = true
+          if(refuseNotificationToDPIIRsendDate !== ''){
+            testIsOk = true
+          }
+      }
+        if(refusePrelimenaryConclusionFileValFileType !== 'pdf' || refusePrelimenaryNotificationFileValFileType !== 'pdf'){
+
+          fileTypeError = true
+        }
+
+      }
+
+      if(!testIsOk){
+        toastr.error('Все поля должны быть заполнены');
+        $('#btn_add_refuse_prelimenary_conclusion_notification').html('<i class="fas fa-save" style="font-size: 25px;"></i>');
+        $('#btn_add_refuse_prelimenary_conclusion_notification').prop('disabled', false)
+      }else{
+        if(fileTypeError){
+          toastr.error('Тип файла(ов) не соответствует требованиям');
+          $('#btn_add_refuse_prelimenary_conclusion_notification').html('<i class="fas fa-save" style="font-size: 25px;"></i>');
+          $('#btn_add_refuse_prelimenary_conclusion_notification').prop('disabled', false)
+
+        }else{
+
+          $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+          $(this).prop('disabled', true)
+
+            let data = new FormData()
+            let orderID = $('#orderNumber').attr('data-orderid');
+
+
+            var notificationDate = refuseNotificationToDPIIRsendDate
+            data.append('orderID', orderID);
+            data.append('notification_date', notificationDate);
+            data.append('ez', $('#refuse-prelimenary-conclusion-file')[0].files[0]);
+            data.append('notification', $('#refuse-prelimenary-notification-file')[0].files[0]);
+
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'save_order_refuse_preliminary' %}",
+                data: data,
+                processData: false,
+                contentType: false,
+                error: function(data){
+                  toastr.error('Ошибка', data)
+                },
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                success: function () {
+                    toastr.success('Данные сохранены');
+                    showModalCommonNextStep({
+                      title: 'Следующие шаги',
+                      modal_body: '<b>Дальнейшие действия по заявке отсутствуют</b> <br>' +
+                                  '<b>Документы сохранены в соответствующую папку на сервере</b> <br>',
+                      headerClass: 'bg-danger'
+                    })
+
+                }
+            })
+
+
+
+
+
+      }
+
+      }
+    })
+
+
+
+  </script>
+
+{% endblock %}

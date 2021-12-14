@@ -1,0 +1,378 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+{% block style %}
+
+{% endblock %}
+
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4>Предварительная проверка заявки</h4>
+        <h5>Заявка - <i id="orderNumber" data-orderid="{{ order.id }}">{{ order.number }}</i>  | Заявитель - <i id="applierName">{{ order.company }}</i> | № ПП - <i id="ppNumber">{{ order.pp }}</i></h5>
+
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content" >
+
+  <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+          <?let showBtn = true?>
+
+          <?if (fileType == 'DOC'){?>
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">Основная информация</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+
+              <div class="card-body">
+
+                <div class="row col-md-12 mt-2">
+                  <div class="form-group col-md-4">
+                    <label for="prelimenaryCheck_comments">Крайняя дата отправки ЭЗ</label>
+                    <div id="prelimenaryCheck_comments"  class="form-control text-danger">
+
+                        {% if temp_stop %}
+                            {{ temp_stop.end_date_after_temp_stop|date:"d.m.Y" }}
+                        {% else %}
+                            {{ order.end_date|date:"d.m.Y" }}
+                        {% endif %}
+
+
+                    </div>
+                    <small class="text-danger">Дата составления ЭЗ не должна превышать указанную дату</small>
+
+                  </div>
+
+                </div>
+                <div class="row col-md-12">
+
+                  <div class="form-group col-md-4">
+                    <label for="conclusion-dateCreated">Дата составления ЭЗ</label>
+                    <input id="conclusion-dateCreated"  class="form-control date-time-picker input-to-fill-up" type="text" name="conclusion-dateCreated" value="{% if ez_doc.creation_date %}{{ ez_doc.creation_date|date:"d.m.Y" }}{% endif %}">
+                    <small class="text-danger">Не позднее <b>
+                        {% if temp_stop %}
+                            {{ temp_stop.end_date_after_temp_stop|date:"d.m.Y" }}
+                        {% else %}
+                            {{ order.end_date|date:"d.m.Y" }}
+                        {% endif %}
+                    </b></small>
+                  </div>
+
+                  <div class="form-group col-md-4 choose-order-appendedSelect" >
+                    <label for="rolesSelect">Решение</label>
+                    <?if ((order_info[1][40] == 'Отказ/ЭЗ' || order_info[1][40] == 'Приостановка/Отказ/ЭЗ') && order_info[1][56] == ''){?>
+                    <select class="custom-select input-to-fill-up" id="choose-conclusion-decision">
+                        <option {% if not ez_doc %} selected="selected" {% endif %}>---</option>
+                        <option {% if ez_doc.decision == True %} selected="selected" {% endif %}>Положительное</option>
+                        <option {% if ez_doc.decision == False %} selected="selected" {% endif %}>Отрицательное</option>
+                   </select>
+                    <?}?>
+                  </div>
+
+                  <div class="form-group col-md-4 ">
+                    <label for="main-info-number">Максимальная расчетная сумма субсидии</label>
+                    <input type="text" class="form-control input-to-fill-up" id="max-sum" placeholder="" name="max-sum" value="{% if ez_doc.max_sum %}{{ ez_doc.max_sum }}{% endif %}">
+                  </div>
+
+
+
+                </div>
+
+              </div>
+              <!-- /.card-body -->
+          </div>
+          <div class="card card-warning">
+            <div class="card-header">
+              <h3 class="card-title">Загрузка файла</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <div class="card-body">
+              <div class="row col-md-12">
+                  <div class="form-group col-md-12">
+                    <label for="exampleInputFile">Файл ЭЗ</label>
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control input-to-fill-up" id="conclusion-file" name="conclusion-file">
+                    </div>
+                    <small class="text-danger">Тип файла - <cite title="Source Title" id="file_type">DOC</cite></small>
+                    <div><small class="text-danger">Имя файла - <cite title="Source Title">любое</cite></small></div>
+
+                  </div>
+
+
+                </div>
+
+            </div>
+
+          </div>
+
+
+          <?}else{?>
+
+
+
+          <?}?>
+
+          </div>
+              <!-- /.card-body -->
+
+          <!-- /.card -->
+        <!-- /.card -->
+      </div>
+      <!--/.col (right) -->
+    </div>
+    <!-- /.row -->
+  </div>
+
+
+  </section>
+  <?if (showBtn){?>
+  <button type="button" class="btn btn-primary btn-float" id="add_conclusion"><i class="fas fa-save"  style="font-size: 25px; z-index: 99999;"></i></button>
+
+{% endblock %}
+
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+  <script>
+
+
+    $('#new_orders_ready_to_proceed_list').addClass('menu-open')
+    $('#temp_stop_menu').addClass('menu-open')
+    $('#refuse_menu').addClass('menu-open')
+
+    $('#content').fadeIn('slow').removeClass('d-none')
+
+
+      $('#choose-conclusion-decision').on('change', function(){
+        if( $('#choose-conclusion-decision').val() === 'Отрицательное'){
+          $('#max-sum').val('0,00');
+        }else{
+          $('#max-sum').val('');
+        }
+      })
+
+
+
+
+
+      $('#add_conclusion').on('click', function(){
+        //console.log('sfsdfs ' + $('#conclusion-dateCreated').length)
+        let dateCreated = $('#conclusion-dateCreated').val();
+
+        let conclusionDecision = $('#choose-conclusion-decision').val();
+
+        let maxSum = $('#max-sum').val();
+        let conclusionFile = $('#conclusion-file');
+
+        let orderNumber = $('#orderNumber').html();
+        let applierName = $('#applierName').html();
+        let file = $()
+        let fileType = $('#file_type').html();
+        let userLogin = $('#userLogin').html()
+
+        let conclusionFileVal = conclusionFile.val()
+        let conclusionFileSplit = conclusionFileVal.split('.')
+        let conclusionFileFileType = conclusionFileSplit[conclusionFileSplit.length - 1].toLowerCase()
+        let fileTypeIsOk = false
+
+          if(conclusionFileFileType === 'doc' || conclusionFileFileType === 'docx'){
+            fileTypeIsOk = true
+          }
+
+        var maxSumIsOk = false;
+
+        var checkMaxSum = new RegExp(/^\d+.?\d{0,2}$/);
+
+        var testIsOK = false;
+
+
+
+          if(dateCreated === '' || conclusionDecision === '---' || maxSum === '' || conclusionFile.get(0).files.length === 0){
+            toastr.error('Все поля должны быть заполнены');
+            $(this).html('<i class="fas fa-save"  style="font-size: 25px;"></i>');
+          }else{
+            if(!checkMaxSum.test(maxSum)){
+              toastr.error('Максимальная сумма должна быть представлена числом');
+              $(this).html('<i class="fas fa-save"  style="font-size: 25px;"></i>');
+            }else{
+              testIsOK = true
+            }
+          }
+
+        if(conclusionFile.get(0).files.length !== 0 && conclusionFile[0].files[0].size === 0){
+          testIsOK = false
+          toastr.error('Файл не содержит информации');
+        }
+        console.log(testIsOK)
+        if(testIsOK){
+          if(fileTypeIsOk){
+            $(this).prop('disabled', true)
+            $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+
+            let data = new FormData()
+            let orderID = {{ order.id }};
+            data.append('orderID', orderID);
+            data.append('dateCreated', dateCreated);
+            data.append('conclusionDecision', conclusionDecision);
+            data.append('maxSum', maxSum);
+            data.append('ezFile', $('#conclusion-file')[0].files[0]);
+
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'save_ez_doc' %}",
+                data: data,
+                processData: false,
+                contentType: false,
+                error: function(data){
+                  toastr.error('Ошибка', data)
+                },
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                success: function () {
+                    toastr.success('Данные сохранены');
+                    showModalCommonNextStep({
+                      title: 'Следующие шаги',
+                      modal_body: '<b>Выполните следующие действия:</b> <br>' +
+                        '<ul class="mt-2">' +
+                        '<li>распечатайте экспертное заключение и передайте его на подпись</li>' +
+                        '</ul>' +
+                        '<b>После получения подписанного ЭЗ:</b> <br>' +
+                        '<ul class="mt-2">' +
+                        '<li>зайдите в пункт меню <b>"ЭЗ > Список ЭЗ PDF"</b></li>' +
+                        '<li>найдите заявку в списке (если документ подписан - заявка имеет зеленый графический маркер)</li>' +
+                        '<li>нажмите на соответствующую запись в списке</li>' +
+                        '<li>загрузите подписанный документ</li>' +
+                        '</ul>',
+                      headerClass: 'bg-danger'
+                    })
+
+                }
+            })
+
+          }else{
+            toastr.error('Тип файла не соответствует требованиям');
+          }
+
+
+        }
+
+/*
+        var data = {}
+        data.userLogin = sessionStorage.user_email
+
+
+        data.dateCreated = $('#conclusion-dateCreated').val();
+        data.dateCreated = $('#conclusion-dateCreated').val();
+
+
+
+        google.script.run.withFailureHandler(function(error){
+          toastr.error(error);
+        }).withSuccessHandler(function(html){
+
+
+
+        }).getPageHtml('main_panel/html/templates/add_user_large_modal_html', data, 'add_user_modal');
+
+*/
+
+      //конец пункт Добвать ЭЗ
+
+      })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      //сохранение даты приостановки
+      $('#btn_add_prelimenary_no_notification_date').on('click', function(){
+
+        var date = $('#temp_stop_no_notification_date').val();
+
+        ////////console.log('date = ', date)
+        if(date == ''){
+          toastr.error('Заполните поле даты');
+        }else{
+          $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+          $(this).prop('disabled', true)
+          var data = {}
+          let orderID = $('#orderNumber').attr('data-orderid');
+          data.orderID = orderID;
+          data.tempStopDate = date;
+          var dateSplit = date.split('.')
+          var dateForFunc = dateSplit[2] + '-' + dateSplit[1] + '-' + dateSplit[0]
+          let endDateForNotification = getWorkingDays(dateForFunc, 10,0)//крайняя дата отправки заявителю уведомления о приостановке
+
+          data.endDateForNotification = endDateForNotification
+
+          $.ajax({
+              headers: { "X-CSRFToken": '{{ csrf_token }}' },
+              url: "{% url 'save_temp_stop_date' %}",
+              type: 'POST',
+              data: data,
+              // processData: false,
+              // contentType: false,
+              error: function(data){
+                  toastr.error('Ошибка', data)
+              },
+              success:function (response) {
+                  let arr = []
+                console.log(response)
+
+                toastr.success('Данные в таблице сохранены')
+
+                showModalCommonNextStep({
+                  title: 'Следующие шаги',
+                  modal_body: '<b>Выполните следующие действия:</b><br/>' +
+                    '<ul class="mt-2"><li>в срок до <b>' + endDateForNotification + '</b> включительно составьте предэкспертизу, а также уведомление о приостановке и загрузите его в ИАС</li>' +
+
+                    '<li>после загрузки уведомления в ИАС зайдите в пункт меню <b>"Приостановка > Без уведомления"</b></li>' +
+                    '<li>найдите данную заявку в списке</li>' +
+                    '<li>нажмите на соответствующую запись в списке</li>' +
+                    '<li>заполните необходимую информацию в открывшейся форме</li></ul>',
+
+                    headerClass: 'bg-danger'
+                })
+
+              }
+            });
+
+        }
+
+      })
+
+
+
+  </script>
+
+{% endblock %}

@@ -1,0 +1,480 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+
+
+
+  <section class="content mt-4" >
+
+
+    <div class="container-fluid">
+
+      <? if(userRoleName == "Суперадмин" || userRoleName == "Админ" || userRoleName == "Статист"){?>
+      {% if user_profile.role.name == 'Админ' or user_profile.role.name == 'Суперадмин' %}
+        <div class="row">
+          <div class="col-lg-6 col-6">
+            <!-- small box -->
+            <div class="small-box bg-info cursor-pointer" id="dashAllOrdersCnt" style="height: 130px;">
+              <div class="inner">
+                <h3 id="dashAllNewOrdersCnt">{% if counter == None %}0{% else %}{{ counter.all_orders }}{% endif %}</h3>
+
+                <p>Общее количество заявок</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 col-6">
+            <!-- small box -->
+            <div class="small-box bg-info cursor-pointer" id="dashNewOrdersCard" style="height: 130px;">
+              <div class="inner">
+                <h3 id="dashNewOrdersCnt">{% if counter == None %}0{% else %}{{ counter.new_orders }}{% endif %}</h3>
+
+                <p>
+                  Новые заявки
+
+
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      <div class="row">
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box bg-primary cursor-pointer" id="dashNewOrdersForExpertToCheckCard" style="height: 130px;">
+            <div class="inner">
+              <h3 id="dashNewOrdersForExpertToCheckCnt">{% if counter == None %}0{% else %}{{ counter.admin_distribution_preliminary }}{% endif %}</h3>
+
+              <p>
+                Заявки для распределения на проверку (до приостановки)
+
+
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box bg-primary cursor-pointer" id="dashOrdersAfterTempStopForExpertToCheckCard" style="height: 130px;">
+            <div class="inner">
+              <h3 id="dashOrdersAfterTempStopForExpertToCheckCnt">{% if counter == None %}0{% else %}{{ counter.admin_distribution_after_temp_stop }}{% endif %}</h3>
+
+              <p>
+                Заявки для распределения на проверку (после приостановки)
+
+
+              </p>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+
+
+
+
+      <div class="row">
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box bg-primary cursor-pointer" id="bageRemadeOrderSendToSubcotractorDateCard" style="height: 130px;">
+            <div class="inner">
+              <h3 id="dashRemadeOrderSendToSubcotractorDateCnt">{% if counter == None %}0{% else %}{{ counter.admin_remade_order_date }}{% endif %}</h3>
+
+              <p>
+                Отправка доработанной заявки подрядчику
+
+
+              </p>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+
+
+
+
+      <div class="row">
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box bg-secondary cursor-pointer" id="dashCalledbackOrdersCard"  style="height: 130px;" title="Заявки в формате WORD, готовые для подписания">
+            <div class="inner">
+              <h3 id="dashCalledbackOrdersCnt"><?= allCalledbackOrders?></h3>
+              <p>Заявки отозванные</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+      {% endif %}
+        <?}?>
+
+        {% if user_profile.role.name == 'Статистика (лотки)' %}
+        <? if(userRoleName == "Статистика (лотки)"){?>
+          <div class="row">
+            <div class="col-lg-6 col-6">
+              <!-- small box -->
+              <div class="small-box bg-warning cursor-pointer" id="dashStatistNotPrelimenaryLotki" style="height: 130px;">
+                <div class="inner">
+                  <h3 id="dashStatistNotPrelimenaryLotkiCnt">{% if counter == None %}0{% else %}{{ counter.statist_refuses_not_preliminary }}{% endif %}</h3>
+
+                  <p>
+                     Отказы (не первичные)
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 col-6">
+              <!-- small box -->
+              <div class="small-box bg-warning cursor-pointer" id="dashStatistConclusionLotki" style="height: 130px;">
+                <div class="inner">
+                  <h3 id="dashStatistConclusionLotkiCnt">{% if counter == None %}0{% else %}{{ counter.statist_ez }}{% endif %}</h3>
+
+                  <p>
+                    ЭЗ
+
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+
+            <div class="col-lg-4 col-4">
+              <!-- small box -->
+              <div class="small-box bg-info cursor-pointer" id="dashStatistTempStop" style="height: 130px;">
+                <div class="inner">
+                  <h3 id="dashStatistTempStopCnt">{% if counter == None %}0{% else %}{{ counter.statist_temp_stop_on_signing }}{% endif %}</h3>
+
+                  <p>
+                    На подписи (приостановка)
+
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4 col-4">
+              <!-- small box -->
+              <div class="small-box bg-info cursor-pointer" id="dashStatistRefuse" style="height: 130px;">
+                <div class="inner">
+                  <h3 id="dashStatistRefuseCnt">{% if counter == None %}0{% else %}{{ counter.statist_refuse_on_signing }}{% endif %}</h3>
+
+                  <p>
+                    На подписи (отказ)
+
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4 col-4">
+              <!-- small box -->
+              <div class="small-box bg-info cursor-pointer" id="dashStatistConclusion" style="height: 130px;">
+                <div class="inner">
+                  <h3 id="dashStatistConclusionCnt">{% if counter == None %}0{% else %}{{ counter.statist_ez_on_signing }}{% endif %}</h3>
+
+                  <p>
+                    На подписи (ЭЗ)
+
+                  </p>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+
+
+        <?}?>
+      {% endif %}
+
+      {% if user_profile.role.name == 'Эксперт МБМ' or user_profile.role.name == 'Эксперт подрядчика' %}
+      <? if(userRoleName == "Эксперт МБМ"){?>
+      <div class="row">
+
+        <div class="col-lg-6 col-6">
+          <!-- small box -->
+          <div class="small-box bg-info" id="dashAllPrelimenaryOrdersCard" style="height: 130px;">
+            <div class="inner">
+              <h3 id="dashAllPrelimenaryOrdersCnt">{% if counter == None %}0{% else %}{{ counter.new_orders }}{% endif %}</h3>
+
+              <p>
+                Общее количество заявок (Первичка)
+
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 col-6">
+          <!-- small box -->
+          <div class="small-box bg-info" id="dashAllOrdersConclusionsCard" style="height: 130px;">
+            <div class="inner">
+              <h3 id="dashAllOrdersConclusionsCnt"><?= allOrdersConclusionsReady?></h3>
+
+              <p>
+                Общее количество заявок (ЭЗ)
+
+              </p>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+
+      <? if (userData[1][7] == 'ГБУ МБМ'){?>
+      <div class="row">
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box bg-primary cursor-pointer" id="dashDocsForCheckCard" style="height: 130px;">
+            <div class="inner">
+              <h3 id="dashDocsForCheckCardCnt">{% if counter == None %}0{% else %}{{ counter.new_orders_check_is_needed }}{% endif %}</h3>
+
+              <p>
+                Заявки для проверки документов (до приостановки)
+
+
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box bg-primary cursor-pointer" id="dashDocsForCheckAfterTempStopCard" style="height: 130px;">
+            <div class="inner">
+              <h3 id="dashDocsForCheckAfterTempStopCardCnt">{% if counter == None %}0{% else %}{{ counter.check_orders_to_check_after_temp_stop }}{% endif %}</h3>
+
+              <p>
+                Заявки для проверки документов (после приостановки)
+
+
+              </p>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+
+      <?}?>
+
+    {% if user_profile.role.name == "Эксперт МБМ" %}
+      <div class="row">
+
+        <div class="col-lg-4 col-sm-12">
+
+          <div class="small-box bg-purple cursor-pointer" id="dashNewOrdersForCheckCard" style="height: 130px;">
+            <div class="inner">
+              <h3 id="dashNewOrdersForCheckCnt">{% if counter == None %}0{% else %}{{ counter.check_orders_to_check_preliminary }}{% endif %}</h3>
+
+              <p>
+                Заявки для первоначальной проверки
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-sm-12">
+
+          <div class="small-box bg-purple cursor-pointer" id="dashNewOrdersSentForCheckCard" style="height: 130px;">
+            <div class="inner">
+              <h3 id="dashNewOrdersSentForCheckCnt"><?= newOrdersSentForCheckCount?></h3>
+
+              <p>
+                Заявки первички (на проверке)
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-sm-12">
+
+          <div class="small-box bg-purple cursor-pointer" id="dashNewOrdersCard" style="height: 130px;">
+            <div class="inner">
+              <h3 id="dashNewOrdersCnt"><?= newOrdersCount?></h3>
+
+              <p>
+                Заявки первички (после проверки)
+              </p>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    {% endif %}
+
+      <div class="row">
+
+        <!-- ./col -->
+        <div class="col-lg-2 col-12">
+          <!-- small box -->
+          <div class="small-box bg-success cursor-pointer" id="dashPrelimenaryNoNotificationDateCard" style="height: 130px;" title="Ожидание отправки уведомления заявителю после приостановления">
+            <div class="inner">
+
+              <h3 id="dashprelimenaryNoNotificationDateCnt">{% if counter == None %}0{% else %}{{ counter.temp_stop_date }}{% endif %}</h3>
+              <p>Приостановка (без даты приостановки ИАС)</p>
+
+            </div>
+            <!--a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a-->
+          </div>
+        </div>
+        <div class="col-lg-2 col-12">
+          <!-- small box -->
+          <div class="small-box bg-success cursor-pointer" id="dashPrelimenaryNoNotificationCard" style="height: 130px;" title="Ожидание отправки уведомления заявителю после приостановления">
+            <div class="inner">
+
+              <h3 id="dashprelimenaryNoNotificationCnt">{% if counter == None %}0{% else %}{{ counter.temp_stop_without_notification }}{% endif %}</h3>
+              <p>Приостановка (уведомление не отправлено)</p>
+
+            </div>
+            <!--a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a-->
+          </div>
+        </div>
+      {% if user_profile.role.name == 'Эксперт подрядчика' %}
+        <div class="col-lg-2 col-12">
+          <!-- small box -->
+          <div class="small-box bg-success cursor-pointer" id="dashPrelimenaryWithNotificationNoRemadeOrderCard" style="height: 130px;" title="Ожидание получения доработанной заявки от заявителя">
+            <div class="inner">
+
+              <h3 id="dashprelimenaryWithNotificationNoRemadeOrderCnt">{% if counter == None %}0{% else %}{{ counter.temp_stop_with_notification }}{% endif %}</h3>
+              <p>Приостановка (уведомление отправлено)</p>
+
+            </div>
+            <!--a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a-->
+          </div>
+        </div>
+          {% endif %}
+        <div class="col-lg-2 col-12">
+          <!-- small box -->
+          <div class="small-box bg-success cursor-pointer" id="dashPrelimenaryRemadeorderDateCard" style="height: 130px;" title="Ожидание отправки уведомления заявителю после приостановления">
+            <div class="inner">
+
+              <h3 id="dashprelimenaryRemadeorderDateCnt">{% if counter == None %}0{% else %}{{ counter.temp_stop_remade_order_date }}{% endif %}</h3>
+              <p>Приостановка (дата получения доработки)</p>
+
+            </div>
+            <!--a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a-->
+          </div>
+        </div>
+      {% if user_profile.common_check_needed  %}
+        <div class="col-lg-2 col-12">
+          <!-- small box -->
+          <div class="small-box bg-success cursor-pointer" id="dashAfterTempStopSendForCheckCard" style="height: 130px;" title="Ожидание отправки документов на проверку после возобновления">
+            <div class="inner">
+
+              <h3 id="dashAfterTempStopSendForCheckCnt">{% if counter == None %}0{% else %}{{ counter.temp_stop_check }}{% endif %}</h3>
+              <p>Возобновление (отправка документов на проверку)</p>
+              <p id="dashAfterTempStopSentForCheckCnt" class="d-none"><?= ordersAfterTempStopSentForExpertToCheck?></p>
+            </div>
+            <!--a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a-->
+          </div>
+        </div>
+          {% endif %}
+        <!-- ./col -->
+        <div class="col-lg-2 col-12">
+          <!-- small box -->
+          <div class="small-box bg-success cursor-pointer" style="height: 130px;" id="dashPrelimenaryWithNotificationCard"  style="height: 130px;" title="Ожидание получения от заявителя доработанной заявки после приостановки">
+            <div class="inner">
+              <h3 id="dashprelimenaryWithNotificationCnt">{% if counter == None %}0{% else %}{{ counter.temp_stop_remade_order_decision }}{% endif %}</h3>
+
+              <p>Решение по доработанной заявке</p>
+            </div>
+          </div>
+        </div>
+        <!-- ./col -->
+
+      </div>
+      <div class="row">
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box bg-danger cursor-pointer" id="refusePrelimenaryNoDPIIRCard"  style="height: 130px;" data-toggle="tooltip" data-placement="right" title="Требуется отправка проекта уведомления и отцательного ЭЗ в ДПиИР">
+            <div class="inner">
+              <h3 id="dashRefusePrelimenaryNoDPIIRCnt">{% if counter == None %}0{% else %}{{ counter.refuse_preliminary }}{% endif %}</h3>
+              <p>Отказ первичный</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box bg-danger cursor-pointer" id="refuseByDocumentsCard"  style="height: 130px;" title="Требуется отправка проекта уведомления и отцательного ЭЗ в ДПиИР по итогам проверки доработанной заявки">
+            <div class="inner">
+              <h3 id="dashRefuseByDocumentsCnt">{% if counter == None %}0{% else %}{{ counter.refuse_by_docs }}{% endif %}</h3>
+              <p>Отказ по приостановке (по документам)</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box bg-danger cursor-pointer" id="refuseByDatesCard"  style="height: 130px;" title="Требуется отправка проекта уведомления и отцательного ЭЗ в ДПиИР по истечению срока предоставления доработанной заявки">
+            <div class="inner">
+              <h3 id="dashRefuseByDateCnt">{% if counter == None %}0{% else %}{{ counter.refuse_by_date }}{% endif %}</h3>
+              <p>Отказ по приостановке (по сроку)</p>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+      <div class="row">
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box bg-warning cursor-pointer" id="dashConclusionWaitingOrdersCard"  style="height: 130px;" title="Заявки в формате WORD, готовые для подписания">
+            <div class="inner">
+              <h3 id="dashConclusionWaitingOrdersCnt">{% if counter == None %}0{% else %}{{ counter.ez_doc }}{% endif %}</h3>
+              <p>Заявки, ожидающие составления ЭЗ</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box bg-warning cursor-pointer" id="dashConclusionWaitingOrdersRemakeCard"  style="height: 130px;" title="Откорректированные заявки в формате WORD, готовые для подписания">
+            <div class="inner">
+              <h3 id="dashConclusionWaitingRemakeOrdersCnt"><?= allOrdersConclusionsRemakeCount?></h3>
+              <p>Заявки, ожидающие загрузки переделанного ЭЗ</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box bg-warning cursor-pointer" id="dashConclusionWaitingSigningCard"  style="height: 130px;" title="Заявки в формате PDF, подписанные уполномоченными лицами">
+            <div class="inner">
+              <h3 id="dashConclusionSigningOrdersCnt">{% if counter == None %}0{% else %}{{ counter.ez_pdf }}{% endif %}</h3>
+              <p>ЭЗ (ожидающие подписи)</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box bg-secondary cursor-pointer" id="dashCalledbackOrdersCard"  style="height: 130px;" title="Заявки в формате WORD, готовые для подписания">
+            <div class="inner">
+              <h3 id="dashCalledbackOrdersCnt"><?= allCalledbackOrders?></h3>
+              <p>Заявки отозванные</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <?}?>
+
+    {% endif %}
+
+
+
+      <!-- /.row (main row) -->
+   </section>
+
+
+{% endblock %}

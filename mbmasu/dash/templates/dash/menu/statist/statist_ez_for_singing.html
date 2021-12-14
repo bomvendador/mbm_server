@@ -1,0 +1,151 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4>ЭЗ от исполнителя получено</h4>
+        <h5>Заявка - <i id="orderNumber">{{ order.number }}</i> | Заявитель - <i id="applierName">{{ order.company }}</i> | № ПП - <i id="ppNumber">{{ order.pp }}</i></h5>
+
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+  <section class="content" >
+
+    <div class="container-fluid">
+        <div class="row">
+          <!-- left column -->
+          <div class="col-md-12">
+            <!-- general form elements -->
+
+
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title"><?=title?></h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+
+                <div class="card-body">
+
+                  <div class="row col-md-12">
+                    <div class="form-group col-md-6" >
+                      <label for="">Уровень документа</label>
+                      <div class="form-control">Экспертное заключение</div>
+                    </div>
+
+                  </div>
+
+                  <div class="row col-md-12">
+
+                    <div class="form-group col-md-6">
+                      <label for="document-received-date">Дата получения документа от исполнителя</label>
+                      <input id="document-received-date"  class="form-control date-time-picker input-to-fill-up" type="text" name="document-received-date">
+
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label>Дата составления документа</label>
+                      <input type="text" class="form-control input-to-fill-up text-danger date-time-picker" id="conclusion_date_created" name="conclusion_date_created" value="{{ ez_doc.creation_date|date:"d.m.Y" }}">
+                      <!--div class="form-control text-danger"><?= data[1][7]?></div-->
+                      <small class="text-danger">Проверьте дату составления ЭЗ. Скорректируйте в случае необходимости</small>
+
+                    </div>
+                  </div>
+
+                </div>
+                <!-- /.card-body -->
+            </div>
+
+
+
+
+            </div>
+                <!-- /.card-body -->
+
+
+
+            <!-- /.card -->
+
+
+
+
+          <!-- /.card -->
+        </div>
+        <!--/.col (right) -->
+      </div>
+      <!-- /.row -->
+
+
+    </section>
+    <button type="button" class="btn btn-primary btn-float" id="btn_add_conclusion_static_boxes"><i class="fas fa-save"  style="font-size: 25px;"></i></button>
+
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+  $('#menu_lotki').addClass('menu-open')
+
+  $('#content').fadeIn(1000).removeClass('d-none')
+
+    $('#btn_add_conclusion_static_boxes').on('click', function(){
+      let data = {}
+      let testOK = false
+      let orderID = {{ order.id }};
+      let documentReceivedDate = $('#document-received-date').val()
+      let documentCreatedDate = $('#conclusion_date_created').val()
+
+
+      if(documentReceivedDate !== '' && documentCreatedDate !== ''){
+          testOK = true
+          data.documentCreatedDate = dateToDB(documentCreatedDate)
+          data.orderID = orderID
+          data.documentReceivedDate = dateToDB(documentReceivedDate)
+
+      }
+
+      console.log(data)
+
+
+      if(testOK){
+          $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+          $(this).attr('disabled', true)
+          $.ajax({
+              headers: { "X-CSRFToken": '{{ csrf_token }}' },
+              url: "{% url 'save_data_ez_for_singing_statist' %}",
+              type: 'POST',
+              data: data,
+              // processData: false,
+              // contentType: false,
+              error: function(data){
+                  toastr.error('Ошибка', data)
+              },
+              success:function (data) {
+                  console.log(data)
+                  window.location.href = "{% url 'dash_index' %}";
+              }
+          });
+
+
+
+      }else{
+          toastr.error('Все поля должны быть заполнены');
+      }
+    })
+
+
+
+
+
+
+
+</script>
+
+{% endblock %}

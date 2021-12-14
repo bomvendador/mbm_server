@@ -1,0 +1,116 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4 id="big_title">{{ big_title }}</h4>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content" >
+
+
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-12">
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">{{ title }}</h3>
+
+            <div class="card-tools">
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body table-responsive p-4 pt-1">
+            <table class="table table-hover text-nowrap list-table" >
+              <thead>
+                <tr>
+                    <th>Номер заявки</th>
+                    <th>Наименование МСП</th>
+                    <th>Дата подачи</th>
+                    <th>Номер ПП</th>
+                    <th>Крайний срок сдачи</th>
+                  <!--th></th-->
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                {% for order in orders %}
+                  <tr class="user-tr cursor-pointer order-temp-stop-notification-not-sent" id="orderID_{{ order.id }}">
+                      <td>{{ order.number }}</td>
+                      <td>{{ order.company }}</td>
+                      <td>{{ order.date_of_appliance|date:"d.m.Y" }}</td>
+                      <td>{{ order.pp }}</td>
+                      <td>{{ order.end_date_for_responsible|date:"d.m.Y" }}</td>
+<!--                      <?}?>-->
+<!--                    <? }?>-->
+                    <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                </tr>
+               {% endfor %}
+
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+
+</section>
+
+{% endblock %}
+
+{% block script %}
+
+  <script>
+
+    $('#new_orders_ready_to_proceed_list').addClass('menu-open')
+    $('#temp_stop_menu').addClass('menu-open')
+    $('#refuse_menu').addClass('menu-open')
+    add_hover_menu('#nav_refuse_prelimenary')
+
+      $('.order-temp-stop-notification-not-sent').on('click', function(){
+
+        showLoaderSpinnerContent();
+        let orderID = $(this).attr('id').split('_')[1];
+        console.log(orderID);
+        let data = {}
+        data.order_id = orderID
+          $.ajax({
+              headers: { "X-CSRFToken": '{{ csrf_token }}' },
+              url: "{% url 'check_if_user_appointed_for_order' %}",
+              type: 'POST',
+              data: data,
+              // processData: false,
+              // contentType: false,
+              error: function(data){
+                  toastr.error('Ошибка', data)
+              },
+              success:function (data) {
+                  console.log(data)
+                  if (data === 'ok'){
+                    window.location.href = "{% url 'orders_refuse_preliminary_list' %}" + '/' + orderID;
+
+                  }else {
+                      toastr.error('Заявка назначена на другого исполнителя')
+                  }
+              }
+          });
+
+
+
+
+      })
+
+  </script>
+
+{% endblock %}

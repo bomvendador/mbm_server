@@ -1,0 +1,81 @@
+{%extends 'dash/menu/common_list.html' %}
+
+
+{% block menu_list_content %}
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-12">
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Список заявок</h3>
+
+            <div class="card-tools">
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body table-responsive p-4 pt-1">
+            <table class="table table-hover text-nowrap list-table" >
+              <thead>
+                <tr>
+                    <th>Номер заявки</th>
+                    <th>Наименование МСП</th>
+                    <th>Номер ПП</th>
+                    <th>Ответственный</th>
+                    <th>Дата подачи</th>
+                    <th>Статус</th>
+                    <th>Дата получения от исполнителя</th>
+                  <!--th></th-->
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                {% for new_order in new_orders %}
+                  <tr class="user-tr cursor-pointer satist-boxes-order-for-signing" id="orderID_{{ new_order.id }}">
+                      <td>{{ new_order.number }}</td>
+                      <td>{{ new_order.company }}</td>
+                      <td>{{ new_order.pp }}</td>
+                      <td>{{ new_order.responsible_preliminary.first_name }} {{ new_order.responsible_preliminary.last_name }}</td>
+                      <td>{{ new_order.date_of_appliance|date:"d.m.Y" }}</td>
+                      <td>{{ new_order.lotki_status.name }}</td>
+                      <td>{{ new_order.lotki_temp_stop_date_received|date:"d.m.Y" }}</td>
+
+
+<!--                      <?}?>-->
+<!--                    <? }?>-->
+                    <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                </tr>
+               {% endfor %}
+
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+
+</section>
+
+{% endblock %}
+
+
+
+{% block script %}
+
+  <script>
+
+    $('#nav_satist_boxes_temp_stop_for_singing').addClass('menu-open')
+
+      $('.satist-boxes-order-for-signing').on('click', function() {
+
+          showLoaderSpinnerContent();
+          let orderID = $(this).attr('id').split('_')[1];
+          window.location.href = "{% url 'statist_temp_stop_orders_for_singing_list' %}" + '/' + orderID;
+
+      })
+
+  </script>
+
+{% endblock %}

@@ -1,0 +1,457 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+{% block style %}
+
+{% endblock %}
+
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4>Принятие решения по доработанной заявке</h4>
+        <h5>Заявка - <i id="orderNumber" data-orderid="{{ order.id }}">{{ order.number }}</i>  | Заявитель - <i id="applierName">{{ order.company }}</i> | № ПП - <i id="ppNumber">{{ order.pp }}</i></h5>
+
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content pl-2 pr-2">
+
+  <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+
+        {% if check_after_temp_stop_file_to_check_final %}
+          <div class="card card-warning">
+            <div class="card-header">
+              <h3 class="card-title">Ссылка на проверенные документы (финальная версия)</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+
+              <div class="card-body">
+
+                <div class="row col-md-12">
+
+                  <div class="form-group col-md-12" >
+                        <p><a href="{% url 'download_file' path=check_after_temp_stop_file_to_check_final.file_1.path %}" class="download_file">{{ check_after_temp_stop_file_to_check_final.file_1.name }}</a></p>
+                        {% if check_after_temp_stop_file_to_check_final.file_2 %}
+                        <p><a href="{% url 'download_file' path=check_after_temp_stop_file_to_check_final.file_2.path %}" class="download_file">{{ check_after_temp_stop_file_to_check_final.file_2.name }}</a></p>
+                        {% endif %}
+                </div>
+
+
+                </div>
+
+              </div>
+              <!-- /.card-body -->
+          </div>
+        {% endif %}
+
+            {% if check_after_temp_stop_file_to_check_final.type == 'ЭЗ' or not check_after_temp_stop_file_to_check_final and check_after_temp_stop_file_to_check.type == 'ЭЗ' %}
+          <div class="card card-success">
+            <div class="card-header" style="background-color: #198754!important">
+              <h3 class="card-title">Результат проверки доработанной заявки - ПОЛОЖИТЕЛЬНО/ЭЗ</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+
+              <div class="card-body">
+
+
+                <!--div class="row col-md-12 mt-2">
+                  <div class="form-group col-md-6">
+                    <label for="">Крайняя дата получения доработанной заявки</label>
+                    <div id=""  class="form-control text-danger"><?= data[1][26]?></div>
+
+                  </div>
+
+                </div>
+
+
+
+
+                <div class="row col-md-12 mt-2">
+                  <div class="form-group col-md-12">
+                    <label for="notification_date">Дата получения доработанной заявки от заявителя</label>
+                    <input id="remade_order_by_applier_date"  class="form-control date-time-picker input-to-fill-up" type="text" name="remade_order_by_applier_date">
+
+                    <small class="text-danger">Дата загрузки заявителем дополнительных документов в систему ИАС (не позднее <b><?= data[1][26]?></b>)</small>
+
+                  </div>
+
+
+                </div>
+                <div class="row col-md-12">
+                  <div class="form-group col-md-12">
+                    <label for="remade_order_documents_comments">Комментарии по доработанной заявке</label>
+                    <textarea id="remade_order_documents_comments"  class="form-control summernote input-to-fill-up" name="remade_order_documents_comments"></textarea>
+                    <small class="text-danger">Опишите детали предоставленных заявителем материалов</small>
+
+                  </div>
+
+                </div-->
+
+
+                <div class="row col-md-12">
+                  <div class="col-md-12">
+                    <button type="button" class="btn btn-block btn-success btnAfterTempStopDecision" id="btnRemadeOrderOK">Причины приостановки устранены</button>
+                    <small class="text-danger">После нажатия заявка попадает в категорию "ЭЗ/Список ЭЗ DOC"</small>
+
+                  </div>
+                </div>
+
+
+
+              </div>
+              <!-- /.card-body -->
+          </div>
+            {% else %}
+          <div class="card card-danger">
+            <div class="card-header">
+              <h3 class="card-title">Результат проверки доработанной заявки - ОТКАЗ</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+
+              <div class="card-body">
+
+
+                <div class="row col-md-12 mt-2">
+                  <div class="col-md-12">
+                    <button type="button" class="btn btn-block btn-danger btnAfterTempStopDecision" id="btnRemadeOrderRefuseNoDocs">Отказать в финансировании</button>
+                  <small class="text-danger">После нажатия заявка попадает в категорию "Отказ/По документам"</small>
+
+                  </div>
+                  <!--div class="col-md-6">
+                    <button type="button" class="btn btn-block btn-warning btnRemadeOrderRefuse" id="btnRemadeOrderRefuseWrongDocs">Документы представлены в неполном объеме/не соответствуют запросу</button>
+                    <small class="text-danger">После нажатия заявка попадает в категорию <?if (data[1][16] == '982-ПП'){?>"ЭЗ/Список ЭЗ DOC"<?}else{?>"Отказ/По документам"<?}?></small>
+
+                  </div-->
+
+
+                </div>
+
+
+
+
+                <div class="row col-md-12 mt-3">
+                  <!-- <h5>Причины отказа</h5> -->
+                  <div class="col-md-12 form-group">
+                    <button type="button" class="btn btn-block btn-info" id="btnAfterTempStopCheckRefuseReasons">Указать причины отказа</button>
+                    <!-- <div><small class="text-danger">Кнопка нажимается в случае принятия экспертом решения о приостановке<br>После нажатия заявка попадает в категорию "Приостановка > Дата приостановки"</small></div> -->
+                  </div>
+
+                </div>
+
+
+                <div class="row col-md-12 mt-2 d-none" id="refuse_reasons_table">
+                  <div class="col-md-12 form-group">
+
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Список причин отказа</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody id="refuse_reasons_tbody">
+                      </tbody>
+                    </table>
+                  </div>
+
+                </div>
+              </div>
+          </div>
+
+
+            {% endif %}
+
+
+
+
+        </div>
+              <!-- /.card-body -->
+
+
+
+          <!-- /.card -->
+
+
+
+
+        <!-- /.card -->
+      </div>
+      <!--/.col (right) -->
+
+
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+
+
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">Комментарии по доработанной заявке</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+
+              <div class="card-body">
+
+
+                <div class="row col-md-12">
+                  <div class="form-group col-md-12">
+                    <label for="remade_order_documents_comments">Комментарии по доработанной заявке</label>
+                    <textarea id="remade_order_documents_comments"  class="form-control summernote input-to-fill-up" name="remade_order_documents_comments"></textarea>
+                    <small class="text-danger">Опишите детали предоставленных заявителем материалов</small>
+
+                  </div>
+
+                </div>
+
+
+              </div>
+          </div>
+
+
+
+        </div>
+      </div>
+
+
+
+    </div>
+    <!-- /.row -->
+  </div>
+
+
+  </section>
+    <div class="modal fade" id="modal_lg_refuse_reasons" style="display: none;" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-lightgrey" >
+            <h4 class="modal-title" id="modal_lg_refuse_reasons_title">Укажите причины отказа</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body" id="modal_lg_refuse_reasons_body">
+            <div class="row m-2">
+
+              <label class="pl-0 mb-0">Расшифровка аббревиатур</label>
+              <div style="border-top: 2px solid #dee2e6;" class="mt-2 mb-2">
+                <p>КД - кредитный договор</p>
+                <p>ЛД - лицензионный договор</p>
+                <p>ДКК - договор коммерческой концессии</p>
+                <p>НП - налогоплательщик</p>
+                <p>СМСП - субъект малого и среднего предпринимательства</p>
+                <p>ИП - индивидуальный предприниматель</p>
+                <p>ЮЛ - юридическое лицо</p>
+                <p>КВМ - конгрессно-выставочные мероприятия</p>
+                <p>ТП - торговые площадки</p>
+                <p>РИП - рекламно-информационные площадки</p>
+                <p>ОС - основные средства</p>
+              </div>
+
+
+              <table class="table mt-3" id="table_refuse_reasons">
+                <thead>
+                  <tr>
+                    <th>Список причин</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="tbody">
+                {% for reason_common in refuse_reasons_common %}
+                  <tr class="">
+                    <td class="refuse_reasons_description">{{ reason_common.description }}<?= refuse_reasons[i][1]?></td>
+                    <td class="refuse_reasons_check_box" id="refuse_reason_{{ reason_common.id }}">
+                      <div class="icheck-primary d-inline">
+                        <input id="refuse_reasons_{{ reason_common.id }}" type="checkbox" class="checkboxRefuseReason scale_1_5">
+                        <label for="refuse_reasons_{{ reason_common.id }}"></label>
+                      </div>
+                  </td>
+                  </tr>
+                <?}?>
+                {% endfor %}
+                {% for reason in refuse_reasons %}
+                  <tr class="">
+                    <td class="refuse_reasons_description">{{ reason.description }}<?= refuse_reasons[i][1]?></td>
+                    <td class="refuse_reasons_check_box" id="refuse_reason_{{ reason.id }}">
+                      <div class="icheck-primary d-inline">
+                        <input id="refuse_reasons_{{ reason.id }}" type="checkbox" class="checkboxRefuseReason scale_1_5">
+                        <label for="refuse_reasons_{{ reason.id }}"></label>
+                      </div>
+                    </td>
+                  </tr>
+              {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+          <div class="modal-footer justify-content-between bg-lightgrey" id="modal_lg_refuse_reasons_footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button type="button" class="btn btn-default" id="modal_lg_refuse_reasons_ok">ОК</button>
+
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+
+{% endblock %}
+
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+  <script>
+
+    setSummernote()
+
+    $('#new_orders_ready_to_proceed_list').addClass('menu-open')
+    $('#temp_stop_menu').addClass('menu-open')
+    $('#refuse_menu').addClass('menu-open')
+
+    $('#content').fadeIn('slow').removeClass('d-none')
+
+    $('#btnAfterTempStopCheckRefuseReasons').on('click', function(){
+      $('#modal_lg_refuse_reasons').modal('show')
+    })
+    $('#modal_lg_refuse_reasons_ok').on('click', function(){
+        let table_checkboxes_refuse_reasons = $('.checkboxRefuseReason:checked')
+        // console.log('кол = ' + table_checkboxes_refuse_reasons.length)
+        // var refuse_reasons_arr = []
+
+        if(table_checkboxes_refuse_reasons.length > 0){
+            $('#refuse_reasons_tbody').html('')
+
+            table_checkboxes_refuse_reasons.each(function(i){
+                // $(this).closest('tr').find('td .refuse_reasons_description').val()
+                let refuse_reasons_description_for_arr = $(this).closest('tr').find('.refuse_reasons_description').html()
+                let refuse_reasons_id_for_arr = $(this).attr('id').split('_')[2]
+                // refuse_reasons_arr.push($(this).attr('id').split('_')[2])
+                $('#refuse_reasons_tbody').append('<tr class="refuse_reason_tr" id="refuse_reason_tr_' + refuse_reasons_id_for_arr + '"><td class="refuse_reason_td">' + refuse_reasons_description_for_arr + '</td></tr>')
+
+                // console.log('прчина = ' + $(this).attr('id'))
+            })
+            $('#refuse_reasons_table').removeClass('d-none')
+            // console.log(refuse_reasons_arr)
+            $('#modal_lg_refuse_reasons').modal('hide')
+
+        }else{
+            toastr.error('Выберите хотя бы одну причину отказа')
+        }
+
+
+    })
+
+      $('.btnAfterTempStopDecision').on('click', function(){
+
+        //var comments = $($('#remade_order_documents_comments').summernote('code')).text()
+        let refuse_reasons_is_ok = false
+        let data = {}
+
+        let comments = $('#remade_order_documents_comments').val()
+        //////console.log('date = ', date)
+        if($(this).attr('id') === 'btnRemadeOrderRefuseNoDocs'){
+            let refuse_reasons_arr = []
+            let refuse_reasons_list = $('.refuse_reason_tr')
+            if (refuse_reasons_list.length > 0){
+                refuse_reasons_is_ok = true
+                refuse_reasons_list.each(function(){
+                    refuse_reasons_arr.push($(this).attr('id').split('_')[3])
+                // console.log($(this).attr('id'))
+                })
+                data.refuse_reasons_arr = JSON.stringify(refuse_reasons_arr)
+
+
+            }
+
+        }else {
+           refuse_reasons_is_ok = true
+        }
+
+        if(comments === '' || !refuse_reasons_is_ok){
+            if(!refuse_reasons_is_ok){
+              toastr.error('Укажаите причины отказа');
+              $("#btnAfterTempStopCheckRefuseReasons").fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500);
+            }
+            if(comments === ''){
+              toastr.error('Заполните поле комментариев по доработанной заявке');
+            }
+        }else{
+          $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+          $(this).attr("disabled", true)
+          let orderID = $('#orderNumber').attr('data-orderid');
+          let btnID = $(this).attr('id')
+
+            data.orderID = orderID
+            data.remadeOrderDocumentsComments = comments
+            data.btnID = btnID
+
+            $.ajax({
+              headers: { "X-CSRFToken": '{{ csrf_token }}' },
+              url: "{% url 'save_temp_stop_remade_order_decision' %}",
+              type: 'POST',
+              data: data,
+              // processData: false,
+              // contentType: false,
+              error: function(data){
+                  toastr.error('Ошибка', data)
+              },
+              success:function (response) {
+                console.log(response)
+
+                toastr.success('Данные в таблице сохранены')
+                let modalBody = ''
+                  switch (btnID) {
+                      case 'btnRemadeOrderRefuseNoDocs':
+                        modalBody = '<b>Выполните следующие шаги:</b> <br>' +
+                                    '<ul class="mt-2">' +
+                                    '<li>произведите действия по отказу в ИАС</li>' +
+                                    '<li>зайдите в пункт меню <b>"Отказ > По документам"</b></li>' +
+                                    '<li>найдите заявку в списке</li>' +
+                                    '<li>нажмите на соответствующую запись в списке</li>' +
+                                    '<li>заполните и сохраните необходимые данные</li></ul>'
+                        break;
+                      case 'btnRemadeOrderOK':
+                        modalBody = '<b>Выполните следующие действия:</b><br/>' +
+                                    '<ul class="mt-2">' +
+                                    '<li>в срок до <b>'  + '</b> составьте экспертное заключение</li>' +
+                                    '<li>зайдите в пункт меню <b>"ЭЗ > Список ЭЗ DOC"</b></li>' +
+                                    '<li>найдите данную заявку в списке</li>' +
+                                    '<li>нажмите на соответствующую запись в списке</li>' +
+                                    '<li>заполните необходимую информацию в открывшейся форме</li></ul>'
+                        break;
+
+                      default:
+                        break;
+
+
+                  }
+                    showModalCommonNextStep({
+                      title: 'Следующие шаги',
+                      modal_body: modalBody,
+                      headerClass: 'bg-danger'
+                    })
+              }
+            });
+
+        }
+      })
+
+
+
+  </script>
+
+{% endblock %}

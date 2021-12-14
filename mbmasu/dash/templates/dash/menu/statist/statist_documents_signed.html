@@ -1,0 +1,182 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4>Подписанный документ получен</h4>
+        <h5>Заявка - <i id="orderNumber">{{ order.number }}</i> | Заявитель - <i id="applierName">{{ order.company }}</i> | № ПП - <i id="ppNumber">{{ order.pp }}</i></h5>
+
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+  <section class="content" >
+
+    <div class="container-fluid">
+        <div class="row">
+          <!-- left column -->
+          <div class="col-md-12">
+            <!-- general form elements -->
+
+
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Ввод данных</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+
+                <div class="card-body">
+
+
+                  <div class="row col-md-12">
+
+                    <div class="form-group col-md-4">
+                      <label for="signed_document_received_date">Дата получения подписанного документа (дата уведомления)</label>
+                      <input id="signed_document_received_date"  class="form-control date-time-picker input-to-fill-up" type="text" name="signed_document_received_date">
+
+                    </div>
+
+                    <div class="form-group col-md-4" >
+                      <label for="callback_date">Дата получения документа от исполнителя</label>
+                      <div class="non-editable-border-styled" >
+                        {% if order.lotki_status.name == 'Приостановка' %}
+                          {{ order.lotki_preliminary_temp_stop_date_received|date:"d.m.Y" }}
+                        {% else %}
+                          {{ order.lotki_preliminary_refuse_date_received|date:"d.m.Y" }}
+                          {{ order.lotki_after_temp_stop_refuse_date_received|date:"d.m.Y" }}
+                        {% endif %}</div>
+                    </div>
+                    <div class="form-group col-md-4" >
+                      <label for="callback_date">Статус документа</label>
+                      <div class="non-editable-border-styled">{{ order.lotki_status.name }}</div>
+                    </div>
+
+                  </div>
+
+
+                  <div class="row col-md-12">
+                    <div class="form-group">
+                      <button type="button" class="btn btn-block btn-success mt-4" id="btn_signed_document_static_boxes">Документ получен</button>
+
+                    </div>
+                  </div>
+
+
+                </div>
+                <!-- /.card-body -->
+            </div>
+
+
+
+
+            </div>
+                <!-- /.card-body -->
+
+
+
+            <!-- /.card -->
+
+
+
+
+          <!-- /.card -->
+        </div>
+        <!--/.col (right) -->
+      </div>
+      <!-- /.row -->
+    </div>
+
+
+  </section>
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+  $('#menu_lotki').addClass('menu-open')
+  $('#nav_satist_boxes_temp_stop_for_singing').addClass('menu-open')
+
+  $('#content').fadeIn(500).removeClass('d-none')
+
+
+  $('#content').on('change', '#choose-document-type', function() {
+    let docType = $(this).val()
+    if (docType !== '---') {
+      if (docType == 'Отказ') {
+        $('#document_created_date_div').removeClass('d-none').addClass('d-block');
+        $('#document_received_date_div').removeClass('d-none').addClass('d-block');
+
+      } else {
+        $('#document_received_date_div').removeClass('d-none').addClass('d-block');
+        $('#document_created_date_div').removeClass('d-block').addClass('d-none');
+
+      }
+    } else {
+      $('#document_created_date_div').removeClass('d-block').addClass('d-none');
+      $('#document_received_date_div').removeClass('d-block').addClass('d-none');
+
+    }
+
+  })
+
+    $('#btn_signed_document_static_boxes').on('click', function(){
+      let data = {}
+      let testOK = false
+      let documentType = $('#choose-document-type').val()
+      let orderID = {{ order.id }}
+
+
+
+      let signedDocumentReceivedDate = $('#signed_document_received_date').val()
+      data.signed_document_received_date = dateToDB(signedDocumentReceivedDate)
+      data.orderID = orderID
+        console.log('docs')
+      if(signedDocumentReceivedDate == ''){
+          toastr.error('Поле даты должно быть заполнено');
+      }else {
+        $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+
+
+        $(this).attr('disabled', true)
+        $.ajax({
+          headers: {"X-CSRFToken": '{{ csrf_token }}'},
+          url: "{% url 'save_data_documents_signed_statist' %}",
+          type: 'POST',
+          data: data,
+          // processData: false,
+          // contentType: false,
+          error: function (data) {
+            toastr.error('Ошибка', data)
+          },
+          success: function (response) {
+            console.log(response)
+
+            $('#modal-large-body-common').html('Номер уведомления - <b>' + response['notificationNumber'] + '</b><br>Дата уведомления - <b>' + response.notificationDate + '</b>')
+            $('#modal-default-title').html(response['modalTitle'])
+            $('#modal-lg-common').modal('show')
+
+            // window.location.href = "{% url 'dash_index' %}";
+            // if (data === 'ok'){
+            //   window.location.href = "{% url 'new_orders_ready_to_proceed_list' %}" + '/' + orderID;
+            //
+            // }else {
+            //     toastr.error('Заявка назначена на другого исполнителя')
+            // }
+          }
+        });
+
+      }
+
+    })
+
+</script>
+
+{% endblock %}

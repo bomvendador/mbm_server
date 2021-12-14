@@ -1,0 +1,209 @@
+
+<!doctype html>
+
+{% load static %}
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <base target="_top">
+
+        <title>АСУ | ГБУ МБМ</title>
+        <meta name="description" content="The HTML5 Herald">
+        <meta name="author" content="SitePoint">
+
+
+        <link rel="stylesheet" type="text/css" href="{% static 'login/css/login_css.css' %}">
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+        <link rel="stylesheet" type="text/css" href="{% static 'login/plugins/toastr/css/toastr.css' %}">
+
+    </head>
+
+    <body>
+        <div class="container-fluid" id="body">
+
+
+        <div class="row no-gutter">
+            <!-- The image half -->
+            <div class="col-md-6 d-none d-md-flex bg-image">
+                <img style="max-width: 100%" class="max-width-height-100" src="{% static 'login/media/images/logo1_dwsm65.png' %}">
+            </div>
+
+
+            <!-- The content half -->
+                <div class="col-md-6 bg-light">
+                    <div class="login d-flex align-items-center py-5">
+
+                        <!-- Demo content-->
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-10 col-xl-7 mx-auto">
+                                    <h3 class="display-4">Вход</h3>
+                                    <p class="text-muted mb-4">Введите учетные данные</p>
+                                    <form>
+                                        <div class="form-group mb-3">
+                                            <input id="inputEmail" placeholder="Логин" autofocus="" class="form-control rounded-pill border-0 shadow-sm px-4">
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <input id="inputPassword" type="password" placeholder="Пароль"  class="form-control rounded-pill border-0 shadow-sm px-4 text-primary">
+                                        </div>
+                                        <button id="btn-submit" style="width: 85px; height: 40px;" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">
+                                            Войти
+
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div><!-- End -->
+
+                    </div>
+                </div><!-- End -->
+
+            </div>
+        </div>
+
+
+        </div>
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{% static 'login/plugins/toastr/js/toastr.js' %}"></script>
+
+    <script>
+
+    {% if user.is_authenticated %}
+
+    window.location.href = "{% url 'dash_index' %}";
+    {% endif %}
+
+
+        $('#btn-submit').on('click', function (e) {
+            e.preventDefault()
+            if($('#inputEmail').val() == ''  || $('#inputPassword').val() == ''){
+                toastr.error('Введите логин и пароль')
+            }else {
+                $(this).html("<div class=='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+                let token = '{{ csrf_token }}';
+                // add_csrf()
+                $.ajax({
+                    headers: { "X-CSRFToken": token },
+                    url: "{% url 'login_index' %}",
+                    type: 'POST',
+
+                    data: JSON.stringify({
+                                'login': $('#inputEmail').val(),
+                                'password': $('#inputPassword').val()
+                            }),
+                    processData: false,
+                    contentType: false,
+                    error: function(data){
+                        toastr.error('Ошибка', data)
+                        $('#btn-submit').html("Войти")
+                    },
+                    success:function (data) {
+                        console.log(data)
+                        let data_json = $.parseJSON(data);
+                        let response = data_json['response'];
+                        console.log(response)
+                        if(response == 'error'){
+                            $('#btn-submit').html("Войти")
+                            toastr.error('Логин и/или пароль указаны не верно')
+
+                        }else {
+                            window.location.href = "{% url 'dash_index' %}";
+                        }
+                        // var data_json = $.parseJSON(data);
+                        // var response = data_json['response'];
+                        // console.log(response)
+                        //
+                        // if (!response['no_data']) {
+                        //
+                        //     var item_type = response['item_type'];
+                        //     var total_amount = parseFloat(response['total_amount']);
+                        //     var cart_meals_qnt = response['cart_meals_qnt'];
+                        //     var min_sum = parseFloat(response['min_sum']);
+                        //     var cart_id = response['cart_id'];
+                        //
+                        //     if (item_type == 'meal'){
+                        //         var meal_id = response['meal_id'];
+                        //         var meal_price = response['meal_price'];
+                        //         var meal_qnt = response['meal_qnt'];
+                        //         var meal_sum = response['meal_sum'];
+                        //         var meal_img = response['meal_img'];
+                        //         var meal_name = response['meal_name'];
+                        //         var item_name = meal_name;
+                        //         var img_url = '/static/images/meals/' + meal_img;
+                        //
+                        //
+                        //         if (meal_name.length > 15){
+                        //             meal_name = $.trim(meal_name).substring(0, 15).trim(this) + '...';
+                        //         }
+                        //
+                        //     }else {
+                        //         var meal_price = response['menu_price'];
+                        //         var meal_qnt = response['menu_qnt'];
+                        //         var menu_sum = response['menu_sum'];
+                        //         var menu_img = response['menu_img'];
+                        //         var menu_name = response['menu_name'];
+                        //         var meal_id = response['menu_id'];
+                        //         var item_name = menu_name;
+                        //         var img_url = '/static/images/menu/' + menu_img;
+                        //         if (menu_name.length > 15){
+                        //             item_name = $.trim(menu_name).substring(0, 15).trim(this) + '...';
+                        //         }
+                        //
+                        //     }
+                        //
+                        //
+                        //
+                        //     if ($.cookie('cart_id') != cart_id){
+                        //         $.cookie('cart_id', cart_id, {path: '/'});
+                        //     }
+                        //
+                        //     if ($('#minicart_' + item_type + '_id_' + meal_id).length == 0){
+                        //         $('.minicart-list').append('<li id="minicart_' + item_type + '_id_' + meal_id + '"><div class="product-thumb"><img class="width-40" src="' + img_url + '" alt=""></div><div class="product-name">' + item_name + '</div><div class="qty-wrap"><span class="product-quantity"><span id="minicart_' + item_type + '_qnt_' + meal_id + '" class="quantity">' + meal_qnt + '</span> * </span><span class="amount">' + meal_price + '</span></div><div class="product-remove"><i class="icon awe_close minicart_del_meal font-size-10 pointer-pure"></i></div></li>').show();
+                        //     }else {
+                        //         $('#minicart_' + item_type + '_qnt_' + meal_id).text(meal_qnt);
+                        //     }
+                        //     $('#cart_sum').text(total_amount.toFixed(2));
+                        //     $('#cart_label_amount').text(total_amount.toFixed(2)).animateCss('bounceIn');
+                        //     $('#cart_label_qnt').text(cart_meals_qnt).animateCss('bounceIn');
+                        //     console.log('min_sum = ' + min_sum + ' amount = ' + total_amount);
+                        //
+                        //     if (min_sum <= total_amount){
+                        //         console.log('заказ');
+                        //         $('#minicart-btn-div').removeClass('no-order-btn-minicart').addClass('order-btn-minicart');
+                        //         $('.warn-amount').hide();
+                        //
+                        //     }else {
+                        //         console.log('нет заказа');
+                        //
+                        //         $('#minicart-btn-div').removeClass('order-btn-minicart').addClass('no-order-btn-minicart');
+                        //         $('.warn-amount').show();
+                        //     }
+                        //
+                        //     $.notiny({ text: 'Позиция: ' + item_name + ' добавлена в корзину',
+                        //         image: img_url
+                        //     });
+                        //
+                        //     if ($('#minicart-ul li').length > 3){
+                        //         $('#minicart-ul').addClass('height-210');
+                        //     }
+                        //     $('.mfp-close').click();
+                        //
+                        // }
+                    }
+                });
+
+
+
+
+            }
+        })
+
+
+    </script>
+</html>
+

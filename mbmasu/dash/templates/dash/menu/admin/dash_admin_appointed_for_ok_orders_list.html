@@ -1,0 +1,476 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'dash/plugins/floatingButton/css/index.css' %}">
+{% endblock %}
+{% block content %}
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4 id="big_title">{{ big_title }}</h4>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+
+
+<section class="content" >
+
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-12">
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">{{ title }}</h3>
+
+            <div class="card-tools">
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body table-responsive p-4 pt-1">
+            <table class="table table-hover text-nowrap" id="table_list">
+              <thead>
+                <tr>
+                    <th style="text-align:center;"><input type="checkbox" class="checkbox-choose-all-orders" style="transform: scale(1.5)"></th>
+                    <th>№ п/п</th>
+                    <th>Дата комиссии</th>
+                    <th>Номер заявки</th>
+                    <th>Наименование МСП</th>
+                    <th>Решение</th>
+                    <th>Сумма</th>
+
+                  <!--th></th-->
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                {% for order in orders %}
+                  <tr class="user-tr cursor-pointer" id="readyForOKID_{{ order.id }}">
+                        <td style="text-align:center;"><input type="checkbox" class="checkbox-ready-for-ok" style="transform: scale(1.5)"></td>
+
+                      <td>{{ forloop.counter }}</td>
+                      <td><p class="d-none">{{ order.commission_date.date|date:"d.m.Y" }}</p>{{ order.commission_date.date|date:"d.m.Y" }}</td>
+                      <td>{{ order.ready_for_OK.order.number }}</td>
+                      <td>{{ order.ready_for_OK.order.company }}</td>
+                      <td>{% if order.decision %}Положительное{% else %}Отрицательное{% endif %}</td>
+                      <td>{{ order.max_sum }}</td>
+                </tr>
+               {% endfor %}
+
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <div class="zoom">
+    <a class="zoom-fab zoom-btn-large" id="zoomBtn"><i class="fa fa-bars"></i></a>
+    <ul class="zoom-menu">
+      <li><a class="zoom-fab zoom-btn-sm zoom-btn-tangram scale-transition scale-out" title="Добавить в протокол" id="appoint_for_protocol"><i class="fas fa-folder-plus"></i></a></li>
+    </ul>
+  </div>
+
+
+        <div class="modal fade" id="modal-download-ready-for-ok" style="display: none;" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header bg-info">
+                <h4 class="modal-title" id="">Скачивание файлов, готовых для ОК</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Количество к скачиванию заявок:</p>
+                  <p id="modal-ready-for-ok-qnt" class="mt-3" style="font-size: 25px"></p>
+                  <p class="mt-3">Продолжить?</p>
+
+              </div>
+              <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-default" id="confirm_download">Да</button>
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+
+        <div class="modal fade" id="modal_error" style="display: none; z-index: 2000" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header bg-danger">
+                <h4 class="modal-title" id="">Ошибка</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p class="mb-2" id="modal_error_title"></p>
+                  <div id="modal_error_body">
+
+                  </div>
+              </div>
+              <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+
+        <div class="modal fade" id="modal_appoint_for_ok" style="display: none;" aria-hidden="true">
+          <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+              <div class="modal-header" style="background-color: #d3d3d3" id="modal-header-info">
+                <h4 class="modal-title" id="modal-default-title-info">Добавление заявок в протокол</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body" id="modal_appoint_for_ok_body">
+                  <div class="row col-md-12">
+                        <div id="ok_date_input" class="form-group col-md-4">
+                            <label for="ok_number">Номер протокола</label>
+                             <input id="ok_number"  class="form-control input-to-fill-up" type="text" name="ok_number" value="">
+                        </div>
+                        <div id="ok_date_input" class="form-group col-md-4">
+                                <label for="ok_date">Дата протокола</label>
+
+                            <div class="input-group mb-12">
+                                 <input id="ok_date"  class="form-control date-time-picker  input-to-fill-up" type="text" name="ok_date" value="">
+
+                                <div class="input-group-append">
+                                    <span class="input-group-text" style="cursor: pointer" id="del"><i class="far fa-trash-alt"></i></span>
+                                </div>
+                            </div>
+                        </div>
+
+                      {% if protocols %}
+                        <div id="ok_date_input" class="form-group col-md-4">
+                            <label for="ok_date">Доступные протоколы</label>
+                            <select class='custom-select input-to-fill-up' id="protocol">
+                                <option selected='selected' >---</option>
+                                {% for protocol in protocols %}
+                                <option id="protocolID_{{ protocol.id }}">{{ protocol.protocol_number }} - {{ protocol.protocol_date|date:"d.m.Y" }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                      {% endif %}
+                </div>
+            <div class="row col-md-12">
+                <table class="table table-hover text-nowrap" id="table_list_appoint_for_ok">
+                  <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Номер заявки</th>
+                        <th>Наименование МСП</th>
+                        <th>Решение</th>
+                        <th>Сумма</th>
+                      <!--th></th-->
+                    </tr>
+                  </thead>
+                  <tbody id="tbody_appoint_for_ok">
+
+                  </tbody>
+                </table>
+            </div>
+
+              </div>
+              <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-default" style="width: 115px" id="save_passed_ok">Сохранить</button>
+
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+
+
+{% endblock %}
+
+{% block script %}
+
+        <script type="text/javascript" src="{% static 'dash/plugins/floatingButton/js/index.js' %}"></script>
+
+
+  <script>
+
+  add_hover_menu('#nav_orders_appointed_for_ok_list')
+    $('#content').fadeIn('fast').removeClass('d-none')
+
+    $('.checkbox-choose-all-orders').change(function () {
+      if(this.checked){
+        $('.checkbox-ready-for-ok').prop('checked', true)
+
+      }else {
+        $('.checkbox-ready-for-ok').prop('checked', false)
+      }
+    })
+
+    $('#del').on('click', function () {
+        $('#ok_date').val('')
+        if($('#ok_number').val() === ''){
+            $('#protocol').prop('disabled', false)
+
+        }
+    })
+
+
+    $('#protocol').on('change', function () {
+        if($(this).val() !== '---'){
+            $('#ok_number').attr('disabled', true).removeClass('input-to-fill-up').val('')
+            $('#ok_date').attr('disabled', true).removeClass('input-to-fill-up').val('')
+        }else {
+            $('#ok_number').attr('disabled', false).addClass('input-to-fill-up').val('')
+            $('#ok_date').attr('disabled', false).addClass('input-to-fill-up').val('')
+        }
+    })
+
+    $('#ok_date').on('change', function () {
+        if($(this).val() === '' && $('#ok_number').val() === ''){
+            $('#protocol').prop('disabled', false)
+
+        }else {
+            $('#protocol').val('---').prop('disabled', 'disabled')
+        }
+    })
+    $('#ok_number').on('input', function () {
+        if($(this).val() === '' && $('#ok_number').val() === ''){
+            $('#protocol').prop('disabled', false)
+
+        }else {
+            $('#protocol').val('---').prop('disabled', 'disabled')
+        }
+    })
+
+    $('#save_passed_ok').on('click', function () {
+        let protocol_ok_arr = []
+        let checkMaxSum = new RegExp(/^\d+.?\d{0,2}$/);
+        let error_arr = []
+        let protocol_val = $('#protocol').val()
+        let protocol_date = $('#ok_date').val()
+        let protocol_number = $('#ok_number').val()
+        let data = {}
+
+        if($('#protocol').length !== 0 && protocol_val !== "---"){
+            data.protocolID = $('#protocol option:selected').attr('id').split('_')[1]
+            console.log('fdfdfd')
+        }
+        $('.ready-for-ok-confirmed').each(function () {
+            let protocol_ok = {}
+
+            let orderIDReadyForOK = $(this).attr('id').split('_')[1]
+            let maxSum = $(this).find('.sum').val()
+            console.log(orderIDReadyForOK)
+            if(!checkMaxSum.test(maxSum)){
+                error_arr.push($(this).find('td')[1].innerHTML)
+            }else {
+                protocol_ok['appointed_for_ok_id'] = orderIDReadyForOK
+                protocol_ok['decision'] = $(this).find('.choose-conclusion-decision').val()
+                protocol_ok['sum'] = $(this).find('.sum').val()
+                protocol_ok_arr.push(protocol_ok)
+
+            }
+        })
+        if(error_arr.length > 0){
+             $('#modal_error_body').html('')
+            $('#modal_error_title').html('Проверьте сумму по следующим заявкам (она должна быть представлена числом):')
+
+            error_arr.map(function (order_number) {
+                $('#modal_error_body').append('<p>' + order_number + '</p>')
+            })
+
+            $('#modal_error').modal('show')
+        }else {
+            if((protocol_date === '' || protocol_number === '') && ($('#protocol').length !== 0 && protocol_val === "---" || $('#protocol').length === 0)){
+               console.log(protocol_date)
+               console.log(protocol_number)
+               console.log($('#protocol').length)
+                toastr.error('Укажите номер и дату протокола')
+            }else {
+                if(!checkMaxSum.test(protocol_number) && protocol_number !== ''){
+                    console.log(protocol_val)
+                        toastr.error('Номер комиссии должен быть представлен числом')
+                }else {
+                    //сохраняем данные
+
+                    $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 20px; height: 20px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+                    data.protocol_ok_arr = JSON.stringify(protocol_ok_arr)
+                    data.protocol_date = protocol_date
+                    data.protocol_number = protocol_number
+                    $.ajax({
+                      headers: { "X-CSRFToken": '{{ csrf_token }}' },
+                      url: "{% url 'save_orders_for_protocol' %}",
+                      type: 'POST',
+                      traditional: true,
+                      data: data,
+                      //processData: false,
+                      //contentType: false,
+                      error: function(data){
+                          toastr.error('Ошибка', data)
+                      },
+                      success:function (response) {
+                        window.location.reload()
+                      }
+
+                    });
+
+                }
+            }
+
+
+        }
+    })
+
+
+
+
+
+      $('#table_list_appoint_for_ok').on('change', '.choose-conclusion-decision', function () {
+        console.log('tttt')
+        if($(this).val() === 'Отрицательное'){
+            $(this).closest('tr').find('.sum').attr('disabled', true).removeClass('input-to-fill-up').val('0.00')
+        }else {
+            let init_sum = $(this).closest('tr').find('.sum').data('sum')
+            $(this).closest('tr').find('.sum').attr('disabled', false).addClass('input-to-fill-up').val(init_sum)
+        }
+    })
+
+    $('#tbody_appoint_for_ok').on('change', '.checkbox-next-ok', function () {
+      if(this.checked){
+        let init_dicision = $(this).closest('tr').find('.choose-conclusion-decision').data('decision')
+        let init_sum = $(this).closest('tr').find('.sum').data('sum')
+      $(this).closest('tr').find('.choose-conclusion-decision').attr('disabled', true).removeClass('input-to-fill-up').val(init_dicision)
+        $(this).closest('tr').find('.sum').attr('disabled', true).removeClass('input-to-fill-up').val(init_sum)
+      }else {
+        $(this).closest('tr').find('.sum').attr('disabled', false).addClass('input-to-fill-up')
+        $(this).closest('tr').find('.choose-conclusion-decision').attr('disabled', false).addClass('input-to-fill-up')
+      }
+    })
+
+
+
+    $('#appoint_for_protocol').on('click', function () {
+        $("#table_list_appoint_for_ok").DataTable().destroy()
+        if($('.checkbox-ready-for-ok:checked').length > 0){
+            $('#modal-ready-for-ok-qnt').html($('.checkbox-ready-for-ok:checked').length)
+            let cnt = 0
+            let tr = ''
+            $('.checkbox-ready-for-ok:checked').each(function () {
+                cnt ++
+                let order_number = $(this).closest('tr').find('td')[3].innerHTML
+                let order_company = $(this).closest('tr').find('td')[4].innerHTML
+                let order_decision = $(this).closest('tr').find('td')[5].innerHTML
+                let order_sum = $(this).closest('tr').find('td')[6].innerHTML
+                let order_id = $(this).closest('tr').attr('id').split('_')[1]
+                let td_decision = ''
+                if(order_decision === 'Положительное'){
+                    td_decision =
+                    "<td>" +
+                    "<select class='custom-select input-to-fill-up choose-conclusion-decision' data-decision='Положительное'>" +
+                    "<option selected='selected' >Положительное</option>" +
+                    "<option>Отрицательное</option>" +
+                    "</select>" +
+                    "</td>"
+
+                }else {
+                    td_decision =
+                    "<td>" +
+                    "<select class='custom-select input-to-fill-up choose-conclusion-decision' data-decision='Отрицательное'>" +
+                    "<option>Положительное</option>" +
+                    "<option selected='selected' >Отрицательное</option>" +
+                    "</select>" +
+                    "</td>"
+
+                }
+
+                let tr_order = "<tr class='ready-for-ok-confirmed' id='orderIDReadyForOK_" + order_id + "'>" +
+                    "<td>" + cnt + "</td>" +
+                    "<td>" + order_number + "</td>" +
+                    "<td>" + order_company + "</td>" +
+                    td_decision +
+                    "<td>" +
+                    "<p class='d-none'>" + order_sum + "</p><input type='text' class='form-control input-to-fill-up sum' data-sum='" + order_sum + "' value='" + order_sum + "'>" +
+                    "</td>" +
+                    "</tr>"
+                tr += tr_order
+            })
+            $('#tbody_appoint_for_ok').html(tr)
+
+
+               $("#table_list_appoint_for_ok").DataTable({
+                  "paging": false,
+                  "language": {
+                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Russian.json"
+                  },
+                  "initComplete": function () {
+
+                  },
+                  dom: 'Bfrtip',
+                  buttons: [
+                    {
+                      extend: 'excelHtml5',
+                      title: "Экспорт EXCEL - Выбрано для протокола ОК"
+                    },
+                    {
+                      extend: 'pdfHtml5',
+                      title: "Экспорт PDF - Выбрано для протокола ОК"
+                    }]
+                })
+
+            $('#modal_appoint_for_ok').modal('show')
+        }else {
+            toastr.error('Ни одной заявки не выбрано', 'Ошибка')
+        }
+
+    })
+
+
+
+    $("#table_list").DataTable({
+      "aoColumnDefs": [{
+      "bSortable": false,
+        "orderable": false,
+      "aTargets": [0]
+        }],
+      "order": [[1, "asc"]],
+
+        "paging": false,
+        "language": {
+        "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Russian.json"
+        },
+        "initComplete": function () {
+        $('.dt-buttons').addClass('padding-top-10')
+        hideLoaderSpinnerContent();
+        $('#content').fadeIn('slow').removeClass('d-none')
+
+        },
+        dom: 'Bfrtip',
+        buttons: [
+        {
+          extend: 'excelHtml5',
+          title: "Экспорт EXCEL - Протокол ОК"
+        },
+        {
+          extend: 'pdfHtml5',
+          title: "Экспорт PDF - Протокол ОК"
+        }]
+    })
+
+
+  </script>
+
+{% endblock %}

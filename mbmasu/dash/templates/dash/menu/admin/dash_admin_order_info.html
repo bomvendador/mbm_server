@@ -1,0 +1,1359 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+
+{% block style %}
+
+{% endblock %}
+
+{% block content %}
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-4">
+        <h4>Данные по заявке</h4>
+      <div class="col-sm-6">
+        <h5>Заявка - <i id="orderNumber">{{ order.number }}</i>  | Заявитель - <i id="applierName">{{ order.company }}</i></h5>
+        <h5>Текущий статус - <i id="orderNumber">{{ order.status.name }}</i></h5>
+      </div>
+      <div class="col-sm-6">
+        <h5>Добавлена пользователем - <i>{{ order.user.first_name }} {{ order.user.last_name }}</i></h5>
+        <h5>Дата и время добавления - <i>{{ order.added|date:"d.m.Y H:i" }}</i></h5>
+
+      </div>
+    </div>
+    <div class="mb-4">
+      <ul class="nav nav-pills mt-4" style="border-top-style: solid;
+                                            border-width: 1px;
+                                            border-color: #cfcfcf;
+                                            border-bottom-style: solid;">
+        <li class="nav-item">
+          <a class="nav-link active nav-link-all-order-info" id="nav_link_order_common_info" href="#" style="border-radius: 0">Общая информация</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-link-all-order-info"  id="nav_link_order_responsibles" href="#" style="border-radius: 0">Ответственные</a>
+        </li>
+          {% if order.check_preliminary_refuse or order.check_preliminary_ez or order.check_preliminary_temp_stop or order.check_after_temp_stop_refuse or order.check_after_temp_stop_ez %}
+        <li class="nav-item">
+          <a class="nav-link nav-link-all-order-info"  id="nav_link_order_check" href="#" style="border-radius: 0">Проверка</a>
+        </li>
+          {% endif %}
+        <li class="nav-item">
+          <a class="nav-link nav-link-all-order-info"  id="nav_link_status_change" href="#" style="border-radius: 0">История изменений</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-link-all-order-info"  id="nav_link_details" href="#" style="border-radius: 0">Детализация</a>
+        </li>
+      </ul>
+
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+    <section class="content" >
+
+  <div class="container-fluid" id="section_content">
+        <!-- left column -->
+      <!--/.col (right) -->
+    <!-- /.row -->
+  </div>
+
+
+
+  </section>
+
+
+    <template id="link_details">
+         <div class="col-md-12">
+            <h5 class="mt-4 mb-4 collapse-toggle cursor-pointer">Добавление в базу данных</h5>
+         <div class="collapse-item" style="display: none">
+            <div class="card card-warning">
+              <div class="card-header">
+                <h3 class="card-title">Данные</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+
+                <div class="card-body">
+
+                  <div class="row col-md-12 mt-2 mb-2">
+                    <div class="form-group mb-0 col-md-6">
+                      <label for="callback_date">Дата и время добавления</label>
+                      <div class="non-editable-border-styled">{{ order.added|date:"d.m.Y" }}</div>
+
+                    </div>
+                    <div class="form-group mb-0 col-md-6">
+                      <label for="callback_date">Добавлена пользователем</label>
+                      <div class="non-editable-border-styled">{{ order.user.first_name }} {{ order.user.last_name }}</div>
+
+                    </div>
+
+                  </div>
+                </div>
+            </div>
+         </div>
+            {% if order.responsible_preliminary or order.responsible_after_temp_stop%}
+             <h5 class="mt-4 mb-4 collapse-toggle cursor-pointer">Назначение ответственного</h5>
+        <div class="collapse-item" style="display: none">
+                {% if order.responsible_preliminary %}
+
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Первичный анализ</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+
+                <div class="card-body">
+
+                  <div class="row col-md-12 mt-2">
+                    <table class="table text-nowrap list-table" >
+                      <thead>
+                        <tr>
+                            <th>Ответственный</th>
+                            <th>Компания ответственного</th>
+                            <th>Кем назначен</th>
+                            <th>Дата и время назначения</th>
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for responsible_for_order_preliminary in responsibles_for_order_preliminary %}
+                          <tr class="">
+                              <td>{{ responsible_for_order_preliminary.responsible.first_name }} {{ responsible_for_order_preliminary.responsible.last_name }}</td>
+                              <td>{{ responsible_for_order_preliminary.company }}</td>
+                              <td>{{ responsible_for_order_preliminary.user.first_name }} {{ responsible_for_order_preliminary.user.last_name }}</td>
+                              <td>{{ responsible_for_order_preliminary.added|date:"d.m.Y H:i" }}</td>
+
+        <!--                      <?}?>-->
+        <!--                    <? }?>-->
+                            <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+
+                  </div>
+                </div>
+            {% endif %}
+             </div>
+                {% if order.responsible_after_temp_stop %}
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Анализ после возобновленния</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+
+                <div class="card-body">
+
+                  <div class="row col-md-12 mt-2">
+                    <table class="table text-nowrap list-table" >
+                      <thead>
+                        <tr>
+                            <th>Ответственный</th>
+                            <th>Компания ответственного</th>
+                            <th>Кем назначен</th>
+                            <th>Дата и время назначения</th>
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for responsible_for_order_after_temp_stop in responsibles_for_order_after_temp_stop %}
+                          <tr class="">
+                              <td>{{ responsible_for_order_after_temp_stop.responsible.first_name }} {{ responsible_for_order_after_temp_stop.responsible.last_name }}</td>
+                              <td>{{ responsible_for_order_after_temp_stop.company }}</td>
+                              <td>{{ responsible_for_order_after_temp_stop.user.first_name }} {{ responsible_for_order_after_temp_stop.user.last_name }}</td>
+                              <td>{{ responsible_for_order_after_temp_stop.added|date:"d.m.Y H:i" }}</td>
+
+        <!--                      <?}?>-->
+        <!--                    <? }?>-->
+                            <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+
+                  </div>
+                </div>
+            {% endif %}
+            </div>
+         </div>
+
+             {% endif %}
+
+            {% if order.check_preliminary_last_date_sent_for_check %}
+            <h5 class="mt-4 mb-4 collapse-toggle cursor-pointer">Первичная загрузка/на проверку файлов исполнителем</h5>
+
+        <div class="collapse-item" style="display: none">
+            <div class="card card-secondary">
+              <div class="card-header">
+                <h3 class="card-title">Данные</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+
+                <div class="card-body">
+
+                  <div class="row col-md-12 mt-2">
+                    <table class="table text-nowrap list-table" >
+                      <thead>
+                        <tr>
+                            <th>Кем загружено</th>
+                            <th>Дата и время загрузки</th>
+                            <th>Предварительный статус</th>
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for check_after_preliminary_file_to_check in check_after_preliminary_files_to_check %}
+                          <tr class="">
+                              <td>{{ check_after_preliminary_file_to_check.user.first_name }} {{ check_after_preliminary_file_to_check.user.last_name }}</td>
+                                <td>{{ check_after_preliminary_file_to_check.added|date:"d.m.Y H:i" }}</td>
+                              <td>{{ check_after_preliminary_file_to_check.type }}</td>
+        <!--                      <?}?>-->
+        <!--                    <? }?>-->
+                            <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+
+                  </div>
+                </div>
+            </div>
+        </div>
+            {% endif %}
+
+            {% if temp_stop %}
+            <h5 class="mt-4 mb-4 collapse-toggle cursor-pointer">Приостановка</h5>
+            <div class="collapse-item" style="display: none">
+            <div class="card card-info">
+              <div class="card-header">
+                <h3 class="card-title">Данные по приостановке</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+
+                <div class="card-body">
+
+                  <div class="row col-md-12 mt-2">
+                    <div class="form-group mb-0 col-md-6">
+                      <label for="callback_date">Приостановлено пользователем</label>
+                      <div class="non-editable-border-styled">{{ temp_stop.user.first_name }} {{ temp_stop.user.last_name }}</div>
+
+                    </div>
+                    <div class="form-group mb-0 col-md-6">
+                      <label for="callback_date">Дата и время приостановки в АСУ</label>
+                      <div class="non-editable-border-styled">{{ temp_stop.added|date:"d.m.Y H:i" }}</div>
+
+                    </div>
+
+                  </div>
+                  <div class="row col-md-12 mt-2">
+                    <div class="form-group mb-0 col-md-6">
+                      <label for="callback_date">Дата загрузки уведомления в ИС РПП</label>
+                      <div class="non-editable-border-styled">{{ temp_stop.date_IAS|date:"d.m.Y"|default_if_none:"Отсутствует" }}</div>
+
+                    </div>
+                    <div class="form-group mb-0 col-md-6">
+                      <label for="callback_date">Крайний срок подписания уведомления (3 РД)</label>
+                      <div class="non-editable-border-styled">{{ temp_stop.end_date_for_notification|date:"d.m.Y"|default_if_none:"Отсутствует" }}</div>
+
+                    </div>
+
+                  </div>
+                  <div class="row col-md-12 mt-2">
+                    <div class="form-group mb-0 col-md-6">
+                      <label for="callback_date">Дата подписания уведомления в ИС РПП</label>
+                      <div class="non-editable-border-styled">{{ temp_stop.notification_sent_date|date:"d.m.Y"|default_if_none:"Отсутствует" }}</div>
+
+                    </div>
+
+                    <div class="form-group mb-0 col-md-6">
+                      <label for="callback_date">Крайний срок для возобновления</label>
+                      <div class="non-editable-border-styled">{{ temp_stop.end_date_for_remade_order|date:"d.m.Y"|default_if_none:"Отсутствует" }}</div>
+
+                    </div>
+
+                  </div>
+
+                    <div class="row col-md-12 mt-2">
+                      <div class="form-group col-md-12">
+                        <label>Комментарии по приостановке</label>
+                        <div id="refuse_documents_inconsistency_comments"  class="non-editable-border-styled">{{ temp_stop.description|striptags }}</div>
+                      </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="card card-info">
+              <div class="card-header">
+                <h3 class="card-title">Данные об уведомлении</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+
+                <div class="card-body">
+
+                  <div class="row col-md-12 mt-2">
+                    <table class="table text-nowrap list-table" >
+                      <thead>
+                        <tr>
+                            <th>Номер</th>
+                            <th>Дата</th>
+                            <th>Кем создано</th>
+                            <th>Когда создано</th>
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for notification in temp_stop_notification %}
+                          <tr class="">
+                               <td>{{ notification.notification_number }}</td>
+                               <td>{{ notification.notification_date|date:"d.m.Y" }}</td>
+                               <td>{{ notification.user.first_name }} {{ notification.user.last_name }}</td>
+                              <td>{{ notification.added|date:"d.m.Y H:i" }}</td>
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+                 </div>
+                </div>
+            </div>
+
+
+
+            <div class="card card-info">
+              <div class="card-header">
+                <h3 class="card-title">Файлы</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+
+                <div class="card-body">
+
+                  <div class="row col-md-12 mt-2">
+                    <table class="table text-nowrap list-table" >
+                      <thead>
+                        <tr>
+                            <th>Ссылки</th>
+                            <th>Кем загружено</th>
+                            <th>Дата и время загрузки</th>
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for temp_stop_file in temp_stop_files %}
+                          <tr class="">
+                              <td>
+                                  <p><a href="{% url 'download_file' path=temp_stop_file.file_pez.path %}" class="download_file">{{ temp_stop_file.file_pez.name }}</a></p>
+                                  <p><a href="{% url 'download_file' path=temp_stop_file.file_notification.path %}" class="download_file">{{ temp_stop_file.file_notification.name }}</a></p>
+                              </td>
+                               <td>{{ temp_stop_file.user.first_name }} {{ temp_stop_file.user.last_name }}</td>
+                              <td>{{ temp_stop_file.added|date:"d.m.Y H:i" }}</td>
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+
+                  </div>
+                </div>
+            </div>
+
+        </div>
+            {% endif %}
+
+
+
+
+            {% if refuse.notification_sent_date %}
+            <h5 class="mt-4 mb-4 collapse-toggle cursor-pointer">Отказ</h5>
+            <div class="collapse-item" style="display: none">
+            <div class="card card-danger">
+              <div class="card-header">
+                <h3 class="card-title">Данные об отказе</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+
+                <div class="card-body">
+
+                  <div class="row col-md-12 mt-2">
+                    <div class="form-group mb-0 col-md-6">
+                      <label for="callback_date">Тип отказа</label>
+                      <div class="non-editable-border-styled">
+                          {% if refuse.is_preliminary %}
+                              Отказ первичный
+                          {% elif refuse.is_refuse_by_date %}
+                              Отказ по сроку после приостановки
+                          {% else %}
+                              Отказ по документам после возобновления
+                          {% endif %}
+                      </div>
+                    </div>
+
+                    <div class="form-group mb-0 col-md-6">
+                      <label for="callback_date">Дата отправки уведомления согласно ИС РПП</label>
+                      <div class="non-editable-border-styled">{{ refuse.notification_sent_date|date:"d.m.Y" }}</div>
+
+                    </div>
+
+                  </div>
+
+                    <div class="row col-md-12 mt-2">
+                      <div class="form-group col-md-12">
+                        <label for="">Комментарии по отказу</label>
+                        <div id=""  class="non-editable-border-styled" >{{ refuse.description|striptags }}</div>
+                      </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+
+
+            <div class="card card-danger">
+              <div class="card-header">
+                <h3 class="card-title">Данные об уведомлении</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+
+                <div class="card-body">
+
+                  <div class="row col-md-12 mt-2">
+                    <table class="table text-nowrap list-table" >
+                      <thead>
+                        <tr>
+                            <th>Номер</th>
+                            <th>Дата</th>
+                            <th>Кем создано</th>
+                            <th>Когда создано</th>
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for notification in notification_refuse %}
+                          <tr class="">
+                               <td>{{ notification.notification_number }}</td>
+                               <td>{{ notification.notification_date|date:"d.m.Y" }}</td>
+                               <td>{{ notification.user.first_name }} {{ notification.user.last_name }}</td>
+                              <td>{{ notification.added|date:"d.m.Y H:i" }}</td>
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+                 </div>
+                </div>
+            </div>
+
+
+            <div class="card card-danger">
+              <div class="card-header">
+                <h3 class="card-title">Файлы</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+
+                <div class="card-body">
+
+                  <div class="row col-md-12 mt-2">
+                    <table class="table text-nowrap list-table" >
+                      <thead>
+                        <tr>
+                            <th>Ссылки</th>
+                            <th>Кем загружено</th>
+                            <th>Дата и время загрузки</th>
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for refuse_file in refuse_files %}
+                          <tr class="">
+                              <td>
+                                  <p><a href="{% url 'download_file' path=refuse_file.file_ez.path %}" class="download_file">{{ refuse_file.file_ez.name }}</a></p>
+                                  <p><a href="{% url 'download_file' path=refuse_file.file_notification.path %}" class="download_file">{{ refuse_file.file_notification.name }}</a></p>
+                              </td>
+                               <td>{{ refuse_file.user.first_name }} {{ refuse_file.user.last_name }}</td>
+                              <td>{{ refuse_file.added|date:"d.m.Y H:i" }}</td>
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+
+                  </div>
+                </div>
+            </div>
+
+
+        </div>
+            {% endif %}
+
+
+            {% if ez_docs %}
+         <h5 class="mt-4 mb-4 collapse-toggle cursor-pointer">Экспертное заключение</h5>
+         <div class="collapse-item" style="display: none">
+
+            {% for ez_doc in ez_docs %}
+            <div class="card card-success">
+              <div class="card-header">
+                <h3 class="card-title">Версия {{ forloop.counter }} от {{ ez_doc.added|date:"d.m.Y" }}</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+
+                <div class="card-body">
+
+                  <div class="row col-md-12 mt-2">
+                    <div class="form-group mb-0 col-md-4">
+                      <label for="callback_date">Дата создания</label>
+                      <div class="non-editable-border-styled">{{ ez_doc.creation_date|date:"d.m.Y" }}</div>
+                    </div>
+
+                    <div class="form-group mb-0 col-md-4">
+                      <label for="callback_date">Решение</label>
+                      <div class="non-editable-border-styled">
+                            {% if ez_doc.decision %}
+                                Положительное
+                          {% else %}
+                            Отрицательное
+                          {% endif %}
+                      </div>
+
+                    </div>
+                    <div class="form-group mb-0 col-md-4">
+                      <label for="callback_date">Максимальная сумма</label>
+                      <div class="non-editable-border-styled">{{ ez_doc.max_sum }}</div>
+                    </div>
+
+                  </div>
+
+                    <div class="row col-md-12 mt-4">
+                        <div class="form-group mb-0 col-md-12">
+                            <table class="table text-nowrap list-table" >
+                              <thead>
+                                <tr>
+                                    <th>Ссылки</th>
+                                    <th>Кем загружено</th>
+                                    <th>Дата и время загрузки</th>
+                                  <!--th></th-->
+                                </tr>
+                              </thead>
+                              <tbody id="tbody">
+                                 <tr>
+                                    <td class="">
+                                        <p><a href="{% url 'download_file' path=ez_doc.file.path %}" class="download_file">{{ ez_doc.file.name }}</a></p>
+                                    </td>
+                                     <td>{{ ez_doc.user.first_name }} {{ ez_doc.user.last_name }}</td>
+                                    <td>{{ ez_doc.added|date:"d.m.Y H:i" }}</td>
+
+                                </tr>
+                                    {% for ez_pdf in ez_pdfs %}
+                                        {% if ez_pdf.ez_doc == ez_doc %}
+
+                              <tr>
+                                    <td>
+                                            <p><a href="{% url 'download_file' path=ez_pdf.file.path %}" class="download_file">{{ ez_pdf.file.name }}</a></p>
+                                    </td>
+                                    <td>{{ ez_pdf.user.first_name }} {{ ez_pdf.user.last_name }}</td>
+                                    <td>{{ ez_pdf.added|date:"d.m.Y H:i" }}</td>
+                                        {% endif %}
+                                    {% endfor %}
+
+                              </tr>
+                              </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            {% endfor %}
+         </div>
+            {% endif %}
+
+
+
+
+
+    </template>
+
+
+
+    <template id="link_status_change">
+     <div class="col-md-12">
+        <div class="card card-warning">
+          <div class="card-header">
+            <h3 class="card-title">Хронология изменений</h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+
+            <div class="card-body">
+
+              <div class="row col-md-12 mt-2">
+                    <table class="table text-nowrap list-table" >
+                      <thead>
+                        <tr>
+                            <th>Статус</th>
+                            <th>Пользователь</th>
+                            <th>Дата и время</th>
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for status_change in status_change_history %}
+                          <tr class="">
+                              <td>{{ status_change.status.name }}</td>
+                              <td>{{ status_change.user.first_name }} {{ status_change.user.last_name }}</td>
+                              <td>{{ status_change.added|date:"d.m.Y H:i" }}</td>
+
+        <!--                      <?}?>-->
+        <!--                    <? }?>-->
+                            <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+              </div>
+            </div>
+        </div>
+
+     </div>
+    </template>
+
+    <template id="link_order_check">
+     <div class="col-md-12">
+
+        {% if order.responsible_preliminary_check_expert %}
+        <h5 class="mt-4 mb-4 collapse-toggle cursor-pointer">Первичная проверка</h5>
+        <div class="collapse-item" style="display: none">
+            <div class="card card-warning">
+              <div class="card-header">
+                <h3 class="card-title">Ответственный за первичную проверку</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+
+                <div class="card-body">
+
+                  <div class="row col-md-12 mt-2">
+                        <table class="table text-nowrap list-table" >
+                          <thead>
+                            <tr>
+                                <th>Ответственный</th>
+                                <th>Кем назначен</th>
+                                <th>Дата и время назначения</th>
+                              <!--th></th-->
+                            </tr>
+                          </thead>
+                          <tbody id="tbody">
+                            {% for check_preliminary_responsible_expert in check_preliminary_responsible_experts %}
+                              <tr class="">
+                                  <td>{{ check_preliminary_responsible_expert.responsible_expert.first_name }} {{ check_preliminary_responsible_expert.responsible_expert.last_name }}</td>
+                                   <td>{{ check_preliminary_responsible_expert.user.first_name }} {{ check_preliminary_responsible_expert.user.last_name }}</td>
+                                  <td>{{ check_preliminary_responsible_expert.added|date:"d.m.Y H:i" }}</td>
+
+            <!--                      <?}?>-->
+            <!--                    <? }?>-->
+                                <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                            </tr>
+                           {% endfor %}
+
+                          </tbody>
+                        </table>
+                  </div>
+                </div>
+
+
+            </div>
+
+        {% endif %}
+
+        {% if check_after_preliminary_files_to_check %}
+         <div class="card card-warning">
+          <div class="card-header">
+            <h3 class="card-title">Файлы, загруженные на проверку</h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+
+            <div class="card-body">
+
+              <div class="row col-md-12 mt-2">
+                    <table class="table text-nowrap list-table" >
+                      <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ссылки</th>
+                            <th>Тип документа</th>
+                            <th>Кем загружено</th>
+                            <th>Дата и время загрузки</th>
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for check_after_preliminary_file_to_check in check_after_preliminary_files_to_check %}
+                          <tr class="">
+                            <td>{{ check_after_preliminary_file_to_check.id }}</td>
+                              <td>
+                                  <p><a href="{% url 'download_file' path=check_after_preliminary_file_to_check.file_1.path %}" class="download_file">{{ check_after_preliminary_file_to_check.file_1.name }}</a></p>
+                                  {% if check_after_preliminary_file_to_check.file_2 %}
+                                  <p><a href="{% url 'download_file' path=check_after_preliminary_file_to_check.file_2.path %}" class="download_file">{{ check_after_preliminary_file_to_check.file_2.name }}</a></p>
+                                    {% endif %}
+                              </td>
+                               <td>{{ check_after_preliminary_file_to_check.type }}</td>
+                               <td>{{ check_after_preliminary_file_to_check.user.first_name }} {{ check_after_preliminary_file_to_check.user.last_name }}</td>
+                              <td>{{ check_after_preliminary_file_to_check.added|date:"d.m.Y H:i" }}</td>
+
+        <!--                      <?}?>-->
+        <!--                    <? }?>-->
+                            <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+              </div>
+            </div>
+        </div>
+
+        {% endif %}
+        {% if check_preliminary_files_returned_check %}
+         <div class="card card-warning">
+          <div class="card-header">
+            <h3 class="card-title">Файлы, возвращенные на переделку</h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+
+            <div class="card-body">
+
+              <div class="row col-md-12 mt-2">
+                    <table class="table text-nowrap list-table" >
+                      <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ссылки</th>
+                            <th>Тип документа</th>
+                            <th>Кем загружено</th>
+                            <th>Дата и время загрузки</th>
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for check_preliminary_file_returned_check in check_preliminary_files_returned_check %}
+                          <tr class="">
+                            <td>{{ check_preliminary_file_returned_check.check_preliminary_file_to_check.id }}</td>
+                              <td>
+                                  <p><a href="{% url 'download_file' path=check_preliminary_file_returned_check.file_1.path %}" class="download_file">{{ check_preliminary_file_returned_check.file_1.name }}</a></p>
+                                  {% if check_preliminary_file_returned_check.file_2 %}
+                                  <p><a href="{% url 'download_file' path=check_preliminary_file_returned_check.file_2.path %}" class="download_file">{{ check_preliminary_file_returned_check.file_2.name }}</a></p>
+                                    {% endif %}
+                              </td>
+                              <td>{{ check_preliminary_file_returned_check.type }}</td>
+                              <td>{{ check_preliminary_file_returned_check.user.first_name }} {{ check_preliminary_file_returned_check.user.last_name }}</td>
+
+                              <td>{{ check_preliminary_file_returned_check.added|date:"d.m.Y H:i" }}</td>
+
+        <!--                      <?}?>-->
+        <!--                    <? }?>-->
+                            <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+              </div>
+            </div>
+        </div>
+        {% endif %}
+     {% if check_preliminary_files_final_check %}
+         <div class="card card-warning">
+          <div class="card-header">
+            <h3 class="card-title">Файлы, финальная версия</h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+
+            <div class="card-body">
+
+              <div class="row col-md-12 mt-2">
+                    <table class="table text-nowrap list-table" >
+                      <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ссылки</th>
+                            <th>Тип документа</th>
+                            <th>Кем загружено</th>
+                            <th>Дата и время загрузки</th>
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for check_preliminary_file_final_check in check_preliminary_files_final_check %}
+                          <tr class="">
+                                <td>{{ check_preliminary_file_final_check.check_preliminary_file_to_check.id }}</td>
+                              <td>
+                                  <p><a href="{% url 'download_file' path=check_preliminary_file_final_check.file_1.path %}" class="download_file">{{ check_preliminary_file_final_check.file_1.name }}</a></p>
+                                  {% if check_preliminary_file_final_check.file_2 %}
+                                  <p><a href="{% url 'download_file' path=check_preliminary_file_final_check.file_2.path %}" class="download_file">{{ check_preliminary_file_final_check.file_2.name }}</a></p>
+                                    {% endif %}
+                              </td>
+
+                               <td>{{ check_preliminary_file_final_check.type }}</td>
+                              <td>{{ check_preliminary_file_final_check.user.first_name }} {{ check_preliminary_file_final_check.user.last_name }}</td>
+
+                              <td>{{ check_preliminary_file_final_check.added|date:"d.m.Y H:i" }}</td>
+
+        <!--                      <?}?>-->
+        <!--                    <? }?>-->
+                            <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+              </div>
+            </div>
+        </div>
+     </div>
+        {% endif %}
+        {% if order.check_after_temp_stop_last_date_sent_for_check %}
+        <h5 class="mt-5 mb-4 collapse-toggle cursor-pointer">Проверка после возобновления</h5>
+    <div class="collapse-item" style="display: none">
+        <div class="card card-info">
+          <div class="card-header">
+            <h3 class="card-title">Ответственный за проверку после возобновления</h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+
+            <div class="card-body">
+
+              <div class="row col-md-12 mt-2">
+                    <table class="table text-nowrap list-table" >
+                      <thead>
+                        <tr>
+                            <th>Ответственный</th>
+                            <th>Кем назначен</th>
+                            <th>Дата и время назначения</th>
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for check_after_temp_stop_responsible_expert in check_after_temp_stop_responsible_experts %}
+                          <tr class="">
+                              <td>{{ check_after_temp_stop_responsible_expert.responsible_expert.first_name }} {{ check_after_temp_stop_responsible_expert.responsible_expert.last_name }}</td>
+                               <td>{{ check_after_temp_stop_responsible_expert.user.first_name }} {{ check_after_temp_stop_responsible_expert.user.last_name }}</td>
+                              <td>{{ check_after_temp_stop_responsible_expert.added|date:"d.m.Y H:i" }}</td>
+
+        <!--                      <?}?>-->
+        <!--                    <? }?>-->
+                            <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+              </div>
+            </div>
+        </div>
+        {% endif %}
+     {% if check_after_temp_stop_files_to_check %}
+        <div class="card card-info">
+          <div class="card-header">
+            <h3 class="card-title">Файлы, загруженные на проверку</h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+
+            <div class="card-body">
+
+              <div class="row col-md-12 mt-2">
+                    <table class="table text-nowrap list-table" >
+                      <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ссылки</th>
+                            <th>Тип документа</th>
+                            <th>Кем загружено</th>
+                            <th>Дата и время загрузки</th>
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for check_after_temp_stop_file_to_check in check_after_temp_stop_files_to_check %}
+
+                          <tr class="">
+                               <td>{{ check_after_temp_stop_file_to_check.id }}</td>
+                              <td>
+                                  <p><a href="{% url 'download_file' path=check_after_temp_stop_file_to_check.file_1.path %}" class="download_file">{{ check_after_temp_stop_file_to_check.file_1.name }}</a></p>
+                                  {% if check_after_temp_stop_file_to_check.file_2 %}
+                                  <p><a href="{% url 'download_file' path=check_after_temp_stop_file_to_check.file_2.path %}" class="download_file">{{ check_after_temp_stop_file_to_check.file_2.name }}</a></p>
+                                    {% endif %}
+                              </td>
+                               <td>{{ check_after_temp_stop_file_to_check.type }}</td>
+                                <td>{{ check_after_temp_stop_file_to_check.user.first_name }} {{ check_after_temp_stop_file_to_check.user.last_name }}</td>
+                              <td>{{ check_after_temp_stop_file_to_check.added|date:"d.m.Y H:i" }}</td>
+
+        <!--                      <?}?>-->
+        <!--                    <? }?>-->
+                            <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+              </div>
+            </div>
+        </div>
+     {% endif %}
+
+     {% if check_after_temp_stop_files_returned_check %}
+        <div class="card card-info">
+          <div class="card-header">
+            <h3 class="card-title">Файлы, возвращенные на переделку</h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+
+            <div class="card-body">
+
+              <div class="row col-md-12 mt-2">
+                    <table class="table text-nowrap list-table" >
+                      <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ссылки</th>
+                            <th>Тип документа</th>
+                            <th>Кем загружено</th>
+                            <th>Дата и время загрузки</th>
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for check_after_temp_stop_file_returned_check in check_after_temp_stop_files_returned_check %}
+                          <tr class="">
+                               <td>{{ check_after_temp_stop_file_returned_check.check_after_temp_stop_file_to_check.id }}</td>
+                              <td>
+                                  <p><a href="{% url 'download_file' path=check_after_temp_stop_file_returned_check.file_1.path %}" class="download_file">{{ check_after_temp_stop_file_returned_check.file_1.name }}</a></p>
+                                  {% if check_after_temp_stop_file_returned_check.file_2 %}
+                                  <p><a href="{% url 'download_file' path=check_after_temp_stop_file_returned_check.file_2.path %}" class="download_file">{{ check_after_temp_stop_file_returned_check.file_2.name }}</a></p>
+                                    {% endif %}
+                              </td>
+                               <td>{{ check_after_temp_stop_file_returned_check.type }}</td>
+                                <td>{{ check_after_temp_stop_file_returned_check.user.first_name }} {{ check_after_temp_stop_file_returned_check.user.last_name }}</td>
+                              <td>{{ check_after_temp_stop_file_returned_check.added|date:"d.m.Y H:i" }}</td>
+
+        <!--                      <?}?>-->
+        <!--                    <? }?>-->
+                            <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+              </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if check_after_temp_stop_files_final_check %}
+        <div class="card card-info">
+          <div class="card-header">
+            <h3 class="card-title">Файлы, финальная версия</h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+
+            <div class="card-body">
+
+              <div class="row col-md-12 mt-2">
+                    <table class="table text-nowrap list-table" >
+                      <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ссылки</th>
+                            <th>Тип документа</th>
+                            <th>Кем загружено</th>
+                            <th>Дата и время загрузки</th>
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for check_after_temp_stop_file_final_check in check_after_temp_stop_files_final_check %}
+                          <tr class="">
+                                <td>{{ check_after_temp_stop_file_final_check.check_after_temp_stop_file_to_check.id }}</td>
+                              <td>
+                                  <p><a href="{% url 'download_file' path=check_after_temp_stop_file_final_check.file_1.path %}" class="download_file">{{ check_after_temp_stop_file_final_check.file_1.name }}</a></p>
+                                  {% if check_after_temp_stop_file_final_check.file_2 %}
+                                  <p><a href="{% url 'download_file' path=check_after_temp_stop_file_final_check.file_2.path %}" class="download_file">{{ check_after_temp_stop_file_final_check.file_2.name }}</a></p>
+                                    {% endif %}
+                              </td>
+
+                               <td>{{ check_after_temp_stop_file_final_check.type }}</td>
+                              <td>{{ check_after_temp_stop_file_final_check.user.first_name }} {{ check_after_temp_stop_file_final_check.user.last_name }}</td>
+
+                              <td>{{ check_after_temp_stop_file_final_check.added|date:"d.m.Y H:i" }}</td>
+
+        <!--                      <?}?>-->
+        <!--                    <? }?>-->
+                            <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+              </div>
+            </div>
+        </div>
+    </div>
+        {% endif %}
+
+     </div>
+    </template>
+
+
+    <template id="link_order_responsibles">
+      <div class="col-md-12">
+        <!-- general form elements -->
+        <div class="card card-info">
+          <div class="card-header">
+            <h3 class="card-title">Ответственный за первичный анализ</h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+
+            <div class="card-body">
+
+              <div class="row col-md-12 mt-2">
+                <div class="form-group mb-0 col-md-12">
+                    <table class="table text-nowrap list-table" >
+                      <thead>
+                        <tr>
+                            <th>Ответственный</th>
+                            <th>Компания</th>
+                            <th>Кем назначен</th>
+                            <th>Дата и время назначения</th>
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for responsible_for_order_preliminary in responsibles_for_order_preliminary %}
+                          <tr class="">
+                              <td>{{ responsible_for_order_preliminary.responsible.first_name }} {{ responsible_for_order_preliminary.responsible.last_name }}</td>
+                              <td>{{ responsible_for_order_preliminary.company }}</td>
+                               <td>{{ responsible_for_order_preliminary.user.first_name }} {{ responsible_for_order_preliminary.user.last_name }}</td>
+                              <td>{{ responsible_for_order_preliminary.added|date:"d.m.Y H:i" }}</td>
+
+        <!--                      <?}?>-->
+        <!--                    <? }?>-->
+                            <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <!-- /.card-body -->
+            </div>
+
+        </div>
+
+        <div class="card card-info">
+          <div class="card-header">
+            <h3 class="card-title">Ответственный за анализ после возобновления</h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+
+            <div class="card-body">
+
+              <div class="row col-md-12 mt-2">
+                <div class="form-group mb-0 col-md-12">
+                    <table class="table text-nowrap list-table" >
+                      <thead>
+                        <tr>
+                            <th>Ответственный</th>
+                            <th>Компания</th>
+                            <th>Кем назначен</th>
+                            <th>Дата и время назначения</th>
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for responsible_for_order_after_temp_stop in responsibles_for_order_after_temp_stop %}
+                          <tr class="">
+                              <td>{{ responsible_for_order_after_temp_stop.responsible.first_name }} {{ responsible_for_order_after_temp_stop.responsible.last_name }}</td>
+                              <td>{{ responsible_for_order_after_temp_stop.company }}</td>
+                               <td>{{ responsible_for_order_after_temp_stop.user.first_name }} {{ responsible_for_order_after_temp_stop.user.last_name }}</td>
+                              <td>{{ responsible_for_order_after_temp_stop.added|date:"d.m.Y H:i" }}</td>
+
+        <!--                      <?}?>-->
+        <!--                    <? }?>-->
+                            <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <!-- /.card-body -->
+            </div>
+
+        </div>
+      </div>
+    </template>
+
+<template id="order_common_info">
+
+  <div class="col-md-12">
+    <!-- general form elements -->
+    <div class="card card-primary">
+      <div class="card-header">
+        <h3 class="card-title">Заявка</h3>
+      </div>
+      <!-- /.card-header -->
+      <!-- form start -->
+
+        <div class="card-body">
+
+          <div class="row col-md-12 mt-2">
+            <div class="form-group mb-0 col-md-4">
+              <label for="callback_date">Номер ПП</label>
+              <div class="non-editable-border-styled">{{ order.pp }}</div>
+
+            </div>
+            <div class="form-group mb-0 col-md-4">
+              <label for="callback_date">Дата подачи</label>
+              <div class="non-editable-border-styled">{{ order.date_of_appliance|date:"d.m.Y" }}</div>
+
+            </div>
+            <div class="form-group mb-0 col-md-4">
+              <label for="callback_date">Сумма запрашиваемой субсидии</label>
+              <div class="non-editable-border-styled">{{ order.sum_of_appliance }}</div>
+
+            </div>
+          </div>
+          <? if(data[1][38]) {?>
+          <div class="row col-md-12 mt-2">
+            <div class="form-group mb-0 col-md-12">
+              <label for="callback_date">Вид субсидии/цель</label>
+              <div class="non-editable-border-styled">{{ order.aim }}</div>
+
+            </div>
+          <?}?>
+          </div>
+            {% if applier.applier_type %}
+          <div class="row col-md-12 mt-2">
+            <div class="form-group mb-0 col-md-12">
+              <label for="callback_date">Категория заявителя</label>
+              <div class="non-editable-border-styled">{{ applier.applier_type }}</div>
+
+            </div>
+
+          </div>
+            {% endif %}
+
+        </div>
+        <!-- /.card-body -->
+    </div>
+
+  </div>
+        <!-- /.card-body -->
+
+
+
+    <!-- /.card -->
+
+
+
+
+  <!-- /.card -->
+
+  <div class="col-md-12">
+    <!-- general form elements -->
+    <div class="card card-primary">
+      <div class="card-header">
+        <h3 class="card-title">Заявитель</h3>
+      </div>
+      <!-- /.card-header -->
+      <!-- form start -->
+
+        <div class="card-body">
+
+          <div class="row col-md-12 mt-2">
+            <div class="form-group mb-0 col-md-8">
+              <label for="callback_date">Наименование заявителя</label>
+              <div class="non-editable-border-styled">{{ order.company }}</div>
+
+            </div>
+            <div class="form-group mb-0 col-md-4">
+              <label for="callback_date">ИНН</label>
+              <div class="non-editable-border-styled">{{ order.company_inn }}</div>
+
+            </div>
+
+          </div>
+          <div class="row col-md-12 mt-2">
+            <div class="form-group mb-0 col-md-4">
+              <label for="callback_date">Представитель заявителя</label>
+              <div class="non-editable-border-styled">{{ applier.applier_fio }}</div>
+
+            </div>
+            <div class="form-group mb-0 col-md-4">
+              <label for="callback_date">Email</label>
+              <div class="non-editable-border-styled">{{ applier.applier_email }}</div>
+
+            </div>
+            <div class="form-group mb-0 col-md-4">
+              <label for="callback_date">Телефон</label>
+              <div class="non-editable-border-styled">{{ applier.applier_tel }}</div>
+
+            </div>
+
+          </div>
+
+          <!--div class="row col-md-12">
+            <div class="form-group">
+              <button type="button" class="btn btn-block btn-success mt-4 mb-4" id="btnCallBackOrder">Отозвать заявку</button>
+            </div>
+          </div-->
+
+
+        </div>
+        <!-- /.card-body -->
+      </div>
+
+    </div>
+
+
+        <!-- /.card-body -->
+
+
+
+    <!-- /.card -->
+
+
+
+
+  <!-- /.card -->
+
+</template>
+
+
+
+<template id="order_info_dates_files">
+    <? if(data[1][18]){?>
+    <div class="col-md-12">
+      <!-- general form elements -->
+      <div class="card card-primary">
+        <div class="card-header">
+          <h3 class="card-title">Приостановка</h3>
+        </div>
+        <!-- /.card-header -->
+        <!-- form start -->
+
+          <div class="card-body">
+
+            <div class="row col-md-12 mt-2">
+              <div class="form-group mb-0 col-md-4">
+                <label for="callback_date">Дата приостановки</label>
+                <div class="non-editable-border-styled"><?= data[1][18]?></div>
+
+              </div>
+            </div>
+            <div class="row col-md-12 mt-2">
+
+              <div class="form-group mb-0 col-md-12">
+                <label for="callback_date">Причины приостановки</label>
+                <div class="non-editable-border-styled" id="temp_stop_description"><?= data[1][19]?></div>
+
+              </div>
+            </div>
+
+          </div>
+          <!-- /.card-body -->
+      </div>
+
+    </div>
+  <?}?>
+
+</template>
+
+
+{% endblock %}
+
+{% block script %}
+    <script>
+
+    $('#section_content').on('click', '.collapse-toggle', function () {
+        $(this).next('.collapse-item').slideToggle(500);
+    })
+
+    $('#section_content').html($('#order_common_info').html())
+    $('#content').removeClass('d-none')
+
+    $('.nav-link-all-order-info').on('click', function(){
+        $('.nav-link-all-order-info').removeClass('active')
+        $(this).addClass('active')
+        let navID = $(this).attr('id');
+        switch (navID) {
+            case 'nav_link_order_dates_files':
+                $('#section_content').html($('#order_info_dates_files').html())
+                let html2 = $('#temp_stop_description').text()
+                console.log('html2 = ' + html2)
+                $('#temp_stop_description').html(html2)
+
+
+                break;
+            case 'nav_link_order_common_info':
+                $('#section_content').html($('#order_common_info').html())
+
+                break;
+            case 'nav_link_order_responsibles':
+                $('#section_content').html($('#link_order_responsibles').html())
+
+                break;
+            case 'nav_link_order_check':
+                $('#section_content').html($('#link_order_check').html())
+
+                break;
+            case 'nav_link_status_change':
+                $('#section_content').html($('#link_status_change').html())
+
+                break;
+            case 'nav_link_details':
+                $('#section_content').html($('#link_details').html())
+
+                break;
+
+
+            default:
+                break;
+    }
+
+})
+
+
+    </script>
+
+
+{% endblock %}

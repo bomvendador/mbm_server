@@ -1,0 +1,246 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <section class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-12">
+              <h3>Добавление заявок в базу данных</h3>
+            </div>
+          </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+
+
+  <section class="content" >
+
+
+
+    <div class="container-fluid">
+        <div class="row">
+          <!-- left column -->
+          <div class="col-md-6">
+            <!-- general form elements -->
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Добавление заявок с помощью XLSX файла</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+                <div class="card-body">
+                  <div class="form-group">
+                    <label>Файл XLSX</label>
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" id="input_add_new_orders_xlsx" name="input_add_new_orders_xlsx">
+                    </div>
+                  </div>
+
+
+                </div>
+                <!-- /.card-body -->
+
+                <div class="card-footer">
+                  <button class="btn btn-primary col-md-12" id="btn_submit_add_new_orders_xlsx">Отправить</button>
+                </div>
+            </div>
+            <!-- /.card -->
+
+
+
+
+            <!-- /.card -->
+          </div>
+
+
+
+
+
+        <!--/.col (right) -->
+      </div>
+      <!-- /.row -->
+    </div>
+    </section>
+
+{% endblock %}
+
+{% block script %}
+  <script>
+
+    $('#admin_orders').addClass('menu-open')
+
+
+  $('#btn_submit_add_new_orders_xlsx').on('click', e =>{
+    $(this).prop('disabled', true)
+    var files = document.getElementById('input_add_new_orders_xlsx').files;
+
+    if(files.length == 0){
+      toastr.error('Выберите файл')
+        $(this).prop('disabled', false)
+    }else{
+      var data_to_return_array = [];
+      var sheet_obj = {};
+      var ExcelToJSON = function() {
+
+        this.parseExcel = function(file) {
+
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            var data = e.target.result;
+            var workbook = XLSX.read(data, {
+              type: 'binary'
+            });
+            var XL_row_object
+            let dateForConclusion = ''
+            workbook.SheetNames.forEach(function(sheetName) {
+              // Here is your object
+              XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+              XL_row_object.map(row =>{
+
+                let date = row['Дата завершения (фактическая)']
+                let dateSplit = date.split('.')
+                let dateForFunc = dateSplit[2] + '-' + dateSplit[1] + '-' + dateSplit[0]
+                row['Дата завершения (фактическая)'] = dateForFunc
+                console.log(row['Дата завершения (фактическая)'])
+
+
+                let dateForConclusion = getWorkingDays(dateForFunc, 15,0).split('.')
+                let dateForConclusionExpert = getWorkingDays(dateForFunc, 13,0).split('.')
+                row['Крайняя дата ЭЗ'] = dateForConclusion[2] + '-' + dateForConclusion[1] + '-' + dateForConclusion[0]
+                row['Крайняя дата ЭЗ для эксперта'] = dateForConclusionExpert[2] + '-' + dateForConclusionExpert[1] + '-' + dateForConclusionExpert[0]
+              })
+              ////console.log('ddddd - ', XL_row_object);
+              let json_object = JSON.stringify(XL_row_object);
+              let dd = JSON.parse(json_object, (key, val) =>{
+                ////////console.log(key, val);
+                sheet_obj[key] = val;
+
+              })
+
+
+              data_to_return_array.push(XL_row_object);
+
+              //console.log('Sheet - ' + sheetName + ' данные - ' +  JSON.stringify(XL_row_object));
+
+            })
+            // data_to_return_array.map(e=>{
+            //   console.log(e);
+            //
+            // })
+            // console.log(data_to_return_array);
+
+            // var data2 = new FormData();
+            // data2.append('orders', data_to_return_array);
+
+            var data3 = {'orders' : JSON.stringify(data_to_return_array)}
+            // var data1 = JSON.stringify({orders: data_to_return_array})
+            console.log(data3)
+            $.ajax({
+              headers: { "X-CSRFToken": '{{ csrf_token }}' },
+              url: "{% url 'dash_add_xlsx_file' %}",
+              type: 'POST',
+              // data: data1,
+              data: data3,
+              // processData: false,
+              // contentType: "application/json; charset=utf-8",
+              // dataType: "json",
+              error: function(data){
+                  toastr.error('Ошибка', data)
+                  $('#btn_submit_add_new_orders_xlsx').html('Отправить')
+              },
+              success:function (response) {
+                  console.log(response['existing_orders'])
+
+                    $('#modal-default-title').html(response['modalTitle'])
+
+                    $('#modal-large-body-common').append('<h5>Кол-во загруженных заявок: ' + response["cnt"] + '</h5>')
+
+                  if(response['existing_orders']){
+                    $('#modal-large-body-common').append('<h5>Заявки уже существуют в базе данных:</h5>')
+                    response['existing_orders'].map(e=>{
+                      $('#modal-large-body-common').append('<p>' + e[0] + ' - ' + e[1] + '</p>')
+                    })
+
+
+
+                  }
+                    $('#modal-lg-common').modal('show')
+
+                  {#toastr.success('Данные сохранены')#}
+                  // $('#btn_submit_add_new_orders_xlsx').html('Отправить')
+                  // $('#input_add_new_orders_xlsx').val('')
+                  // $('#bage_new_orders_admin').html(data)
+                  // window.location.href = "{% url 'dash_index' %}";
+              }
+            });
+
+
+
+
+
+            // google.script.run.withFailureHandler(function(error){
+            //     //////console.log("855 - " + error);
+            //     toastr.error(error);
+            //
+            //   }).withSuccessHandler(function(newOrdersCnt){
+            //     toastr.success('Данные сохранены');
+            //     document.getElementById('btn_submit_add_new_orders_xlsx').innerHTML = "Отправить"
+            //     $('#input_add_new_orders_xlsx').val('');
+            //     if($('#bage_new_orders_admin').html() == ''){
+            //       var bageNewOrdersCnt = 0
+            //     }else{
+            //       var bageNewOrdersCnt = parseInt($('#bage_new_orders_admin').html());
+            //     }
+            //
+            //
+            //     $('#bage_new_orders_admin').html(bageNewOrdersCnt + newOrdersCnt);
+            //     //////console.log(newOrdersCnt, bageNewOrdersCnt)
+            //
+            //
+            //   }).parseOredersFileXLSX(data_to_return_array, $('#userLogin').html());
+
+        //      return data_to_return
+
+          };
+
+
+          reader.onerror = function(ex) {
+            console.log(ex);
+          };
+
+          reader.readAsBinaryString(file);
+        };
+    };
+
+
+    //////console.log(files.length);
+    document.getElementById('btn_submit_add_new_orders_xlsx').innerHTML = "<div class=='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>"
+    var xl2json = new ExcelToJSON().parseExcel(files[0]);
+
+
+
+    ////////console.log(xl2json);
+    //  //////console.log(data_to_return_array[0][0]);
+    ////////console.log(xl2json.length);
+    /*
+    JSON.parse(xl2json, function(key, value){
+      //////console.log(key , value);
+    })*/
+
+    /*
+    for(var i=0; i < data_to_return.length; i++){
+      var rowObj = data_to_return[i];
+      var objKeys = Object.keys(rowObj);
+      //////console.log('ddd' , objKeys);
+    }
+  */
+
+    }
+
+  })
+
+
+  </script>
+{% endblock %}

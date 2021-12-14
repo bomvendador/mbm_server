@@ -1,0 +1,31 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4 id="big_title">{{ big_title }}</h4>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content" >
+
+    {% block menu_list_content %}
+
+    {% endblock %}
+
+</section>
+
+{% endblock %}
+
+{% block script %}
+
+
+
+{% endblock %}

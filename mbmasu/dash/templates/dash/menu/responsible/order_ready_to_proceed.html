@@ -1,0 +1,965 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+{% block style %}
+
+{% endblock %}
+
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4>Предварительная проверка заявки</h4>
+        <h5>Заявка - <i id="orderNumber" data-orderid="{{ order.id }}">{{ order.number }}</i>  | Заявитель - <i id="applierName">{{ order.company }}</i> | № ПП - <i id="ppNumber">{{ order.pp }}</i></h5>
+
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+
+  <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+
+          <?if (order_info[1][58] == 'Да'){?>
+        {% if check_preliminary_file_to_check_final %}
+          <div class="card card-warning">
+            <div class="card-header">
+              <h3 class="card-title">Ссылка на проверенные документы (финальная версия)</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+
+              <div class="card-body">
+
+                <div class="row col-md-12">
+
+                  <div class="form-group col-md-12" >
+                        <p><a href="{% url 'download_file' path=check_preliminary_file_to_check_final.file_1.path %}" class="download_file">{{ check_preliminary_file_to_check_final.file_1.name }}</a></p>
+                        {% if check_preliminary_file_to_check_final.file_2 %}
+                        <p><a href="{% url 'download_file' path=check_preliminary_file_to_check_final.file_2.path %}" class="download_file">{{ check_preliminary_file_to_check_final.file_2.name }}</a></p>
+                        {% endif %}
+                  </div>
+
+
+                </div>
+
+              </div>
+              <!-- /.card-body -->
+          </div>
+        {% endif %}
+          <?}?>
+
+
+
+
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">Результат проверки</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+
+              <div class="card-body">
+
+                <div class="row col-md-12 mt-2">
+                  <div class="form-group col-md-6">
+                    <label for="">Дата получения заявки</label>
+                    <div id=""  class="form-control">{{ order.date_of_appliance|date:"d.m.Y" }}</div>
+
+                  </div>
+
+                  <div class="form-group col-md-6">
+                    <label for="">Крайняя дата сдачи</label>
+                    <div id=""  class="form-control text-danger">{{ order.end_date_for_responsible|date:"d.m.Y" }}</div>
+
+                  </div>
+
+                </div>
+
+
+
+                <?if (order_info[1][40] == ''){?>
+                  {% if order.lotki_preliminary_temp_stop_date_received == None and order.lotki_preliminary_refuse_date_received == None %}
+                <div class="row col-md-12">
+                  <div class="form-group">
+                    <button type="button" class="btn btn-block btn-success" id="btnPrelimenaryCheckSuccess">Результат проверки - положительно</button>
+                    <div><small class="text-danger">Кнопка нажимается при принятии экспертом положительного решения о соответствии заявки и заявителя, не дожидаясь подписания ЭЗ<br>
+                      После нажатия заявка попадает в категорию "ЭЗ > Список ЭЗ DOC"</small>
+
+                    </div>
+                  </div>
+                </div>
+
+                <?}else{?>
+                {% else %}
+                  <?if(order_info[1][42] == ''){?>
+                  {% if order.lotki_preliminary_temp_stop_date_signed == None and order.lotki_preliminary_refuse_date_signed == None %}
+
+                <div class="row col-md-12 mt-2" id="expect_for_docs">
+                  <div class="col-md-12 form-group">
+                    <div class="alert alert-primary" role="alert">
+                      <b>{{ order.lotki_preliminary_temp_stop_date_received|date:"d.m.Y"|default_if_none:"" }}{{ order.lotki_preliminary_refuse_date_received|date:"d.m.Y"|default_if_none:"" }}</b> Вами был передан на подпись документ со статусом - <b>{{ order.lotki_status.name }}</b>. Ожидайте возврата подписанного документа
+                    </div>
+
+                  </div>
+                </div>
+
+                  <?}else{?>
+                    {% else %}
+                    <?if (order_info[1][40] == 'Приостановка'){?>
+                        {% if order.lotki_status.name == 'Приостановка' %}
+                      <div class="row col-md-12 mt-2">
+                        <div class="form-group col-md-6">
+                          <label for="">Номер уведомления о приостановке</label>
+                          <div id=""  class="form-control">{{ notification.notification_number }}</div>
+
+                        </div>
+
+                        <div class="form-group col-md-6">
+                          <label for="">Дата уведомления о приостановке</label>
+                          <div id=""  class="form-control">{{ notification.notification_date|date:"d.m.Y" }}</div>
+
+                        </div>
+
+                      </div>
+
+                      <div class="row col-md-12">
+                        <div class="col-md-12 form-group">
+                          <button type="button" class="btn btn-block btn-info prelimenaryCheck" id="btnPrelimenaryCheckTempStop">Приостановить</button>
+                          <div><small class="text-danger">Кнопка нажимается в случае принятия экспертом решения о приостановке<br>После нажатия заявка попадает в категорию "Приостановка > Дата приостановки"</small></div>
+                        </div>
+
+                      </div>
+
+
+
+                    <?}else{?>
+                        {% else %}
+                      <div class="row col-md-12 mt-2">
+                        <div class="form-group col-md-6">
+                          <label for="">Номер уведомления об отказе</label>
+                          <div id=""  class="form-control">{{ notification.notification_number }}</div>
+
+                        </div>
+
+                        <div class="form-group col-md-6">
+                          <label for="">Дата уведомления об отказе</label>
+                          <div id=""  class="form-control">{{ notification.notification_date|date:"d.m.Y" }}</div>
+
+                        </div>
+
+                      </div>
+
+                      <div class="row col-md-12 mt-2">
+                        <div class="col-md-12">
+                          <button type="button" class="btn btn-block btn-danger" id="btnPrelimenaryCheckRefuse">Отказ (несоответствие заявителя)</button>
+                            <div><small class="text-danger">Кнопка нажимается в случае факта фиксации отказа в ИАС. После нажатия заявка попадает в категорию "Отказ/Первичный"</small></div>
+
+
+                        </div>
+                      </div>
+
+                      <div class="row col-md-12 mt-3">
+                        <!-- <h5>Причины отказа</h5> -->
+                        <div class="col-md-12 form-group">
+                          <button type="button" class="btn btn-block btn-info" id="btnPrelimenaryCheckRefuseReasons">Указать причины отказа</button>
+                          <!-- <div><small class="text-danger">Кнопка нажимается в случае принятия экспертом решения о приостановке<br>После нажатия заявка попадает в категорию "Приостановка > Дата приостановки"</small></div> -->
+                        </div>
+
+                      </div>
+
+
+                      <div class="row col-md-12 mt-2 d-none" id="refuse_reasons_table">
+                        <div class="col-md-12 form-group">
+
+                          <table class="table">
+                            <thead>
+                              <tr>
+                                <th>Список причин отказа</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody id="refuse_reasons_tbody">
+
+
+                            </tbody>
+                          </table>
+
+
+
+
+                        </div>
+
+                      </div>
+
+
+
+
+
+                    <?}?>
+
+                    {% endif %}
+
+
+                    <div class="row col-md-12 mt-2">
+                      <div class="form-group">
+                        <label for="prelimenaryCheck_comments">Комментарии по {% if order.lotki_status.name == 'Приостановка' %}приостановке{% else %}отказу{% endif %}</label>
+                        <textarea class="form-control summernote input-to-fill-up" name="prelimenaryCheck_comments" id="prelimenaryCheck_comments"></textarea>
+                        <small class="text-danger">Опишите причины {% if order.lotki_status.name == 'Приостановка' %}приостановки{% else %}отказа{% endif %} со ссылкой на пункты соответствующего постановления</small>
+
+                      </div>
+
+                    </div>
+
+
+
+                  <?}?>
+                  {% endif %}
+                <?}?>
+                {% endif %}
+
+
+
+              </div>
+              <!-- /.card-body -->
+          </div>
+
+
+
+
+          <?if ((order_info[1][41] !== '' && order_info[1][42] !== '') || (order_info[1][41] == '' && order_info[1][42] == '')){?>
+
+          {% if show_categories %}
+          <div class="card card-warning">
+            <div class="card-header">
+              <h3 class="card-title">Категории заявки</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+
+              <div class="card-body">
+                <div class="row col-md-12 mt-2">
+
+
+                      <div class="col-md-12 form-group">
+                        <label for="prelimenaryCheck_comments">Выберите категорию {% if order.pp.name != '741-ПП' %}и нажмите кнопку "Добавить категорию"{% endif %}</label>
+
+                        <select class="custom-select input-to-fill-up" id="choose_order_category">
+                          <option>---</option>
+                          <?for (i = 0; i < categories.length; i++){?>
+                            {% for category in categories %}
+                          <option>{{ category.name }}</option>
+                            {% endfor %}
+                          <?}?>
+                        </select>
+
+                      </div>
+
+                </div>
+                <?if (order_info[1][16] !== '741-ПП'){?>
+                {% if order.pp.name != '741-ПП' %}
+                <div class="row col-md-12 mt-2">
+                  <div class="col-md-12 form-group">
+                    <button type="button" class="btn btn-block btn-info" id="category_add_item">Добавить категорию</button>
+                  </div>
+
+                </div>
+
+
+                <div class="row col-md-12 mt-2 d-none" id="category_table">
+                  <div class="col-md-12 form-group">
+
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Категория</th>
+                          <th>Название</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody id="category_tbody">
+
+
+                      </tbody>
+                    </table>
+
+
+
+
+                  </div>
+
+                </div>
+                {% endif %}
+                <?}?>
+
+              </div>
+          </div>
+          {% endif %}
+
+
+
+          <?}?>
+
+
+          {% if order.lotki_status.name == 'Приостановка' and show_categories or order.lotki_status == None and show_categories %}
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">Компенсация затрат на приобретение оборудования/кредитный(лизинговый) договор</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+
+              <div class="card-body">
+                <div class="row col-md-12 mt-2">
+
+                      <div class="col-md-12 form-group">
+                        <label for="choose_equipment_compensation">Предполагает ли заявка компенсацию затрат на приобретение оборудования/кредитный(лизинговый) договор?</label>
+
+                        <select class="custom-select input-to-fill-up" id="choose_equipment_compensation">
+                          <option>---</option>
+                          <option>Да</option>
+                          <option>Нет</option>
+                        </select>
+
+                      </div>
+
+                </div>
+
+              </div>
+          </div>
+
+          {% endif %}
+
+
+
+          <!-- /.card-body -->
+
+
+
+          <!-- /.card -->
+
+
+
+
+        <!-- /.card -->
+      </div>
+      <!--/.col (right) -->
+    </div>
+    <!-- /.row -->
+  </div>
+
+
+  </section>
+
+  <?if (order_info[1][40] == 'Отказ' || order_info[1][40] == 'Приостановка/Отказ'){?>
+  {% if refuse_reasons %}
+  <div class="modal fade" id="modal_lg_refuse_reasons" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-lightgrey" >
+          <h4 class="modal-title" id="modal_lg_refuse_reasons_title">Укажите причины отказа</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body" id="modal_lg_refuse_reasons_body">
+
+          <div class="row m-2">
+            <label class="pl-0 mb-0">Расшифровка аббревиатур</label>
+            <div style="border-top: 2px solid #dee2e6;" class="mt-2 mb-2">
+              <p>КД - кредитный договор</p>
+              <p>ЛД - лицензионный договор</p>
+              <p>ДКК - договор коммерческой концессии</p>
+              <p>НП - налогоплательщик</p>
+              <p>СМСП - субъект малого и среднего предпринимательства</p>
+              <p>ИП - индивидуальный предприниматель</p>
+              <p>ЮЛ - юридическое лицо</p>
+              <p>КВМ - конгрессно-выставочные мероприятия</p>
+              <p>ТП - торговые площадки</p>
+              <p>РИП - рекламно-информационные площадки</p>
+            </div>
+
+            <table class="table mt-3" id="table_refuse_reasons">
+              <thead>
+                <tr>
+                  <th>Список причин</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                <? for (var i = 1; i < refuse_reasons.length; i++) {?>
+                {% for reason_common in refuse_reasons_common %}
+                  <tr class="">
+                    <td class="refuse_reasons_description">{{ reason_common.description }}<?= refuse_reasons[i][1]?></td>
+                    <td class="refuse_reasons_check_box" id="refuse_reason_{{ reason_common.id }}">
+                      <div class="icheck-primary d-inline">
+                        <input id="refuse_reasons_{{ reason_common.id }}" type="checkbox" class="checkboxRefuseReason scale_1_5">
+                        <label for="refuse_reasons_{{ reason_common.id }}"></label>
+                      </div>
+                  </td>
+                  </tr>
+                <?}?>
+                {% endfor %}
+                {% for reason in refuse_reasons %}
+                  <tr class="">
+                    <td class="refuse_reasons_description">{{ reason.description }}<?= refuse_reasons[i][1]?></td>
+                    <td class="refuse_reasons_check_box" id="refuse_reason_{{ reason.id }}">
+                      <div class="icheck-primary d-inline">
+                        <input id="refuse_reasons_{{ reason.id }}" type="checkbox" class="checkboxRefuseReason scale_1_5">
+                        <label for="refuse_reasons_{{ reason.id }}"></label>
+                      </div>
+                  </td>
+                  </tr>
+                <?}?>
+              {% endfor %}
+
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+        <div class="modal-footer justify-content-between bg-lightgrey" id="modal_lg_refuse_reasons_footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+          <button type="button" class="btn btn-default" id="modal_lg_refuse_reasons_ok">ОК</button>
+
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  {% endif %}
+
+    <div class="modal fade" id="modal-lg-common-category" style="display: none;" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="modal-default-title-category"></h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body" id="modal-large-body-common-category">
+
+
+
+          </div>
+          <div class="modal-footer justify-content-between" id="modal-lg-common-header-category">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+            <button type="button" class="btn btn-default" id="modal-lg-common-ok">ОК</button>
+
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+
+
+
+{% endblock %}
+
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+  <script>
+
+    setSummernote()
+    $('#new_orders_ready_to_proceed_list').addClass('menu-open')
+    $('#temp_stop_menu').addClass('menu-open')
+    $('#refuse_menu').addClass('menu-open')
+
+    $('#btnPrelimenaryCheckRefuseReasons').on('click', function(){
+      $('#modal_lg_refuse_reasons').modal('show')
+    })
+    $('#content').fadeIn('slow').removeClass('d-none')
+
+
+    $('#modal_lg_refuse_reasons_ok').on('click', function(){
+        let table_checkboxes_refuse_reasons = $('.checkboxRefuseReason:checked')
+        // console.log('кол = ' + table_checkboxes_refuse_reasons.length)
+        // var refuse_reasons_arr = []
+
+        if(table_checkboxes_refuse_reasons.length > 0){
+            $('#refuse_reasons_tbody').html('')
+
+            table_checkboxes_refuse_reasons.each(function(i){
+                // $(this).closest('tr').find('td .refuse_reasons_description').val()
+                let refuse_reasons_description_for_arr = $(this).closest('tr').find('.refuse_reasons_description').html()
+                let refuse_reasons_id_for_arr = $(this).attr('id').split('_')[2]
+                // refuse_reasons_arr.push($(this).attr('id').split('_')[2])
+                $('#refuse_reasons_tbody').append('<tr class="refuse_reason_tr" id="refuse_reason_tr_' + refuse_reasons_id_for_arr + '"><td class="refuse_reason_td">' + refuse_reasons_description_for_arr + '</td></tr>')
+
+                // console.log('прчина = ' + $(this).attr('id'))
+            })
+            $('#refuse_reasons_table').removeClass('d-none')
+            // console.log(refuse_reasons_arr)
+            $('#modal_lg_refuse_reasons').modal('hide')
+
+        }else{
+            toastr.error('Выберите хотя бы одну причину отказа')
+        }
+
+
+    })
+
+
+
+        // $("#table_refuse_reasons").DataTable({
+        //   "paging": false,
+        //   "language": {
+        //     "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Russian.json"
+        //   },
+        //   "initComplete": function () {
+        //
+        //   },
+        //   dom: 'Bfrtip',
+        // })
+
+
+
+        //обработка категорий в Первичке
+      $('#content').on('click', '#category_add_item', function(){
+        let categotySlecetVal = $('#choose_order_category').find('option:selected').val()
+        let title = ''
+        let html = ''
+        let htmlModal = ''
+        let options = ''
+        if(categotySlecetVal == '---'){
+          toastr.error('Выберите категорию')
+        }else{
+          switch (categotySlecetVal) {
+            case 'Франшиза':
+              title = 'товарного знака'
+              break;
+            case 'КВМ':
+              title = 'КВМ'
+              break;
+            case 'Торговая площадка':
+              title = 'торговой площадки'
+              break;
+            case 'Сервис по доставке продуктов питания':
+              title = 'сервиса по доставке продуктов питания'
+              break;
+            case 'Рекламно-информационная полощадка':
+              title = 'рекламно-информационной полощадки'
+              break;
+
+            default:
+              break;
+          }
+          $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+          $(this).prop('disabled', true)
+
+        let orderID = $('#orderNumber').attr('data-orderid');
+        console.log(orderID);
+        let data = {}
+        data.order_id = orderID
+          $.ajax({
+              headers: { "X-CSRFToken": '{{ csrf_token }}' },
+              url: "{% url 'get_categories_list' %}",
+              type: 'POST',
+              data: data,
+              // processData: false,
+              // contentType: false,
+              error: function(data){
+                  toastr.error('Ошибка', data)
+              },
+              success:function (response) {
+                  let arr = []
+                console.log(response)
+                  $.each(response, function(key, value){
+                    arr.push(value.fields.name)
+                  });
+                  let final_arr = unique(arr)
+                  $('#category_add_item').html('Добавить категорию')
+                  $('#category_add_item').prop('disabled', false)
+
+                  htmlModal = '<input id="modal_input"  class="form-control input-to-fill-up" type="text">'
+                  $('#modal-default-title-category').html('Введите название ' + title)
+                  $('#modal-large-body-common-category').html(htmlModal)
+                  $('#modal_input').autocomplete({
+                    source: final_arr
+                  });
+                  $('#modal-lg-common-category').modal('show')
+
+
+              }
+          });
+
+
+        }
+
+      })
+
+      $('#modal-lg-common-category').on('click', '#modal-lg-common-ok', function(){
+        let cat_name = $('#modal_input').val()
+        if(cat_name !== ''){
+          let categotySlecetVal = $('#choose_order_category').find('option:selected').val()
+          $('#category_tbody').append('<tr class="category_tr"><td class="category_td">' + categotySlecetVal + '</td><td class="name_td">' + cat_name + '</td><td><button type="button" class="btn btn-block btn-outline-secondary btn-sm category_item_delete">Удалить</button></td></tr>')
+          $('#modal-lg-common-category').modal('hide')
+          $('#category_table').removeClass('d-none')
+
+        }else{
+          toastr.error('Заполните поле')
+        }
+
+      })
+
+      $('#content').on('click', '.category_item_delete', function(){
+        $(this).closest('tr').remove()
+      })
+
+
+
+      $('#content').on('change', '#choose_order_category', function(){
+        let nameDiv = $(this).parent().next()
+        //console.log($('#choose_order_category').find('option:selected').val())
+        let categoryName = $(this).find('option:selected').val()
+        if(categoryName == 'Франшиза'){
+          nameDiv.find('label').html('Название торговой марки')
+
+        }
+
+
+      })
+
+
+          //НАЧАЛО ЭЗ (Эксперт МБМ)
+
+        $('#btnPrelimenaryCheckSuccess').on('click', function(){
+
+
+          let orderID = $('#orderNumber').attr('data-orderid');
+          let ppNumber = $('#ppNumber').html();
+          let choose_equipment_compensation = $('#choose_equipment_compensation').find('option:selected').val()
+          var data = {}
+          let testIsOK = false
+          data.orderID = orderID
+          data.btnID = 'btnPrelimenaryCheckSuccess'
+          data.choose_equipment_compensation = choose_equipment_compensation
+
+          let categoryArr = []
+
+
+          if(ppNumber !== '741-ПП'){
+            let category_tr = $('.category_tr')
+
+            if(category_tr.length !== 0 && choose_equipment_compensation !== '---'){
+              testIsOK = true
+              $('.category_tr').each(function(){
+                categoryArr.push([$(this).find('.category_td').html(), $(this).find('.name_td').html()])
+              })
+            }
+          }else{
+            let category_741 = $('#choose_order_category option:selected').text()
+            if(category_741 !== '---' && $('#choose_equipment_compensation').find('option:selected').val() !== '---'){
+              categoryArr.push([$('#choose_order_category option:selected').text(), 'Без названия'])
+              testIsOK = true
+            }
+          }
+          if(!testIsOK){
+            toastr.error('Все поля должны быть заполнены');
+          }else{
+            console.log(categoryArr)
+            data.categoryArr = JSON.stringify(categoryArr)
+            $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>");
+            $(this).attr("disabled", true)
+
+
+            $.ajax({
+              headers: { "X-CSRFToken": '{{ csrf_token }}' },
+              url: "{% url 'save_data_preliminary_check' %}",
+              type: 'POST',
+              data: data,
+              // processData: false,
+              // contentType: false,
+              error: function(data){
+                  toastr.error('Ошибка', data)
+              },
+              success:function (response) {
+                  let arr = []
+                console.log(response)
+
+                toastr.success('Данные в таблице сохранены')
+
+                showModalCommonNextStep({
+                  title: 'Следующие шаги',
+                  modal_body: '<b>Выполните следующие действия:</b> <br>' +
+                    '<ul class="mt-2">' +
+                    '<li>зайдите в пункт меню <b>"ЭЗ > Список ЭЗ DOC"</b></li>' +
+                    '<li>найдите заявку в списке</li>' +
+                    '<li>нажмите на соответствующую запись в списке</li>' +
+                    '<li>заполните необходимую информацию в открывшейся форме</li></ul>',
+                  headerClass: 'bg-danger'
+                })
+
+                }
+            });
+
+
+
+            // google.script.run.withFailureHandler(function(error){
+            //   toastr.error(error);
+            //   $(this).html('Результат проверки - положительно');
+            //   $(this).removeAttr("disabled")
+            // }).withSuccessHandler(function(response){
+            //
+            //   toastr.success('Данные в таблице сохранены')
+            //   ////////console.log('дфтфаф =', html)
+            //
+            //   var bageNewOrders = parseInt($('.bage-new-orders').html()) - 1
+            //
+            //   if(bageNewOrders == 0){
+            //     $('.bage-new-orders').html('')
+            //   }else{
+            //     $('.bage-new-orders').html(bageNewOrders);
+            //   }
+            //
+            //
+            //   if(response){
+            //     var bageOrdersForConclusion = parseInt($('.bage-orders-for-conclusion').html()) + 1
+            //
+            //     if ($('.bage-orders-for-conclusion').html() == ''){
+            //       $('.bage-orders-for-conclusion').html(1);
+            //     }else{
+            //       $('.bage-orders-for-conclusion').html(bageOrdersForConclusion);
+            //
+            //     }
+            //
+            //   }
+            //
+            //   showModalCommonNextStep({
+            //     title: 'Следующие шаги',
+            //     modal_body: '<b>Выполните следующие действия:</b> <br>' +
+            //       '<ul class="mt-2">' +
+            //       '<li>зайдите в пункт меню <b>"ЭЗ > Список ЭЗ DOC"</b></li>' +
+            //       '<li>найдите заявку в списке</li>' +
+            //       '<li>нажмите на соответствующую запись в списке</li>' +
+            //       '<li>заполните необходимую информацию в открывшейся форме</li></ul>',
+            //     headerClass: 'bg-danger'
+            //   })
+            //
+            //
+            //
+            //
+            // }).saveDataToTablesPrelimenaryOrderIsOK(data);
+
+          }
+
+
+        })
+
+
+        function checkPrelimenaryCategory(ppNumber){
+            var categoryIsOK = false;
+
+            let categoryFuncArr = []
+
+            if(ppNumber !== '741-ПП'){
+              let category_tr = $('.category_tr')
+
+              if(category_tr.length !== 0){
+                categoryIsOK = true
+                $('.category_tr').each(function(){
+                    categoryFuncArr.push([$(this).find('.category_td').html(), $(this).find('.name_td').html()])
+                })
+                categoryFuncArr = JSON.stringify(categoryFuncArr)
+              }else{
+                toastr.error('Выберите категорию')
+               $('#category_add_item').fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500)
+               $('#choose_order_category').fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500)
+              }
+            }else{
+              let category_741 = $('#choose_order_category').find('option:selected').html()
+              if(category_741 !== '---'){
+                categoryFuncArr.push([category_741, 'Без названия'])
+                // categoryFuncArr.push([category_741])
+                categoryFuncArr = JSON.stringify(categoryFuncArr)
+                categoryIsOK = true
+              }else{
+                toastr.error('Выберите категорию')
+                $('#category_add_item').fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500)
+              }
+            }
+
+            var response = {
+                categoryIsOK: categoryIsOK,
+                categoryFuncArr: categoryFuncArr
+            }
+
+            return response
+        }
+
+
+
+    //обработка нажатий ОТКАЗ
+        $('#content').on('click', '#btnPrelimenaryCheckRefuse', function(){
+
+          var data = {}
+          let orderID = $('#orderNumber').attr('data-orderid');
+          let ppNumber = $('#ppNumber').html()
+          data.orderID = orderID
+          var btnID = $(this).attr('id');
+          data.btnID = btnID;
+          data.comments = $('#prelimenaryCheck_comments').val()
+          var checkPassed = false
+
+          if($('#prelimenaryCheck_comments').val() !== ''){
+            checkPassed = true
+            console.log('оборуд - ' + $('#choose_equipment_compensation').find('option:selected').val())
+          }else{
+            toastr.error('Заполните поле комментариев');
+          }
+
+          let refuse_reasons_arr = []
+          let refuse_reasons_is_ok = false
+          let refuse_reasons_list = $('.refuse_reason_tr')
+          if (refuse_reasons_list.length > 0){
+            refuse_reasons_is_ok = true
+            refuse_reasons_list.each(function(){
+              refuse_reasons_arr.push($(this).attr('id').split('_')[3])
+            })
+
+          }else{
+            toastr.error('Укажите причины отказа');
+          }
+
+          let checkCategoryObj = checkPrelimenaryCategory(ppNumber)
+
+
+          if(checkPassed && checkCategoryObj.categoryIsOK && refuse_reasons_is_ok){
+            data.categoryArr = checkCategoryObj.categoryFuncArr
+            data.refuse_reasons_arr = JSON.stringify(refuse_reasons_arr)
+            console.log(refuse_reasons_arr)
+            console.log(checkCategoryObj.categoryFuncArr)
+            $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+            $(this).attr("disabled", true);
+
+            $.ajax({
+              headers: { "X-CSRFToken": '{{ csrf_token }}' },
+              url: "{% url 'save_data_preliminary_check' %}",
+              type: 'POST',
+              data: data,
+              // processData: false,
+              // contentType: false,
+              error: function(data){
+                  toastr.error('Ошибка', data)
+              },
+              success:function (response) {
+                  let arr = []
+                console.log(response)
+
+                toastr.success('Данные в таблице сохранены')
+
+                showModalCommonNextStep({
+                  title: 'Следующие шаги',
+                  modal_body: '<b>Выполните следующие шаги:</b> <br>' +
+                    '<ul class="mt-2">' +
+                    '<li>произведите действия по отказу в ИАС</li>' +
+                    '<li>зайдите в пункт меню <b>"Отказ > Первичный"</b></li>' +
+                    '<li>найдите заявку в списке</li>' +
+                    '<li>нажмите на соответствующую запись в списке</li>' +
+                    '<li>заполните и сохраните необходимые данные</li></ul>',
+                  headerClass: 'bg-danger'
+                })
+
+
+
+              }
+            });
+
+
+          }
+
+
+        })
+    //обработка нажатий ПРИОСТАНОВКА
+        $('#content').on('click', '#btnPrelimenaryCheckTempStop', function(){
+
+          var data = {}
+          let orderID = $('#orderNumber').attr('data-orderid');
+          let ppNumber = $('#ppNumber').html()
+          let choose_equipment_compensation = $('#choose_equipment_compensation').find('option:selected').val()
+
+          data.orderID = orderID
+          var btnID = $(this).attr('id');
+          data.btnID = btnID;
+          data.comments = $('#prelimenaryCheck_comments').val()
+          data.choose_equipment_compensation = choose_equipment_compensation
+
+          var checkPassed = false
+
+          if($('#prelimenaryCheck_comments').val() !== ''){
+            if(choose_equipment_compensation !== '---'){
+              checkPassed = true
+
+            }else {
+              toastr.error('Ометьте предполагает ли заявка компенсацию затрат на приобретение оборудования');
+
+            }
+          }else{
+            toastr.error('Заполните поле комментариев');
+          }
+
+
+          let checkCategoryObj = checkPrelimenaryCategory(ppNumber)
+
+
+          if(checkPassed && checkCategoryObj.categoryIsOK){
+            data.categoryArr = checkCategoryObj.categoryFuncArr
+            console.log(checkCategoryObj.categoryFuncArr)
+            $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+            $(this).attr("disabled", true);
+
+            $.ajax({
+              headers: { "X-CSRFToken": '{{ csrf_token }}' },
+              url: "{% url 'save_data_preliminary_check' %}",
+              type: 'POST',
+              data: data,
+              // processData: false,
+              // contentType: false,
+              error: function(data){
+                  toastr.error('Ошибка', data)
+              },
+              success:function (response) {
+                  let arr = []
+                console.log(response)
+
+                toastr.success('Данные в таблице сохранены')
+
+                showModalCommonNextStep({
+                  title: 'Следующие шаги',
+                  modal_body: '<b>Выполните следующие шаги:</b> <br>' +
+                    '<ul class="mt-2"><li>произведите действия по приостановке в ИАС</li>' +
+                    '<li>зайдите в пункт меню <b>"Приостановка > Дата приостановки"</b></li>' +
+                    '<li>найдите заявку в списке</li>' +
+                    '<li>нажмите на соответствующую запись в списке</li>' +
+                    '<li>заполните поле даты приостановки и сохраните данные</li></ul>',
+                    headerClass: 'bg-danger'
+                })
+
+
+
+              }
+            });
+
+
+          }
+
+
+        })
+
+
+
+  </script>
+
+{% endblock %}

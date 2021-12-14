@@ -1,0 +1,281 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+{% block style %}
+
+{% endblock %}
+
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4>Предварительная проверка заявки</h4>
+        <h5>Заявка - <i id="orderNumber" data-orderid="{{ order.id }}">{{ order.number }}</i>  | Заявитель - <i id="applierName">{{ order.company }}</i> | № ПП - <i id="ppNumber">{{ order.pp }}</i></h5>
+
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content" >
+
+  <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+          <?let showBtn = true?>
+
+          <?if (fileType == 'DOC'){?>
+
+            {% if not order.lotki_ez_date_received %}
+
+                  <div class="row col-md-12 mt-2" id="no_docs_handedover">
+                    <div class="col-md-12 form-group">
+                      <div class="alert alert-danger" role="alert">
+                          <b>Распечатайте ЭЗ и передайте на подпись.</b>
+                      </div>
+
+                    </div>
+                  </div>
+                {% elif not order.lotki_ez_date_signed %}
+                  <div class="row col-md-12 mt-2" id="waiting_for_docs_signed">
+                    <div class="col-md-12 form-group">
+                      <div class="alert alert-primary" role="alert">
+                        <b>{{ order.lotki_ez_date_received|date:"d.m.Y" }}</b> Вами был передан на подпись документ со статусом - <b>{{ order.lotki_status.name }}</b>. Ожидайте возврата подписанного документа
+                      </div>
+
+                    </div>
+                  </div>
+                {% else %}
+                  <div class="card card-warning">
+                    <div class="card-header">
+                      <h3 class="card-title">Загрузка файла</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <!-- form start -->
+                    <div class="card-body">
+                      <div class="row col-md-12">
+                          <div class="form-group col-md-12">
+                            <label for="exampleInputFile">Файл ЭЗ</label>
+                            <div class="input-group mb-3">
+                                <input type="file" class="form-control input-to-fill-up" id="conclusion-file" name="conclusion-file">
+                            </div>
+                            <small class="text-danger">Тип файла - <cite title="Source Title" id="file_type">PDF</cite></small>
+                            <div><small class="text-danger">Имя файла - <cite title="Source Title">любое</cite></small></div>
+
+                          </div>
+
+
+                        </div>
+
+                    </div>
+
+                  </div>
+
+
+
+            {% endif %}
+
+
+          </div>
+              <!-- /.card-body -->
+
+          <!-- /.card -->
+        <!-- /.card -->
+      </div>
+      <!--/.col (right) -->
+    </div>
+    <!-- /.row -->
+  </div>
+
+
+  </section>
+  <?if (showBtn){?>
+  <button type="button" class="btn btn-primary btn-float" id="add_conclusion_pdf"><i class="fas fa-save"  style="font-size: 25px; z-index: 99999;"></i></button>
+
+{% endblock %}
+
+{% block script %}
+  <script>
+
+
+    $('#new_orders_ready_to_proceed_list').addClass('menu-open')
+    $('#temp_stop_menu').addClass('menu-open')
+    $('#refuse_menu').addClass('menu-open')
+
+    $('#content').fadeIn('slow').removeClass('d-none')
+
+
+      $('#add_conclusion_pdf').on('click', function(){
+        //console.log('sfsdfs ' + $('#conclusion-dateCreated').length)
+        let conclusionFile = $('#conclusion-file');
+
+        let conclusionFileVal = conclusionFile.val()
+        let conclusionFileSplit = conclusionFileVal.split('.')
+        let conclusionFileFileType = conclusionFileSplit[conclusionFileSplit.length - 1].toLowerCase()
+        let fileTypeIsOk = false
+        let testIsOK = true
+
+          if(conclusionFileFileType === 'pdf'){
+            fileTypeIsOk = true
+          }else {
+              if(conclusionFile.get(0).files.length > 0 ){
+              toastr.error('Тип файла не соответствует требованиям');
+
+              }
+          }
+
+          if(conclusionFile.get(0).files.length === 0){
+            toastr.error('Добавьте файл');
+            testIsOK = false
+            $(this).html('<i class="fas fa-save"  style="font-size: 25px;"></i>');
+          }
+
+        if(conclusionFile.get(0).files.length !== 0 && conclusionFile[0].files[0].size === 0){
+          testIsOK = false
+          toastr.error('Файл не содержит информации');
+        }
+        console.log(testIsOK && fileTypeIsOk)
+        if(testIsOK && fileTypeIsOk){
+            $(this).prop('disabled', true)
+            $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+
+            let data = new FormData()
+            let orderID = {{ order.id }};
+            data.append('orderID', orderID);
+            data.append('ezFile', $('#conclusion-file')[0].files[0]);
+
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'save_ez_pdf' %}",
+                data: data,
+                processData: false,
+                contentType: false,
+                error: function(data){
+                  toastr.error('Ошибка', data)
+                },
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                success: function () {
+                    toastr.success('Данные сохранены');
+                    showModalCommonNextStep({
+                      title: 'Информация',
+                      modal_body: '<b style="color: red;">Дальнейшие действия по заявке отсутствуют</b> <br><br>',
+                      headerClass: 'bg-danger'
+                    })
+
+                }
+            })
+        }
+
+/*
+        var data = {}
+        data.userLogin = sessionStorage.user_email
+
+
+        data.dateCreated = $('#conclusion-dateCreated').val();
+        data.dateCreated = $('#conclusion-dateCreated').val();
+
+
+
+        google.script.run.withFailureHandler(function(error){
+          toastr.error(error);
+        }).withSuccessHandler(function(html){
+
+
+
+        }).getPageHtml('main_panel/html/templates/add_user_large_modal_html', data, 'add_user_modal');
+
+*/
+
+      //конец пункт Добвать ЭЗ
+
+      })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      //сохранение даты приостановки
+      $('#btn_add_prelimenary_no_notification_date').on('click', function(){
+
+        var date = $('#temp_stop_no_notification_date').val();
+
+        ////////console.log('date = ', date)
+        if(date == ''){
+          toastr.error('Заполните поле даты');
+        }else{
+          $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+          $(this).prop('disabled', true)
+          var data = {}
+          let orderID = $('#orderNumber').attr('data-orderid');
+          data.orderID = orderID;
+          data.tempStopDate = date;
+          var dateSplit = date.split('.')
+          var dateForFunc = dateSplit[2] + '-' + dateSplit[1] + '-' + dateSplit[0]
+          let endDateForNotification = getWorkingDays(dateForFunc, 10,0)//крайняя дата отправки заявителю уведомления о приостановке
+
+          data.endDateForNotification = endDateForNotification
+
+          $.ajax({
+              headers: { "X-CSRFToken": '{{ csrf_token }}' },
+              url: "{% url 'save_temp_stop_date' %}",
+              type: 'POST',
+              data: data,
+              // processData: false,
+              // contentType: false,
+              error: function(data){
+                  toastr.error('Ошибка', data)
+              },
+              success:function (response) {
+                  let arr = []
+                console.log(response)
+
+                toastr.success('Данные в таблице сохранены')
+
+                showModalCommonNextStep({
+                  title: 'Следующие шаги',
+                  modal_body: '<b>Выполните следующие действия:</b><br/>' +
+                    '<ul class="mt-2"><li>в срок до <b>' + endDateForNotification + '</b> включительно составьте предэкспертизу, а также уведомление о приостановке и загрузите его в ИАС</li>' +
+
+                    '<li>после загрузки уведомления в ИАС зайдите в пункт меню <b>"Приостановка > Без уведомления"</b></li>' +
+                    '<li>найдите данную заявку в списке</li>' +
+                    '<li>нажмите на соответствующую запись в списке</li>' +
+                    '<li>заполните необходимую информацию в открывшейся форме</li></ul>',
+
+                    headerClass: 'bg-danger'
+                })
+
+              }
+            });
+
+        }
+
+      })
+
+
+
+  </script>
+
+{% endblock %}

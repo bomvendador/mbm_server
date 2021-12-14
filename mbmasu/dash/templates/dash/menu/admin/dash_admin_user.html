@@ -1,0 +1,276 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+{% block style %}
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4>Данные пользователя</h4>
+          <h5>Дата добавления - <i>{{ user_profile_to_save.added|date:"d.m.Y H:i" }}</i>{% if user_profile_to_save.modified  %} | Дата изменения - <i>{{ user_profile_to_save.modified|date:"d.m.Y H:i" }}</i>{% endif %}</h5>
+          <h5>Последние измнения внесены пользователем - <i>{{ user_profile_to_save.user_added.first_name }} {{ user_profile_to_save.user_added.last_name }}</i></h5>
+
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content pl-2 pr-2">
+
+  <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title"><?= title?></h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+
+              <div class="card-body">
+                <div class="row col-md-12 mt-2">
+                  <div class="form-group col-md-3">
+                    <label for="temp_stop_no_notification_date">Имя</label>
+                    <input value="{{ user_profile_to_save.user.first_name }}" id="name"  class="form-control input-to-fill-up" type="text" name="name">
+                  </div>
+                  <div class="form-group col-md-3">
+                        <label for="exampleInputEmail1">Фамилия</label>
+                        <input type="text" class="form-control input-to-fill-up" id="newUserSurname" placeholder="Введите фамилию" value="{{ user_profile_to_save.user.last_name }}" required>
+                  </div>
+
+                  <div class="form-group col-md-3">
+                    <label for="exampleInputEmail1">Email (Логин)</label>
+                    <input type="email" class="form-control input-to-fill-up" id="newUserEmail" placeholder="Введите Email" value="{{ user_profile_to_save.user.username }}" required>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="exampleInputPassword1">Телефон</label>
+                    <input type="tel" class="form-control input-to-fill-up" id="newUserTel" placeholder="Введите телефон" value="{{ user_profile_to_save.tel }}" required>
+                  </div>
+
+
+
+                </div>
+              <div class="row col-md-12 mt-2">
+                  <div class="form-group col-md-3">
+                    <label for="inputGroupSelect02">Роль</label>
+                    <select class="custom-select input-to-fill-up" id="rolesSelect">
+
+                        {% for role in roles %}
+
+                            <option {% if user_profile_to_save.role.name == role.name %}selected{% endif %}>{{ role.name }}</option>
+                        {% endfor %}
+
+                    </select>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="inputGroupSelect02">Компания</label>
+                    <select class="custom-select input-to-fill-up" id="rolesSelect">
+
+                         {% for company in companies %}
+
+                            <option {% if user_profile_to_save.company.name == company.name %}selected{% endif %}>{{ company.name }}</option>
+                        {% endfor %}
+
+                    </select>
+                  </div>
+                  <div class="form-group col-md-6">
+                      <label for="exampleInputEmail1">Пароль</label>
+
+                        <div class="row">
+                          <div class="col-6">
+                            <input type="text" class="form-control" id="newUserPassword" placeholder="Введите пароль" required>
+
+                          </div>
+                          <div class="col-6">
+                            <button type="button" class="btn btn-primary col-12" id="passGenerate">Сгенерировать пароль</button>
+                          </div>
+                        </div>
+
+                  </div>
+
+              </div>
+              <div class="row col-md-12 mt-2">
+                <div class="form-group clearfix col-md-12">
+                      <label for="preliminary_refuse_check">
+                          Первичная проверка
+                      </label>
+
+                    <div class="icheck-primary">
+
+                      <input type="checkbox" id="preliminary_refuse_check" class="mr-2" {% if user_profile_to_save.check_preliminary_refuse %}checked{% endif %}> Требуется проверка первичного отказа
+                    </div>
+                </div>
+                <div class="form-group clearfix col-md-12">
+                    <div class="icheck-primary">
+
+                      <input type="checkbox" id="preliminary_ez_check" class="mr-2"{% if user_profile_to_save.check_preliminary_ez %}checked{% endif %}> Требуется проверка первичного ЭЗ
+                    </div>
+                </div>
+                <div class="form-group clearfix col-md-12">
+                      <label for="temp_stop_check">
+                          Приостановка
+                      </label>
+
+                    <div class="icheck-primary">
+
+                      <input type="checkbox" id="temp_stop_check" class="mr-2"{% if user_profile_to_save.check_preliminary_temp_stop %}checked{% endif %}> Требуется проверка приостановки
+                    </div>
+                </div>
+                <div class="form-group clearfix col-md-12">
+                      <label for="after_temp_stop_refuse_check">
+                          Возобновление
+                      </label>
+
+                    <div class="icheck-primary">
+
+                      <input type="checkbox" id="after_temp_stop_refuse_check" class="mr-2"{% if user_profile_to_save.check_after_temp_stop_refuse %}checked{% endif %}> Требуется проверка отказа после возобновления
+                    </div>
+                </div>
+                <div class="form-group clearfix col-md-12">
+                    <div class="icheck-primary">
+
+                      <input type="checkbox" id="after_temp_stop_ez_check" class="mr-2"{% if user_profile_to_save.check_after_temp_stop_ez %}checked{% endif %}> Требуется проверка ЭЗ после возобновления
+                    </div>
+                </div>
+
+              </div>
+
+              <!-- /.card-body -->
+          </div>
+
+        </div>
+              <!-- /.card-body -->
+
+
+
+          <!-- /.card -->
+
+
+
+
+        <!-- /.card -->
+      </div>
+      <!--/.col (right) -->
+    </div>
+    <!-- /.row -->
+  </div>
+
+
+  </section>
+  <button type="button" class="btn btn-primary btn-float" id="save_company_changes"><i class="fas fa-save" style="font-size: 25px;"></i></button>
+
+
+{% endblock %}
+
+{% block script %}
+  <script>
+
+
+
+    $('#content').fadeIn('slow').removeClass('d-none')
+
+      $.passGen = function (options) {
+        // Override default options with passed-in options
+        options = $.extend({}, $.passGen.options, options);
+
+        // Local varialbles declaration
+        var charsets, charset = '', password = '', index;
+
+        // Available character lists
+        charsets = {
+          'numeric'   : '0123456789',
+          'lowercase' : 'abcdefghijklmnopqrstuvwxyz',
+          'uppercase' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+          'special'   : '~!@#$%^&*()-+[]{}<>?'
+        };
+
+        // Defining merged character set
+        $.each(charsets, function(key, value) {
+          if (options[key]) {
+            charset += value;
+          }
+        });
+
+        // Generating the password
+        for (var i=0; i< options.length; i++) {
+          // defining random character index
+          index = Math.floor(Math.random() * (charset.length));
+          // adding the character to the password
+          password += charset[index];
+        }
+
+        // Returning generated password value
+        return password;
+      };
+
+      // Default options
+      $.passGen.options = {
+        'length' : 10,
+        'numeric' : true,
+        'lowercase' : true,
+        'uppercase' : true,
+        'special'   : false
+         };
+
+
+
+      //генерация пароля
+      $('#passGenerate').on('click', function(){
+        $('#newUserPassword').val($.passGen({'length' : 8, 'numeric' : true, 'lowercase' : true, 'uppercase' : true, 'special' : false}));
+      });
+
+
+
+
+      //сохранение даты приостановки
+      $('#save_company_changes').on('click', function(){
+
+        var name = $('#name').val();
+
+        ////////console.log('date = ', date)
+        if(name === ''){
+          toastr.error('Заполните название');
+        }else{
+          $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+          $(this).prop('disabled', true)
+          var data = {}
+          data.companyID = {{ user_profile.user.id }};
+          data.company_name = name
+
+          $.ajax({
+              headers: { "X-CSRFToken": '{{ csrf_token }}' },
+              url: "{% url 'save_company_changes' %}",
+              type: 'POST',
+              data: data,
+              // processData: false,
+              // contentType: false,
+              error: function(data){
+                  toastr.error('Ошибка', data)
+              },
+              success:function (response) {
+                showModalCommonNextStep({
+                  title: 'Информация сохранена',
+                  modal_body: '<b>Название компании упешно сохранено</b><br/>',
+                    headerClass: 'bg-success'
+                })
+
+              }
+            });
+
+        }
+
+      })
+
+
+
+  </script>
+
+{% endblock %}

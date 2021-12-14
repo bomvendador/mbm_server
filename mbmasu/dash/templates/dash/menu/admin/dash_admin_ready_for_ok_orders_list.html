@@ -1,0 +1,532 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'dash/plugins/floatingButton/css/index.css' %}">
+{% endblock %}
+{% block content %}
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4 id="big_title">{{ big_title }}</h4>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+
+
+<section class="content" >
+
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-12">
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">{{ title }}</h3>
+
+            <div class="card-tools">
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body table-responsive p-4 pt-1">
+            <table class="table table-hover text-nowrap" id="table_list">
+              <thead>
+                <tr>
+                    <th style="text-align:center;"><input type="checkbox" class="checkbox-choose-all-orders" style="transform: scale(1.5)"></th>
+                    <th>№ п/п</th>
+                    <th>Отметки</th>
+                    <th>Перенос</th>
+                    <th>Дата регистрации</th>
+                    <th>Номер заявки</th>
+                    <th>Наименование МСП</th>
+                    <th>ИНН</th>
+                    <th>НПА</th>
+                    <th>Компенсируемые затраты</th>
+                    <th>Вид субсидии</th>
+                    <th>Дата приостановки</th>
+                    <th>Дата доработки</th>
+                    <th>Решение</th>
+                    <th>Сумма запрашиваемая</th>
+                    <th>Сумма расчетная</th>
+                    <th>Исполнитель</th>
+                    <th>ВП</th>
+                    <th>Дата и время добавления</th>
+                    <th>Ссылка на файл</th>
+
+                  <!--th></th-->
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                {% for order in orders %}
+                  <tr class="user-tr cursor-pointer" id="readyForOKID_{{ order.id }}">
+                      <td style="text-align:center;"><input type="checkbox" class="checkbox-ready-for-ok" style="transform: scale(1.5)"></td>
+                      <td>{{ forloop.counter }}</td>
+                      <td>
+                          {% if order.marked_for_next_ok %}
+                              <i class="fas fa-undo" style="color: #0d6efd" title="Перенос"></i>
+                          {% endif %}
+                          {% if order.order.onsite_check %}
+                              {% if order.order.onsite_check_complete %}
+                                <i class="fas fa-car-side" style="color: #0ad406" title="Выездная проверка осуществлена"></i>
+                              {% else %}
+                                <i class="fas fa-car-side" style="color: red" title="Требуется выездная проверка"></i>
+                              {% endif %}
+                          {% endif %}
+                      </td>
+                      <td>{% if order.marked_for_next_ok %}Да{% endif %}</td>
+                        <td>{{ order.order.date_of_appliance|date:"d.m.Y" }}</td>
+                      <td>{{ order.order.number }}</td>
+                      <td>{{ order.order.company }}</td>
+                      <td>{{ order.order.company_inn }}</td>
+                      <td>{{ order.order.pp.name }}</td>
+                      <td title="{{ order.order.service_name }}">{{ order.order.service_name|truncatechars:20 }}</td>
+                      <td title="{{ order.order.aim }}">{{ order.order.aim|truncatechars:20 }}</td>
+                      <td>{% if order.order.temp_stop_date %}{{ order.order.temp_stop_date|date:"d.m.Y" }}{% else %}Нет{% endif %}</td>
+                      <td>{% if order.order.remade_order_received_date %}{{ order.order.remade_order_received_date|date:"d.m.Y" }}{% else %}Нет{% endif %}</td>
+                      <td>{% if order.decision %}Положительное{% else %}Отрицательное{% endif %}</td>
+                      <td>{{ order.order.sum_of_appliance }}</td>
+                      <td>{{ order.max_sum }}</td>
+                      <td>{{ order.order.responsible_after_temp_stop.first_name }} {{ order.order.responsible_after_temp_stop.last_name }}</td>
+
+                      <td>{% if order.order.onsite_check %}Да{% else %}Нет{% endif %}</td>
+                      <td>{{ order.added|date:"d.m.Y H:i" }}</td>
+                      <td>
+                          <p><a href="{% url 'download_file' path=order.doc_file.path %}" class="download_file" title="{{ order.doc_file.name }}">{{ order.doc_file.name|truncatechars:40 }}</a></p>
+                          <p><a href="{% url 'download_file' path=order.pdf_file.path %}" class="download_file" title="{{ order.pdf_file.name }}">{{ order.pdf_file.name|truncatechars:40 }}</a></p>
+                      </td>
+
+
+<!--                      <?}?>-->
+<!--                    <? }?>-->
+                    <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                </tr>
+               {% endfor %}
+
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <div class="zoom">
+    <a class="zoom-fab zoom-btn-large" id="zoomBtn"><i class="fa fa-bars"></i></a>
+    <ul class="zoom-menu">
+      <li><a class="zoom-fab zoom-btn-sm zoom-btn-person scale-transition scale-out" title="Скачать файлы" id="download"><i class="fas fa-arrow-down"></i></a></li>
+      <li><a class="zoom-fab zoom-btn-sm zoom-btn-tangram scale-transition scale-out" title="Назначить на рассмотрение" id="appoint_for_ok"><i class="fas fa-folder-plus"></i></a></li>
+    </ul>
+  </div>
+
+
+        <div class="modal fade" id="modal-download-ready-for-ok" style="display: none;" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header bg-info">
+                <h4 class="modal-title" id="">Скачивание файлов, готовых для ОК</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Количество к скачиванию заявок:</p>
+                  <p id="modal-ready-for-ok-qnt" class="mt-3" style="font-size: 25px"></p>
+                  <p class="mt-3">Продолжить?</p>
+
+              </div>
+              <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-default" id="confirm_download">Да</button>
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+
+        <div class="modal fade" id="modal_error" style="display: none; z-index: 2000" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header bg-danger">
+                <h4 class="modal-title" id="">Ошибка</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p class="mb-2" id="modal_error_title"></p>
+                  <div id="modal_error_body">
+
+                  </div>
+              </div>
+              <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+
+        <div class="modal fade" id="modal_appoint_for_ok" style="display: none;" aria-hidden="true">
+          <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+              <div class="modal-header" style="background-color: #d3d3d3" id="modal-header-info">
+                <h4 class="modal-title" id="modal-default-title-info">Рассмотренные на ОК заявки</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body" id="modal_appoint_for_ok_body">
+                  <div class="row col-md-12">
+                        <div id="ok_date_input" class="form-group col-md-4">
+                            <label for="ok_date">Дата проведения ОК</label>
+                             <input id="ok_date"  class="form-control date-time-picker input-to-fill-up" type="text" name="ok_date" value="">
+                        </div>
+                </div>
+            <div class="row col-md-12">
+                <table class="table table-hover text-nowrap" id="table_list_appoint_for_ok">
+                  <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Номер заявки</th>
+                        <th>Наименование МСП</th>
+                        <th>Решение</th>
+                        <th>Сумма</th>
+                        <th>Перенос</th>
+                      <!--th></th-->
+                    </tr>
+                  </thead>
+                  <tbody id="tbody_appoint_for_ok">
+
+                  </tbody>
+                </table>
+            </div>
+
+              </div>
+              <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-default" style="width: 115px" id="save_passed_ok">Сохранить</button>
+
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+
+
+
+{% endblock %}
+
+{% block script %}
+
+    <script type="text/javascript" src="{% static 'dash/plugins/floatingButton/js/index.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dash/js/download.js' %}"></script>
+
+  <script>
+
+
+    $('#save_passed_ok').on('click', function () {
+        let next_ok_arr = []
+        let passed_ok_arr = []
+        let checkMaxSum = new RegExp(/^\d+.?\d{0,2}$/);
+        let error_arr = []
+        let ok_date = $('#ok_date').val()
+
+        $('.ready-for-ok-confirmed').each(function () {
+            let passed_ok = {}
+
+            let cb = $(this).find('.checkbox-next-ok').prop('checked')
+            let orderIDReadyForOK = $(this).attr('id').split('_')[1]
+            let maxSum = $(this).find('.sum').val()
+            console.log(orderIDReadyForOK)
+            if(cb){
+                next_ok_arr.push(orderIDReadyForOK)
+            }else {
+                if(!checkMaxSum.test(maxSum)){
+                    error_arr.push($(this).find('td')[1].innerHTML)
+                }else {
+                    passed_ok['ready_for_ok_id'] = orderIDReadyForOK
+                    passed_ok['decision'] = $(this).find('.choose-conclusion-decision').val()
+                    passed_ok['sum'] = $(this).find('.sum').val()
+                    passed_ok_arr.push(passed_ok)
+
+                }
+            }
+        })
+        if(error_arr.length > 0){
+             $('#modal_error_body').html('')
+            $('#modal_error_title').html('Проверьте сумму по следующим заявкам (она должна быть представлена числом):')
+
+            error_arr.map(function (order_number) {
+                $('#modal_error_body').append('<p>' + order_number + '</p>')
+            })
+
+            $('#modal_error').modal('show')
+        }else {
+            if(ok_date === ''){
+                toastr.error('Укажите дату комиссии')
+            }else {
+                //сохраняем данные
+                $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 20px; height: 20px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+                let data = {}
+                data.next_ok_arr = next_ok_arr
+                data.passed_ok_arr = JSON.stringify(passed_ok_arr)
+                data.ok_date = ok_date
+                $.ajax({
+                  headers: { "X-CSRFToken": '{{ csrf_token }}' },
+                  url: "{% url 'save_ready_for_ok_orders' %}",
+                  type: 'POST',
+                  traditional: true,
+                  data: data,
+                  //processData: false,
+                  //contentType: false,
+                  error: function(data){
+                      toastr.error('Ошибка', data)
+                  },
+                  success:function (response) {
+                    window.location.reload()
+                  }
+
+                });
+
+            }
+        }
+        console.log(next_ok_arr)
+        console.log(passed_ok_arr)
+    })
+
+    $('#table_list_appoint_for_ok').on('change', '.choose-conclusion-decision', function () {
+        console.log('tttt')
+        if($(this).val() === 'Отрицательное'){
+            $(this).closest('tr').find('.sum').attr('disabled', true).removeClass('input-to-fill-up').val('0.00')
+        }else {
+            let init_sum = $(this).closest('tr').find('.sum').data('sum')
+            $(this).closest('tr').find('.sum').attr('disabled', false).addClass('input-to-fill-up').val(init_sum)
+        }
+    })
+
+    $('#tbody_appoint_for_ok').on('change', '.checkbox-next-ok', function () {
+      if(this.checked){
+        let init_dicision = $(this).closest('tr').find('.choose-conclusion-decision').data('decision')
+        let init_sum = $(this).closest('tr').find('.sum').data('sum')
+      $(this).closest('tr').find('.choose-conclusion-decision').attr('disabled', true).removeClass('input-to-fill-up').val(init_dicision)
+        $(this).closest('tr').find('.sum').attr('disabled', true).removeClass('input-to-fill-up').val(init_sum)
+      }else {
+        $(this).closest('tr').find('.sum').attr('disabled', false).addClass('input-to-fill-up')
+        $(this).closest('tr').find('.choose-conclusion-decision').attr('disabled', false).addClass('input-to-fill-up')
+      }
+    })
+
+
+
+    $('#download').on('click', function () {
+        if($('.checkbox-ready-for-ok:checked').length > 0){
+            $('#modal-ready-for-ok-qnt').html($('.checkbox-ready-for-ok:checked').length)
+            $('#modal-download-ready-for-ok').modal('show')
+        }else {
+            toastr.error('Ни одной заявки не выбрано', 'Ошибка')
+        }
+
+    })
+    $('#appoint_for_ok').on('click', function () {
+        $("#table_list_appoint_for_ok").DataTable().destroy()
+        if($('.checkbox-ready-for-ok:checked').length > 0){
+            $('#modal-ready-for-ok-qnt').html($('.checkbox-ready-for-ok:checked').length)
+            let cnt = 0
+            let tr = ''
+            $('.checkbox-ready-for-ok:checked').each(function () {
+                cnt ++
+                let order_number = $(this).closest('tr').find('td')[3].innerHTML
+                let order_company = $(this).closest('tr').find('td')[4].innerHTML
+                let order_decision = $(this).closest('tr').find('td')[11].innerHTML
+                let order_sum = $(this).closest('tr').find('td')[13].innerHTML
+                let order_id = $(this).closest('tr').attr('id').split('_')[1]
+                let td_decision = ''
+                if(order_decision === 'Положительное'){
+                    td_decision =
+                    "<td>" +
+                    "<select class='custom-select input-to-fill-up choose-conclusion-decision' data-decision='Положительное'>" +
+                    "<option selected='selected' >Положительное</option>" +
+                    "<option>Отрицательное</option>" +
+                    "</select>" +
+                    "</td>"
+
+                }else {
+                    td_decision =
+                    "<td>" +
+                    "<select class='custom-select input-to-fill-up choose-conclusion-decision' data-decision='Отрицательное'>" +
+                    "<option>Положительное</option>" +
+                    "<option selected='selected' >Отрицательное</option>" +
+                    "</select>" +
+                    "</td>"
+
+                }
+
+                let tr_order = "<tr class='ready-for-ok-confirmed' id='orderIDReadyForOK_" + order_id + "'>" +
+                    "<td>" + cnt + "</td>" +
+                    "<td>" + order_number + "</td>" +
+                    "<td>" + order_company + "</td>" +
+                    td_decision +
+                    "<td>" +
+                    "<p class='d-none'>" + order_sum + "</p><input type='text' class='form-control input-to-fill-up sum' data-sum='" + order_sum + "' value='" + order_sum + "'>" +
+                    "</td>" +
+                    "<td style='text-align:center;'><input type='checkbox' class='checkbox-next-ok' style='transform: scale(1.5)'></td>" +
+                    "</tr>"
+                tr += tr_order
+            })
+            $('#tbody_appoint_for_ok').html(tr)
+
+
+               $("#table_list_appoint_for_ok").DataTable({
+                  "paging": false,
+                  "language": {
+                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Russian.json"
+                  },
+                  "initComplete": function () {
+
+                  },
+                  dom: 'Bfrtip',
+                  buttons: [
+                    {
+                      extend: 'excelHtml5',
+                      title: "Экспорт EXCEL - Рассмотрено на ОК"
+                    },
+                    {
+                      extend: 'pdfHtml5',
+                      title: "Экспорт PDF - Рассмотрено на ОК"
+                    }]
+                })
+
+            $('#modal_appoint_for_ok').modal('show')
+        }else {
+            toastr.error('Ни одной заявки не выбрано', 'Ошибка')
+        }
+
+    })
+
+
+    $('#confirm_download').on('click', function () {
+        let data = {}
+        $('#modal-download-ready-for-ok').modal('hide')
+        {#showLoaderSpinnerContent()#}
+        let arr = []
+        $('.checkbox-ready-for-ok:checked').each(function () {
+            arr.push($(this).closest('tr').attr('id').split('_')[1])
+        })
+        console.log(arr)
+        $('#download').html("<div class='d-flex justify-content-center' style='margin-top: 9px'><div class='spinner-border' style='width: 20px; height: 20px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+        data.arr = arr
+        $.ajax({
+          headers: { "X-CSRFToken": '{{ csrf_token }}' },
+          url: "{% url 'ready_for_ok_orders_download' %}",
+          type: 'POST',
+          traditional: true,
+          data: data,
+          //processData: false,
+          //contentType: false,
+          error: function(data){
+              toastr.error('Ошибка', data)
+          },
+          success:function (response) {
+              console.log(response)
+              window.location = '/dash/download_file/' + response
+              {#download.bind(response, 'www.zip', "application/zip")#}
+              hideLoaderSpinnerContent()
+               $('#download').html("<i class=\"fas fa-arrow-down\"></i>")
+              $('#zoomBtn').click()
+          }
+
+        });
+
+
+
+    })
+
+
+  $('.checkbox-choose-all-orders').change(function () {
+      if(this.checked){
+        $('.checkbox-ready-for-ok').prop('checked', true)
+
+      }else {
+        $('.checkbox-ready-for-ok').prop('checked', false)
+      }
+  })
+
+  $('#table_list').dataTable( {
+    "aoColumnDefs": [{
+      "bSortable": false,
+        "orderable": false,
+      "aTargets": [0,2]
+    }],
+      "order": [[1, "asc"]],
+      "paging": false,
+      "language": {
+        "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Russian.json"
+      },
+      "initComplete": function () {
+        $('.dt-buttons').addClass('padding-top-10')
+        hideLoaderSpinnerContent();
+        $('#content').fadeIn('slow').removeClass('d-none')
+
+      },
+      dom: 'Bfrtip',
+      buttons: [
+        {
+          extend: 'excelHtml5',
+          title: "Экспорт EXCEL - Готово для ОК"
+        },
+        {
+          extend: 'pdfHtml5',
+          title: "Экспорт PDF - Готово для ОК"
+        }]
+
+});
+
+    add_hover_menu('#nav_orders_ready_for_ok_list')
+    $('#content').fadeIn('fast').removeClass('d-none')
+
+            //обработка btn-submit-modal-large
+      $('.order-info').on('click', function(){
+
+            let data = {}
+            let orderID = $(this).attr('id').split('_')[1];
+            window.location.href = "{% url 'all_orders_list' %}" + '/' + orderID
+
+              $.ajax({
+                  headers: { "X-CSRFToken": '{{ csrf_token }}' },
+                  url: "{% url 'get_user_role_name' %}",
+                  type: 'POST',
+                  traditional: true,
+                  data: data,
+                  // processData: false,
+                  // contentType: false,
+                  error: function(data){
+                      toastr.error('Ошибка', data)
+                  },
+                  success:function (response) {
+                      console.log(response)
+                      if (response === 'Админ' ||  response === 'Суперадмин'){
+                        window.location.href = "{% url 'all_orders_list' %}" + '/' + orderID
+
+                      }else {
+                          toastr.error('Ваша роль не позволяет просматривать данную информацию', 'Отказ в доступе')
+                      }
+                  }
+              });
+
+      });
+
+
+
+  </script>
+
+{% endblock %}

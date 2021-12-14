@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+
+    <head>
+
+      <meta charset="utf-8">
+      <base target="_top">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>АСУ | ГБУ МБМ</title>
+
+      <!-- Google Font: Source Sans Pro -->
+
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+      <link rel="stylesheet" type="text/css" href="{% static 'dash/css/adminlte_min_css.css' %}">
+      <link rel="stylesheet" type="text/css" href="{% static 'dash/plugins/overlayScrollbars/css/OverlayScrollbars_min_css.css' %}">
+      <link rel="stylesheet" type="text/css" href="{% static 'dash/plugins/toastr/css/toastr.css' %}">
+
+
+      <link rel="stylesheet" type="text/css" href="{% static 'dash/css/adminlte_min_css.css' %}">
+
+      <link rel="stylesheet" type="text/css" href="{% static 'dash/css/progress_bar_css.css' %}">
+      <link rel="stylesheet" type="text/css" href="{% static 'dash/plugins/datatable/css/jquery_dataTables_min_css.css' %}">
+
+      <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+      <link rel="preconnect" href="https://fonts.gstatic.com">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto" rel="stylesheet">
+
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+      <!-- Font Awesome -->
+      <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+      <!-- Ionicons -->
+      <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+      <!-- Tempusdominus Bootstrap 4 -->
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+      <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
+
+
+      <link rel="stylesheet" type="text/css" href="{% static 'dash/plugins/datetimepicker/css/bootstrap_datetimepicker_min_css.css' %}">
+      <link rel="stylesheet" type="text/css" href="{% static 'dash/css/custom_css.css' %}">
+
+{% block style %}
+
+{% endblock %}
+
+
+    </head>
+    <body class="hold-transition sidebar-mini layout-fixed" id="body">
+
+      <div id="content_progressbar_loader_start" class="progress-mat content-default-background d-none" style="z-index: 1000000; background-color: white;">
+        <div class="indeterminate"></div>
+      </div>
+
+    <div class="wrapper">
+
+      <!-- Preloader -->
+
+
+      <!-- Navbar -->
+      <nav class="main-header navbar navbar-expand navbar-white navbar-light" id="top_nav_bar">
+        <!-- Left navbar links -->
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" role="button"><i class="fas fa-bars"></i></a>
+          </li>
+        </ul>
+
+
+
+        <ul class="navbar-nav ml-auto pr-3">
+          <li class="nav-item text-danger">Тестовая БД</li>
+        </ul>
+
+              <!-- Right navbar links -->
+        <ul class="navbar-nav ml-auto">
+          <!-- Navbar Search -->
+          <!-- Notifications Dropdown Menu -->
+
+          <li class="nav-item d-none" id="open_info" title="Информация для пользователя">
+            <a class="nav-link" role="button">
+              <i class="far fa-question-circle" style="margin-right: 15px; font-size: 22px;"></i>
+            </a>
+          </li>
+
+
+<!--          <li class="nav-item dropdown">-->
+<!--            <a id="release_link" class="nav-link" data-toggle="dropdown" href="#" aria-expanded="false" title="Релизы">-->
+<!--              <i class="fas fa-code-branch top-nav-icons-style"></i>-->
+<!--              <span class="badge badge-warning navbar-badge top-0-important" style="font-size: 0.6em;" id="relaeseToViewCnt">1</span>-->
+<!--            </a>-->
+<!--            <div>-->
+<!--              <div class="dropdown-menu dropdown-menu-lg" style="padding-top: 0px;">-->
+<!--                <div class="progress-mat visibility-hidden">-->
+<!--                  <div class="indeterminate"></div>-->
+<!--                </div>-->
+<!--                <span class="dropdown-item dropdown-header">Релизы</span>-->
+<!--                <div class="dropdown-divider"></div>-->
+<!--                <div id="version_div"><a href="#" class="dropdown-item version-item" id="versionID_1"><span>Ver. 1.1</span></a><a href="#" class="dropdown-item version-item" id="versionID_2"><span>Ver. 1.2</span></a><a href="#" class="dropdown-item version-item" id="versionID_3"><span>Ver. 1.3</span><span class="float-right badge badge-danger" style="padding-bottom: 7px;">new</span></a></div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </li>-->
+          <li class="nav-item">
+            <a class="nav-link" data-widget="fullscreen" role="button">
+              <i class="fas fa-expand-arrows-alt" style="font-size: 18px;"></i>
+            </a>
+          </li>
+
+
+          <li class="nav-item dropdown">
+            <a class="nav-link" data-toggle="dropdown" href="" aria-expanded="false">
+              <i class="far fa-user top-nav-icons-style"></i>
+<!--              <span class="badge badge-warning navbar-badge">15</span>-->
+            </a>
+            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" style="left: inherit; right: 0px;">
+<!--              <span class="dropdown-item dropdown-header">15 Notifications</span>-->
+              <div class="dropdown-divider"></div>
+              <a href="" class="dropdown-item" id="dash_logout">
+                <i class="fas fa-sign-out-alt mr-2"></i> Выйти
+              </a>
+            </div>
+          </li>
+
+          <!--li class="nav-item">
+            <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
+              <i class="fas fa-th-large"></i>
+            </a>
+          </li-->
+        </ul>
+
+
+
+      </nav>
+      <!-- /.navbar -->
+
+
+
+
+      <!-- Main Sidebar Container -->
+      <aside class="main-sidebar sidebar-dark-primary elevation-4">
+
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+          <!-- Sidebar user panel (optional) -->
+          <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="info">
+              <div style="color: #c2c7d0;">
+                <div style="color: #c2c7d0;" id="userLogin">{{ user_profile.user.first_name }} {{ user_profile.user.last_name }}</div>
+                <div style="color: #c2c7d0;" id="userRoleName">{{ user_profile.role }}</div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- SidebarSearch Form -->
+          <!--div class="form-inline">
+            <div class="input-group" data-widget="sidebar-search">
+              <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+              <div class="input-group-append">
+                <button class="btn btn-sidebar">
+                  <i class="fas fa-search fa-fw"></i>
+                </button>
+              </div>
+            </div>
+          </div-->
+
+          <!-- Sidebar Menu -->
+          <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+              <!-- Add icons to the links using the .nav-icon class
+                   with font-awesome or any other icon font library -->
+              <li class="nav-item superadmin admin expert-MBM menu-item menu-link statist statist-boxes" id="nav_satistics">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon fas fa-sync text-info"></i>
+                  <p>Статистика</p>
+                </a>
+              </li>
+            {% if user_profile.role.name == 'Статистика (лотки)' %}
+
+              <li class="nav-item statist-boxes menu-item" id="menu_lotki">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon far fa-clipboard text-info"></i>
+                  <p>
+                    Лотки
+                    <i class="fas fa-angle-left right"></i>
+
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item menu-link pl-2" id="nav_satist_boxes_prelimenary">
+                    <a href="#" class="nav-link menu-link">
+
+                      <p>Первичка</p>
+                    </a>
+                  </li>
+                  <li class="nav-item menu-link pl-2" id="nav_satist_boxes_refuses">
+                    <a href="#" class="nav-link menu-link">
+
+                      <p>Отказы (не первич.)<span class="badge badge-info right bage_refuses_not_prelimenary">{% if counter.statist_refuses_not_preliminary == 0 %}{% else %}{{ counter.statist_refuses_not_preliminary }}{% endif %}</span></p>
+                    </a>
+                  </li>
+                  <li class="nav-item menu-link pl-2" id="nav_satist_boxes_conclusions">
+                    <a href="#" class="nav-link menu-link">
+
+                      <p>ЭЗ<span class="badge badge-info right bage_orders_for_recieve_conclusion">{% if counter.statist_ez == 0 %}{% else %}{{ counter.statist_ez }}{% endif %}</span></p>
+                    </a>
+                  </li>
+
+                </ul>
+
+              </li>
+
+
+              <li class="nav-item menu-item statist-boxes" id="nav_satist_boxes_temp_stop_for_singing">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon far fa-clipboard text-info"></i>
+                  <p>
+                    На подписи
+                    <i class="fas fa-angle-left right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item menu-link pl-2" id="nav_satist_boxes_for_signing_temp_stop" data-toggle="tooltip" data-placement="right" title="Заявки на подписи (Приостановка)">
+                    <a class="nav-link menu-link cursor-pointer">
+                      <p>Приостановка<span class="badge badge-info right" id="bage_orders_for_signing_temp_stop">{% if counter.statist_temp_stop_on_signing == 0 %}{% else %}{{ counter.statist_temp_stop_on_signing }}{% endif %}</span></p>
+                    </a>
+                  </li>
+                  <li class="nav-item menu-link pl-2" id="nav_satist_boxes_for_signing_refuse"  data-toggle="tooltip" data-placement="right" title="Заявки на подписи (Отказ)">
+                    <a class="nav-link menu-link cursor-pointer">
+                      <p>Отказ<span class="badge badge-info right"  id="bage_orders_for_signing_refuse">{% if counter.statist_refuse_on_signing == 0 %}{% else %}{{ counter.statist_refuse_on_signing }}{% endif %}</span></p>
+                    </a>
+                  </li>
+                  <li class="nav-item menu-link pl-2" id="nav_satist_boxes_for_signing_conclusion"  data-toggle="tooltip" data-placement="right" title="Заявки на подписи (ЭЗ)">
+                    <a class="nav-link menu-link cursor-pointer">
+                      <p>ЭЗ<span class="badge badge-info right"  id="bage_orders_for_signing_conclusion">{% if counter.statist_ez_on_signing == 0 %}{% else %}{{ counter.statist_ez_on_signing }}{% endif %}</span></p>
+                    </a>
+                  </li>
+
+                </ul>
+              </li>
+
+            {% endif %}
+
+            {% if user_profile.role.name == 'Эксперт МБМ' %}
+              <li class="nav-item menu-item expert-MBM-no-subcontractor expert-MBM" id="nav_check">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon far fa-clipboard text-info"></i>
+                  <p>
+                    Проверка
+                    <i class="fas fa-angle-left right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item menu-link pl-2" id="nav_expert_docs_for_check" data-toggle="tooltip" data-placement="right" title="Заявки, документы по которым от подподрядчика получены и требуют проверки">
+                    <a class="nav-link menu-link cursor-pointer">
+                      <p>Проверить перв.<span class="badge badge-info right" id="bage_expert_docs_for_check">{% if counter.check_orders_to_check_preliminary == 0 %}{% else %}{{ counter.check_orders_to_check_preliminary }}{% endif %}</span></p>
+                    </a>
+                  </li>
+                  <li class="nav-item menu-link pl-2" id="nav_expert_docs_checked" data-toggle="tooltip" data-placement="right" title="Заявки, документы по которым проверены">
+                    <a class="nav-link menu-link cursor-pointer">
+                      <p>Проверенные перв.<span class="badge badge-info right" id="bage_expert_docs_checked"></span></p>
+                    </a>
+                  </li>
+                  <li class="nav-item menu-link pl-2" id="nav_expert_docs_for_check_after_temp_stop" data-toggle="tooltip" data-placement="right" title="Заявки, документы по которым от подподрядчика получены и требуют проверки">
+                    <a class="nav-link menu-link cursor-pointer">
+                      <p>Проверить возобн.<span class="badge badge-info right" id="bage_expert_docs_for_check_after_temp_stop">{% if counter.check_orders_to_check_after_temp_stop == 0 %}{% else %}{{ counter.check_orders_to_check_after_temp_stop }}{% endif %}</span></p>
+                    </a>
+                  </li>
+                  <li class="nav-item menu-link pl-2" id="nav_expert_docs_checked_after_temp_stop" data-toggle="tooltip" data-placement="right" title="Заявки, документы по которым проверены">
+                    <a class="nav-link menu-link cursor-pointer">
+                      <p>Проверенные возобн.<span class="badge badge-info right" id="bage_expert_docs_checked_after_temp_stop"></span></p>
+                    </a>
+                  </li>
+
+                </ul>
+              </li>
+
+            {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              <!--li class="nav-item superadmin admin expert-MBM menu-item menu-link statist" id="nav_satistics">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon fas fa-sync text-info"></i>
+                  <p>Статистика</p>
+                </a>
+              </li-->
+
+            {% if user_profile.role.name == 'Суперадмин' or user_profile.role.name == 'Админ' %}
+              <li class="nav-item superadmin admin menu-item menu-link cursor-pointer" id="nav_users">
+                <a class="nav-link">
+                  <i class="nav-icon far fa-user text-info"></i>
+                  <p>Пользователи</p>
+                </a>
+              </li>
+
+
+              <li class="nav-item superadmin admin menu-item menu-link cursor-pointer" id="nav_companies">
+                <a class="nav-link">
+                  <i class="nav-icon far fa-landmark text-info"></i>
+                  <p>Компании</p>
+                </a>
+              </li>
+
+              <li class="nav-item superadmin admin menu-item cursor-pointer" id="admin_orders">
+                <a class="nav-link">
+                  <i class="nav-icon far fa-clipboard text-info"></i>
+                  <p>
+                    Заявки (Админ)
+                    <i class="fas fa-angle-left right"></i>
+
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item menu-link pl-2 cursor-pointer" id="nav_new_orders_list">
+                    <a class="nav-link menu-link">
+
+                      <p>Новые заявки <span class="badge badge-info right bage-new-orders" id="bage_new_orders_admin">{% if counter.new_orders > 0 %}{{ counter.new_orders|default_if_none:"" }}{% endif %}</span></p>
+                    </a>
+                  </li>
+                  <li class="nav-item menu-link pl-2" id="nav_all_orders_list_admin">
+                    <a href="#" class="nav-link menu-link">
+                      <!--i class="far fa-book-open nav-icon text-info"></i-->
+                      <p>Все заявки<span class="badge badge-info right bage-all-orders"></span></p>
+                    </a>
+                  </li>
+
+                  <!--li class="nav-item menu-link pl-2" id="nav_orders_list">
+                    <a href="#" class="nav-link menu-link">
+
+                      <p>Список заявок</p>
+                    </a>
+                  </li>
+                  <li class="nav-item menu-link pl-2" id="nav_add_new_order">
+                    <a href="#" class="nav-link">
+
+                      <p>Добавить заявку</p>
+                    </a>
+                  </li-->
+                  <li class="nav-item menu-link pl-2" id="nav_add_new_orders_xlsx">
+                    <a href="#" class="nav-link">
+
+                      <p>Добавить XLSX файл</p>
+                    </a>
+                  </li>
+
+                  <li class="nav-item menu-link pl-2" id="nav_remade_order_send_to_subcotractor_date" title="Фиксация даты отправки доработанной заявки подрядчику">
+                    <a href="#" class="nav-link">
+
+                      <p>Доработка дата <span class="badge badge-info right bage-remade-order-send-to-subcotractor-date">{% if counter.admin_remade_order_date == 0 %}{% else %}{{ counter.admin_remade_order_date }}{% endif %}</span></p>
+                    </a>
+                  </li>
+
+                </ul>
+
+              </li>
+
+
+              <li class="nav-item superadmin admin menu-item" id="admin_check">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon far fa-clipboard text-info"></i>
+                  <p>
+                    Проверка <i class="fas fa-angle-left right"></i>
+
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item menu-link pl-2" id="nav_new_orders_for_experts_to_check">
+                    <a href="#" class="nav-link menu-link">
+
+                      <p>Распределение до<span class="badge badge-info right bage-new-orders-check" id="bage_new_orders_check_admin">{% if counter.admin_distribution_preliminary == 0 %}{% else %}{{ counter.admin_distribution_preliminary }}{% endif %}</span></p>
+                    </a>
+                  </li>
+
+                </ul>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item menu-link pl-2" id="nav_new_orders_for_experts_to_check_after_temp_stop">
+                    <a href="#" class="nav-link menu-link">
+
+                      <p>Распределение после<span class="badge badge-info right" id="bage_new_orders_check_after_temp_stop_admin">{% if counter.admin_distribution_after_temp_stop == 0 %}{% else %}{{ counter.admin_distribution_after_temp_stop }}{% endif %}</span></p>
+                    </a>
+                  </li>
+
+                </ul>
+
+              </li>
+
+
+              <li class="nav-item menu-item cursor-pointer" id="admin_ok">
+                <a class="nav-link">
+                  <i class="nav-icon far fa-clipboard text-info"></i>
+                  <p>
+                    Комиссия
+                    <i class="fas fa-angle-left right"></i>
+
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item menu-link pl-2 cursor-pointer" id="nav_orders_ready_for_ok_list">
+                    <a class="nav-link menu-link">
+
+                      <p>Подготовка к ОК<span class="badge badge-info right" id="bage_orders_ready_for_ok_admin">{% if counter.admin_ready_for_ok > 0 %}{{ counter.admin_ready_for_ok|default_if_none:"" }}{% endif %}</span></p>
+                    </a>
+                  </li>
+                  <li class="nav-item menu-link pl-2 cursor-pointer" id="nav_orders_appointed_for_ok_list">
+                    <a class="nav-link menu-link">
+
+                      <p>Рассмотрено<span class="badge badge-info right" id="bage_orders_appointed_for_ok_admin">{% if counter.appointed_for_ok > 0 %}{{ counter.appointed_for_ok|default_if_none:"" }}{% endif %}</span></p>
+                    </a>
+                  </li>
+
+                </ul>
+
+              </li>
+
+
+
+           {% endif %}
+            {% if user_profile.role.name == 'Эксперт МБМ' or user_profile.role.name == 'Эксперт подрядчика' %}
+              <li class="nav-item expert-MBM menu-item" id="new_orders_ready_to_proceed_list">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon far fa-clipboard text-info"></i>
+                  <p>
+                    Заявки (Эксперт)
+                    <i class="fas fa-angle-left right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  {% if user_profile.common_check_needed %}
+                  <li class="nav-item menu-link pl-2 status-for-check" id="nav_new_orders_send_for_check">
+                    <a class="nav-link menu-link cursor-pointer">
+                      <!--i class="far fa-book-open nav-icon text-info"></i-->
+                      <p>Проверка новые<span class="badge badge-info right bage-new-orders-for-check">{% if counter.new_orders_check_is_needed == 0 %}{% else %}{{ counter.new_orders_check_is_needed }}{% endif %}</span></p>
+                    </a>
+                  </li>
+                  <li class="nav-item menu-link pl-2 status-for-check" id="nav_new_orders_sent_for_preliminary_check">
+                    <a class="nav-link menu-link cursor-pointer">
+                      <!--i class="far fa-book-open nav-icon text-info"></i-->
+                      <p>На проверке новые<span class="badge badge-info right bage-new-orders-sent-for-check">{% if counter.check_orders_sent_for_check_preliminary == 0 %}{% else %}{{ counter.check_orders_sent_for_check_preliminary }}{% endif %}</span></p>
+                    </a>
+                  </li>
+                  {% endif %}
+                  <li class="nav-item menu-link pl-2" id="nav_new_orders_list_expert">
+                    <a class="nav-link menu-link cursor-pointer">
+                      <!--i class="far fa-book-open nav-icon text-info"></i-->
+                      <p>Первичка новые<span class="badge badge-info right bage-new-orders">{% if counter.new_orders == 0 %}{% else %}{{ counter.new_orders }}{% endif %}</span></p>
+                    </a>
+                  </li>
+                  <!--li class="nav-item menu-link pl-2" id="nav_all_orders_list_expert">
+                    <a href="#" class="nav-link menu-link">
+                      <p>Все заявки<span class="badge badge-info right bage-all-orders"></span></p>
+                    </a>
+                  </li-->
+                  <li class="nav-item expert-MBM menu-item" id="temp_stop_menu">
+                    <a href="#" class="nav-link">
+                      <i class="nav-icon far fa-clipboard text-info"></i>
+                      <p>
+                        Приостановка
+                        <i class="fas fa-angle-left right"></i>
+                      </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                      <li class="nav-item menu-link pl-2" id="nav_orders_temp_stop_stop_date" data-toggle="tooltip" data-placement="right" title="Фиксация даты приостановки">
+                        <a class="nav-link menu-link cursor-pointer">
+                          <!--i class="far fa-book-open nav-icon text-info"></i-->
+                          <p>Дата приостановки<span class="badge badge-info right bage-orders-temp-stop-date">{% if counter.temp_stop_date == 0 %}{% else %}{{ counter.temp_stop_date }}{% endif %}</span></p>
+                        </a>
+                      </li>
+                      <li class="nav-item menu-link pl-2" id="nav_orders_temp_stop_no_notification" data-toggle="tooltip" data-placement="right" title="Ожидание отправки уведомления заявителю после приостановки">
+                        <a class="nav-link menu-link cursor-pointer">
+                          <!--i class="far fa-book-open nav-icon text-info"></i-->
+                          <p>Без уведомления<span class="badge badge-info right bage-orders-temp-stop-no-notification" >{% if counter.temp_stop_without_notification == 0  or counter == None%}{% else %}{{ counter.temp_stop_without_notification }}{% endif %}</span></p>
+                        </a>
+                      </li>
+                    {% if user_profile.role.name == 'Эксперт подрядчика' %}
+
+                      <li class="nav-item menu-link pl-2 status-for-check" id="nav_orders_temp_stop_with_notification_before_remade_date" data-toggle="tooltip" data-placement="right" title="Ожидание получения доработанной заявки от заявителя после приостановки и фиксация даты получения">
+                        <a class="nav-link menu-link cursor-pointer">
+                          <!--i class="far fa-book-open nav-icon text-info"></i-->
+                          <p>С уведомлением<span class="badge badge-info right bage-orders-temp-stop-with-notification-before-remade-date">{% if counter.temp_stop_with_notification == 0  or counter == None%}{% else %}{{ counter.temp_stop_with_notification }}{% endif %}</span></p>
+                        </a>
+                      </li>
+                    {% endif %}
+                      <li class="nav-item menu-link pl-2" id="nav_orders_temp_stop_remadeorder_date" data-toggle="tooltip" data-placement="right" title="Доработанная заявка от заявителя получена. Нобходима фиксация даты ее получения">
+                        <a class="nav-link menu-link cursor-pointer">
+                          <!--i class="far fa-book-open nav-icon text-info"></i-->
+                          <p>Дата доработки<span class="badge badge-info right bage-orders-temp-stop-remadeorder-date">{% if counter.temp_stop_remade_order_date == 0 %}{% else %}{{ counter.temp_stop_remade_order_date }}{% endif %}</span></p>
+                        </a>
+                      </li>
+                    {% if user_profile.common_check_needed  %}
+                      <li class="nav-item menu-link pl-2 status-for-check" id="nav_orders_temp_stop_with_notification_check" data-toggle="tooltip" data-placement="right" title="Отправка документов на проверку после возобновления">
+                        <a class="nav-link menu-link cursor-pointer">
+                          <!--i class="far fa-book-open nav-icon text-info"></i-->
+                          <p>Проверка<span class="badge badge-info right bage-orders-temp-stop-with-notification-check">{% if counter.temp_stop_check == 0 %}{% else %}{{ counter.temp_stop_check }}{% endif %}</span></p>
+                        </a>
+                      </li>
+                      <li class="nav-item menu-link pl-2 status-for-check" id="nav_orders_temp_stop_with_notification_sent_for_check" data-toggle="tooltip" data-placement="right" title="Отправка документов на проверку после возобновления">
+                        <a class="nav-link menu-link cursor-pointer">
+                          <!--i class="far fa-book-open nav-icon text-info"></i-->
+                          <p>На проверке<span class="badge badge-info right bage-orders-temp-stop-with-notification-sent-for-check">{% if counter.temp_stop_on_check == 0 %}{% else %}{{ counter.temp_stop_on_check }}{% endif %}</span></p>
+                        </a>
+                      </li>
+                    {% endif %}
+                      <li class="nav-item menu-link pl-2" id="nav_orders_temp_stop_decision" data-toggle="tooltip" data-placement="right" title="Принятие решения по доработанной заявке">
+                        <a class="nav-link menu-link cursor-pointer">
+                          <!--i class="far fa-book-open nav-icon text-info"></i-->
+                          <p>Решение (доработка)<span class="badge badge-info right bage-orders-temp-stop-decision">{% if counter.temp_stop_remade_order_decision == 0 %}{% else %}{{ counter.temp_stop_remade_order_decision }}{% endif %}</span></p>
+                        </a>
+                      </li>
+                    </ul>
+
+                  </li>
+
+
+                  <li class="nav-item expert-MBM menu-item" id="refuse_menu">
+                    <a href="#" class="nav-link">
+                      <i class="nav-icon far fa-clipboard text-info"></i>
+                      <p>
+                        Отказ
+                        <i class="fas fa-angle-left right"></i>
+                      </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                      <li class="nav-item menu-link pl-2" id="nav_refuse_prelimenary" data-toggle="tooltip" data-placement="right" title="Требуется отправка проекта уведомления и отцательного ЭЗ в ДПиИР">
+                        <a class="nav-link menu-link cursor-pointer">
+                          <!--i class="far fa-book-open nav-icon text-info"></i-->
+                          <p>Первичный<span class="badge badge-info right bage-refuse-prelimenary">{% if counter.refuse_preliminary == 0 %}{% else %}{{ counter.refuse_preliminary }}{% endif %}</span></p>
+                        </a>
+                      </li>
+                      <li class="nav-item menu-link pl-2" id="nav_refuse_remade_order" data-toggle="tooltip" data-placement="right" title="Требуется составление уведомления и отцательного ЭЗ по итогам проверки доработанной заявки">
+                        <a class="nav-link menu-link cursor-pointer">
+                          <!--i class="far fa-book-open nav-icon text-info"></i-->
+                          <p>По документам<span class="badge badge-info right bage-refuse-remade-order">{% if counter.refuse_by_docs == 0 %}{% else %}{{ counter.refuse_by_docs }}{% endif %}</span></p>
+                        </a>
+                      </li>
+                      <li class="nav-item menu-link pl-2" id="nav_refuse_by_date_order" data-toggle="tooltip" data-placement="right" title="Требуется отправка проекта уведомления и отцательного ЭЗ в ДПиИР по истечению срока предоставления доработанной заявки">
+                        <a class="nav-link menu-link cursor-pointer">
+                          <!--i class="far fa-book-open nav-icon text-info"></i-->
+                          <p>По сроку<span class="badge badge-info right bage-refuse-by-date-orders"></span></p>
+                        </a>
+                      </li>
+
+                    </ul>
+
+                  </li>
+
+
+
+                </ul>
+
+              </li>
+
+
+              <li class="nav-item expert-MBM menu-item" id="menu_ez">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon far fa-clipboard text-info"></i>
+                  <p>
+                    ЭЗ
+                    <i class="fas fa-angle-left right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item menu-link pl-2" id="nav_add_conclusion" data-toggle="tooltip" data-placement="right" title="Заявки в формате WORD, готовые для подписания">
+                    <a class="nav-link menu-link cursor-pointer">
+                      <p>Список ЭЗ DOC<span class="badge badge-info right bage-orders-for-conclusion">{% if counter.ez_doc == 0 %}{% else %}{{ counter.ez_doc }}{% endif %}</span></p>
+                    </a>
+                  </li>
+                  <li class="nav-item menu-link pl-2" id="nav_add_conclusion_remake" data-toggle="tooltip" data-placement="right" title="Заявки в формате WORD, предназначенные для переделки">
+                    <a class="nav-link menu-link cursor-pointer">
+                      <p>Переделки DOC<span class="badge badge-info right bage-orders-for-conclusion-remake"></span></p>
+                    </a>
+                  </li>
+                  <li class="nav-item menu-link pl-2" id="nav_add_signed_conclusion"  data-toggle="tooltip" data-placement="right" title="Заявки в формате PDF, подписанные уполномоченными лицами">
+                    <a class="nav-link menu-link cursor-pointer">
+                      <p>Список ЭЗ PDF<span class="badge badge-info right bage-orders-for-conclusion-for-singing">{% if counter.ez_pdf == 0 %}{% else %}{{ counter.ez_pdf }}{% endif %}</span></p>
+                    </a>
+                  </li>
+
+                </ul>
+              </li>
+
+
+              <li class="nav-item expert-MBM menu-item" id="menu_ez">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon far fa-clipboard text-info"></i>
+                  <p>
+                    Отзыв заявок
+                    <i class="fas fa-angle-left right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item menu-link pl-2" id="nav_callback">
+                    <a class="nav-link cursor-pointer">
+
+                      <p>Отозвать заявку</p>
+                    </a>
+                  </li>
+                  <li class="nav-item menu-link pl-2" id="nav_calledback_orders">
+                    <a class="nav-link cursor-pointer">
+
+                      <p>Отозванные заявки</p>
+                    </a>
+                  </li>
+
+                </ul>
+              </li>
+
+            {% endif %}
+
+            </ul>
+          </nav>
+          <!-- /.sidebar-menu -->
+        </div>
+        <!-- /.sidebar -->
+      </aside>
+
+      <!-- Content Wrapper. Contains page content -->
+
+
+
+      <div class="content-wrapper" style="position:relative">
+        <!-- Content Header (Page header) -->
+
+        <!-- progress bar loader -->
+        <div id="content_progressbar_loader" class="progress-mat content-default-background visibility-hidden" style="z-index: 8999;">
+          <div class="indeterminate"></div>
+        </div>
+
+        <!-- Main content -->
+        <div id="content" class="pl-2 pr-2 d-none" style="font-family: 'Roboto', sans-serif;">
+        {% block content %}
+
+
+        {% endblock %}
+        </div>
+
+        <div id="loader_spinner" style="display:none; position:absolute; width:100%; height:100%; background:#f4f6f9; opacity: 1; z-index: 8998; top: 0;">
+          <!--div class="loader">Loading...</div-->
+
+        </div>
+
+
+
+
+        <div class="modal fade" id="modal-lg" style="display: none;" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title" id="modal_title"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body" id="modal-large-body">
+
+
+              <template>
+                <div class="card-body">
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Email (Логин)</label>
+                    <input type="email" class="form-control" id="newUserEmail" placeholder="Введите Email" value="" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Пароль</label>
+
+                    <div class="row">
+                      <div class="col-6">
+                        <input type="text" class="form-control" id="newUserPassword" placeholder="Введите пароль" required>
+
+                      </div>
+                      <div class="col-6">
+                        <button type="button" class="btn btn-primary" id="passGenerate">Сгенерировать пароль</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Фамилия</label>
+                    <input type="text" class="form-control" id="newUserSurname" placeholder="Введите фамилию" value="" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="exampleInputPassword1">Имя</label>
+                    <input type="text" class="form-control" id="newUserName" placeholder="Введите имя" value="" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="exampleInputPassword1">Телефон</label>
+                    <input type="tel" class="form-control" id="newUserTel" placeholder="Введите телефон" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="inputGroupSelect02">Роль</label>
+                    <select class="custom-select" id="rolesSelect">
+                    </select>
+                  </div>
+                </div>
+
+
+              </template>
+
+              </div>
+              <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+
+                <button type="button" class="btn btn-primary" id="btn-submit-modal-large">Сохранить</button>
+
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+
+
+
+        <div class="modal fade" id="modal-lg-common" style="display: none; z-index: 99999" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header" id="modal-header">
+                <h4 class="modal-title" id="modal-default-title"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body" id="modal-large-body-common">
+
+
+
+              </div>
+              <div class="modal-footer justify-content-between" id="modal-lg-common-header">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+
+
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+        <!--следующий шаг-->
+        <div class="modal fade" id="modal-lg-common-next-step" style="display: none; z-index: 99999" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header" id="modal-header-next-step">
+                <h4 class="modal-title" id="modal-default-title-next-step"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body" id="modal-large-body-common-next-step">
+
+
+
+              </div>
+              <div class="modal-footer justify-content-between" >
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+
+
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+
+
+        <div class="modal fade" id="modal-lg-common-category" style="display: none;" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title" id="modal-default-title-category"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body" id="modal-large-body-common-category">
+
+
+
+              </div>
+              <div class="modal-footer justify-content-between" id="modal-lg-common-header-category">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-default" id="modal-lg-common-ok">ОК</button>
+
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+
+
+        <div class="modal fade" id="modal-lg-common-info" style="display: none;" aria-hidden="true">
+          <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+              <div class="modal-header" id="modal-header-info">
+                <h4 class="modal-title" id="modal-default-title-info"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body" id="modal-large-body-common-info">
+
+
+
+              </div>
+              <div class="modal-footer justify-content-between" id="modal-lg-common-header-info">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+
+
+
+
+
+
+
+
+        <div class="modal fade" id="modal-default" style="display: none;" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title" id="">Default Modal</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>One fine body…</p>
+              </div>
+              <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+
+
+
+
+        <!-- /.content -->
+      </div>
+
+
+      <!-- /.content-wrapper -->
+      <footer class="main-footer">
+        <strong>Ver. </strong>
+        1.3
+      </footer>
+
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+      </aside>
+      <!-- /.control-sidebar -->
+
+
+
+
+    </div>
+    <!--Spinner-->
+    <div id="loader-div-start" class="loader-div d-block">
+      <!--div class="loader">Loading...</div-->
+    </div>
+
+      <div class="modal fade" id="modal-error">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content bg-danger">
+            <div class="modal-header">
+              <h4 class="modal-title" id="modal_error_title">{{ modal_error_title }}</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>{{ error }}</p>
+            </div>
+            <div class="modal-footer justify-content-between">
+              <button type="button" class="btn btn-outline-light" data-dismiss="modal">Закрыть</button>
+            </div>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
+
+
+    <!-- ./wrapper -->
+
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/jszip.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
+
+
+      <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+      <script type="text/javascript" src="{% static 'dash/plugins/toastr/js/toastr.js' %}"></script>
+
+      <script type="text/javascript" src="{% static 'dash/js/adminlte_min_js.js' %}"></script>
+
+
+      <script type="text/javascript" src="{% static 'dash/plugins/overlayScrollbars/js/OverlayScrollbars_min_js.js' %}"></script>
+      <script type="text/javascript" src="{% static 'dash/plugins/datatable/js/jquery_dataTables_min_js.js' %}"></script>
+      <script type="text/javascript" src="{% static 'dash/plugins/datetimepicker/js/bootstrap_datetimepicker_min_js.js' %}"></script>
+
+      <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+
+     <script type="text/javascript" src="{% static 'dash/js/dash_custom.js' %}"></script>
+
+      <script>
+
+        $('#new_orders_ready_to_proceed_list').addClass('menu-open')
+        $('#temp_stop_menu').addClass('menu-open')
+        $('#refuse_menu').addClass('menu-open')
+        $('#menu_ez').addClass('menu-open')
+        $('#menu_lotki').addClass('menu-open')
+        $('#nav_satist_boxes_temp_stop_for_singing').addClass('menu-open')
+        $('#admin_orders').addClass('menu-open')
+        $('#admin_check').addClass('menu-open')
+        $('#nav_check').addClass('menu-open')
+        $('#admin_ok').addClass('menu-open')
+
+      toastr.options = {
+        "positionClass": "toast-top-right",
+        "preventDuplicates": true,
+      }
+
+        //обработка закрытия модального окна modal-lg-common
+        $('#modal-lg-common-next-step').on('hidden.bs.modal', function (e) {
+            window.location.href = "{% url 'dash_index' %}";
+        })
+
+        $('#modal-lg-common').on('hidden.bs.modal', function (e) {
+            window.location.href = "{% url 'dash_index' %}";
+        })
+
+      function setSummernote(){
+        $('.summernote').summernote({
+
+           toolbar: [
+             // [groupName, [list of button]]
+             ['style', ['bold', 'italic', 'underline', 'clear']],
+             ['font', ['strikethrough', 'superscript', 'subscript']],
+             ['fontsize', ['fontsize']],
+             ['color', ['color']],
+             ['para', ['ul', 'ol', 'paragraph']],
+             ['height', ['height']]
+           ]
+         });
+
+         $('.note-editor').css('border-width', '1px').css('border-color', 'red').css('border-radius', '.25rem');
+
+      }
+
+
+
+        function showModalCommonNextStep(data){
+            $('#modal-default-title-next-step').html(data.title)
+            $('#modal-large-body-common-next-step').html(data.modal_body)
+            $('#modal-header-next-step').addClass(data.headerClass)
+            $('#modal-lg-common-next-step').modal('show')
+        }
+
+
+        function dateToDB(date) {
+            if(date !== ''){
+              let date_split = date.split('.')
+              return date_split[2] + '-' + date_split[1] + '-' + date_split[0]
+
+            }else {
+                return ''
+            }
+        }
+
+        function unique(list) {
+          var result = [];
+          $.each(list, function(i, e) {
+            if ($.inArray(e, result) == -1) result.push(e);
+          });
+          return result;
+        }
+
+        function getWorkingDays(startDay, duration, add_days){
+            var newDate = new Date(startDay);
+            newDate.setDate(newDate.getDate() + add_days)
+            //var endDate = new Date (newDate.getDate() + 1);
+            ////////console.log(moment(newDate).format('DD.MM.YYYY'))
+            //var endDayOfWeek = endDate.getDay()
+            var dayOfWeek = newDate.getDay()
+            var today = new Date()
+            ////////console.log(newDate.getDay(), moment(today).format('DD.MM.YYYY'));
+            var weekendDaysArr = [6,0];
+            var exclusionDates = ['2021-05-03', '2021-05-04', '2021-05-05','2021-05-06','2021-05-07','2021-05-10', '2021-06-14', '2021-11-04', '2021-11-05', '2021-12-31'];
+            var daysToAdd = duration;
+            var currDaysToAdd = 1;
+            var passDay = false
+            while (daysToAdd > 0){
+              passDay = false
+              ////////console.log('daysToAdd = ' + daysToAdd + ' / ' + 'dayOfWeek = ' + dayOfWeek + '/ date = ' + newDate)
+              weekendDaysArr.map((weekend,i) =>{
+                if(dayOfWeek === weekend){
+                  ////////console.log('weekend | ' + 'data = ' + newDate + ' dayOfWeek = ' + dayOfWeek);
+                  newDate.setDate(newDate.getDate() + 1)
+
+                  dayOfWeek = newDate.getDay()
+                  passDay = true
+                }
+              })
+              exclusionDates.map(date =>{
+                var dateToCheck = new Date(date)
+                ////////console.log('dateToCheck = ' + dateToCheck + ' newDate = ' + newDate)
+                if(dateToCheck === newDate){
+                  ////////console.log('exlusion - ' + dateToCheck);
+                  newDate.setDate(newDate.getDate() + 1)
+                  dayOfWeek = newDate.getDay()
+                  passDay = true
+                }
+              })
+              if(!passDay){
+                if(daysToAdd > 1){
+                  newDate.setDate(newDate.getDate() + 1)
+                  dayOfWeek = newDate.getDay()
+                }
+
+                daysToAdd --;
+
+              }
+              ////////console.log('endDayOfWeek - ' + dayOfWeek);
+            }
+            ////////console.log(newDate.getDate() - 1)
+
+            let formatter = new Intl.DateTimeFormat('ru');
+            return formatter.format(newDate)
+            ////////console.log(moment(newDate).format('DD.MM.YYYY'))
+          }
+
+        $(document ).ready(function() {
+            $('.date-time-picker').prop('readonly' , 'readonly').css('background', 'white').css('cursor', 'pointer')
+
+            jQuery.datetimepicker.setLocale('ru');
+            $('.date-time-picker').datetimepicker({
+                 showButtonPanel: true,
+                 closeText: 'Clear',
+                 onClose: function (dateText, inst) {
+                     if ($(window.event.srcElement).hasClass('ui-datepicker-close')) {
+                         document.getElementById(this.id).value = '';
+                     }
+                 },
+                format:'d.m.Y',
+                timepicker:false,
+                locale:'ru',
+                scrollMonth : false,
+                dayOfWeekStart: 1,
+            });
+
+
+          {% if error %}
+              $('#modal-error').modal('show')
+                //обработка закрытия модального окна modal-lg-common
+              $('#modal-error').on('hidden.bs.modal', function (e) {
+                  window.location.href = "{% url 'dash_index' %}";
+              })
+
+
+          {% endif %}
+
+          let table_name = ''
+          switch (window.location.pathname) {
+            case "{% url 'dash_index' %}":
+              $('#content').fadeIn(500).removeClass('d-none')
+              break;
+            case "{% url 'dash_add_xlsx_file' %}":
+              $('#content').fadeIn(500).removeClass('d-none')
+              break;
+            case "{% url 'new_orders_ready_to_proceed_list' %}":
+              table_name = 'Заявки для предварительной проверки'
+              break;
+            default:
+              break;
+          }
+
+          generate_table(table_name)
+
+
+        });
+
+        $('#dash_logout').on('click', function (e) {
+          // e.preventDefault()
+
+          $.ajax({
+              headers: { "X-CSRFToken": '{{ csrf_token }}' },
+              url: "{% url 'dash_logout' %}",
+              type: 'POST',
+
+              processData: false,
+              contentType: false,
+              error: function(data){
+                  console.log('huiohuihuigtydf')
+              },
+              success:function (data) {
+                  // console.log('logout')
+                  window.location.href = "{% url 'dash_index' %}";
+              }
+          });
+
+        })
+
+        {% if user_profile.role.name == 'Суперадмин' or user_profile.role.name == 'Админ' %}
+
+        // $('#nav_add_new_orders_xlsx').on('click', function () {
+        //   window.location.href = "{% url 'dash_add_xlsx_file' %}";
+        // })
+
+        {% endif %}
+
+    function showLoaderSpinnerStart() {
+      $('#content_progressbar_loader_start').removeClass('d-none')
+    }
+
+    function hideLoaderSpinnerStart() {
+      $('#content_progressbar_loader_start').addClass('d-none')
+    }
+
+    function showLoaderSpinnerContent() {
+      $('#content_progressbar_loader').removeClass('visibility-hidden')
+    }
+
+    function hideLoaderSpinnerContent() {
+      $('#content_progressbar_loader').addClass('visibility-hidden')
+    }
+
+    function setInnerHtml(elementID, htmlContent){
+      document.getElementById(elementID).innerHTML = htmlContent;
+    }
+
+
+    //изменение содержания контента в зависимости от пункта меню
+    function menuSetContent(data, successFunc){
+          // showLoaderSpinnerContent();
+
+
+          
+          $.ajax({
+            headers: { "X-CSRFToken": '{{ csrf_token }}' },
+            url: "{% url 'get_menu_content' %}",
+            type: 'POST',
+            // data: data1,
+            data: data,
+            // processData: false,
+            // contentType: "application/json; charset=utf-8",
+            // dataType: "json",
+            error: function(data){
+              toastr.error('Ошибка', data)
+            },
+            success:function (response) {
+              // console.log(response)
+              $('#content').html(response)
+              successFunc(response)
+              //window.location.href = "{% url 'dash_index' %}";
+            }
+          });
+
+
+
+//           google.script.run.withFailureHandler(function(error){
+//             //console.log("panel_js 717 - " + error);
+//             toastr.error(error);
+//
+//           }).withSuccessHandler(function(html){
+//
+//               setInnerHtml('content', html);
+//               //console.log(html);
+//               if(successFunc){
+//                 successFunc();
+//               }
+//               let table_name = $('#' + data.btnClass).text().trim()
+//               console.log('table_name = ' + table_name)
+//               if(menuType === 'table'){
+//
+//                 $(".list-table").DataTable({
+//                   "paging": false,
+//                   "language": {
+//                     "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Russian.json"
+//                   },
+//                   "initComplete":function(){
+//                     hideLoaderSpinner();
+//                     $('.dt-buttons').addClass('padding-top-10')
+//                   },
+//                   dom: 'Bfrtip',
+//                   buttons: [
+//                     {
+//                       extend: 'excelHtml5',
+//                       title: "Экспорт EXCEL. Пункт меню - " + table_name
+//                     },
+//                     {
+//                       extend: 'pdfHtml5',
+//                       title: "Экспорт PDF. Пункт меню - " + table_name
+//                     }]
+//
+//                 })
+//
+//
+// /*
+//
+//                 $('.list-table').DataTable({
+//                   "paging": false,
+//                   "language": {
+//                     "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Russian.json"
+//                   },
+//                   "initComplete":function(){
+//                     hideLoaderSpinner();
+//                   }
+//
+//                   //"responsive": true,
+//                   //"scrollX": true
+//                 });
+//
+// */
+//               }else{
+//                 hideLoaderSpinner();
+//               }
+//
+//
+//           }).getPageHtml(fileName, data, add_parameter);
+
+
+    }
+
+      //обработка нажатий пунктов меню
+
+      function parseCntDashToMenu(dashElement, menuElement){
+        if(parseInt($(dashElement).html()) == 0){
+            $(menuElement).html('')
+        }else{
+          $(menuElement).html($(dashElement).html())
+        }
+        $('#content').fadeIn('fast').removeClass('d-none')
+
+      }
+
+      // function generate_table(){
+      function generate_table(table_name){
+        // let table_name = $('#' + btn_id).text().trim()
+
+       $(".list-table").DataTable({
+          "paging": false,
+          "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Russian.json"
+          },
+          "initComplete": function () {
+            $('.dt-buttons').addClass('padding-top-10')
+            hideLoaderSpinnerContent();
+            $('#content').fadeIn('slow').removeClass('d-none')
+
+          },
+          dom: 'Bfrtip',
+          buttons: [
+            {
+              extend: 'excelHtml5',
+              title: "Экспорт EXCEL - " + table_name
+            },
+            {
+              extend: 'pdfHtml5',
+              title: "Экспорт PDF - " + table_name
+            }]
+        })
+
+      }
+        // Обработка нажатий меню
+        $('.menu-link').on("click", function(e){
+          var menuType = '';
+          var menuID =  $(this).attr('id');
+          var data = {}
+          console.log(menuID);
+          data.menu_id = menuID
+          e.preventDefault();
+          showLoaderSpinnerContent();
+
+          switch (menuID) {
+
+            //админ
+            case "nav_new_orders_list_expert":
+              window.location.href = "{% url 'new_orders_ready_to_proceed_list' %}";
+
+              break;
+              case "nav_new_orders_send_for_check":
+              window.location.href = "{% url 'orders_new_send_for_check_preliminary_list' %}";
+
+              break;
+
+            case "nav_add_new_orders_xlsx":
+              window.location.href = "{% url 'dash_add_xlsx_file' %}";
+
+
+              break;
+            case "nav_new_orders_for_experts_to_check":
+              window.location.href = "{% url 'appoint_expert_for_order_check_list' %}";
+
+
+              break;
+            case "nav_new_orders_sent_for_preliminary_check":
+              window.location.href = "{% url 'orders_sent_for_preliminary_check_list' %}";
+
+
+              break;
+            case "nav_orders_temp_stop_with_notification_before_remade_date":
+              window.location.href = "{% url 'orders_temp_stop_with_notification_before_remade_date_list' %}";
+
+
+              break;
+            case "nav_remade_order_send_to_subcotractor_date":
+              window.location.href = "{% url 'remade_order_send_to_subcotractor_date_list' %}";
+
+
+              break;
+            case "nav_orders_temp_stop_with_notification_check":
+              window.location.href = "{% url 'orders_temp_stop_with_notification_check_list' %}";
+
+
+              break;
+              //статист
+            case "nav_satist_boxes_prelimenary":
+              window.location.href = "{% url 'statist_new_orders_preliminary_list' %}";
+
+              break;
+            case "nav_satist_boxes_for_signing_temp_stop":
+              window.location.href = "{% url 'statist_temp_stop_orders_for_singing_list' %}";
+
+              break;
+            case "nav_satist_boxes_for_signing_refuse":
+              window.location.href = "{% url 'statist_refuse_orders_for_singing_list' %}";
+
+              break;
+            case "nav_satist_boxes_refuses":
+              window.location.href = "{% url 'statist_refuse_orders_not_preliminary_list' %}";
+
+              break;
+            case "nav_satist_boxes_conclusions":
+              window.location.href = "{% url 'statist_ez_for_signing_list' %}";
+
+              break;
+            case "nav_satist_boxes_for_signing_conclusion":
+              window.location.href = "{% url 'statist_ez_on_signing_list' %}";
+
+              break;
+            case "nav_orders_temp_stop_stop_date":
+              window.location.href = "{% url 'orders_temp_stop_date_list' %}";
+
+              break;
+            case "nav_orders_temp_stop_no_notification":
+              window.location.href = "{% url 'orders_temp_stop_without_notification_list' %}";
+
+              break;
+            case "nav_orders_temp_stop_with_notification_sent_for_check":
+              window.location.href = "{% url 'orders_temp_stop_with_notification_sent_for_check_list' %}";
+
+              break;
+            case "nav_companies":
+              window.location.href = "{% url 'companies_list' %}";
+
+              break;
+            case "nav_orders_temp_stop_remadeorder_date":
+              window.location.href = "{% url 'orders_temp_stop_remadeorder_date_list' %}";
+
+              break;
+            case "nav_orders_temp_stop_decision":
+              window.location.href = "{% url 'orders_temp_stop_remade_order_decision_list' %}";
+
+              break;
+            case "nav_refuse_prelimenary":
+              window.location.href = "{% url 'orders_refuse_preliminary_list' %}";
+
+              break;
+            case "nav_refuse_remade_order":
+              window.location.href = "{% url 'orders_refuse_remade_order_list' %}";
+
+              break;
+            case "nav_add_conclusion":
+              window.location.href = "{% url 'orders_ez_doc_list' %}";
+
+              break;
+            case "nav_add_signed_conclusion":
+              window.location.href = "{% url 'orders_ez_pdf_list' %}";
+
+              break;
+            case "nav_users":
+              window.location.href = "{% url 'users_list' %}";
+
+              break;
+            case "nav_callback":
+              window.location.href = "{% url 'orders_all_callback_list' %}";
+
+              break;
+
+            case "nav_satistics":
+                window.location.href = "{% url 'dash_index' %}";
+              break;
+            case "nav_all_orders_list_admin":
+                window.location.href = "{% url 'all_orders_list' %}";
+              break;
+
+            case 'nav_new_orders_list':
+                window.location.href = "{% url 'appoint_responsible_for_order_list' %}";
+              break;
+            case 'nav_new_orders_for_experts_to_check_after_temp_stop':
+                window.location.href = "{% url 'appoint_expert_for_order_after_temp_stop_check_list' %}";
+              break;
+            case 'nav_expert_docs_for_check':
+                window.location.href = "{% url 'orders_new_for_expert_to_check_preliminary_list' %}";
+              break;
+            case 'nav_expert_docs_for_check_after_temp_stop':
+                window.location.href = "{% url 'orders_new_for_expert_to_check_after_temp_stop_list' %}";
+              break;
+            case 'nav_orders_ready_for_ok_list':
+                window.location.href = "{% url 'ready_for_ok_orders_list' %}";
+              break;
+           case 'nav_orders_appointed_for_ok_list':
+                window.location.href = "{% url 'appointed_for_ok_orders_list' %}";
+              break;
+
+            default:
+              break;
+          }
+        })
+
+
+
+
+
+
+
+      </script>
+        {% block script %}
+
+        {% endblock %}
+
+    </body>
+
+
+</html>

@@ -1,0 +1,234 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4 id="big_title">{{ big_title }}</h4>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+
+<section class="content" >
+
+
+<div class="container-fluid pt-4">
+  <div class="row">
+      <div class="col-12">
+
+          <div class="card" id="appoint_expert_for_check_manual">
+            <div class="card-header">
+              <h3 class="card-title">Список заявок</h3>
+
+              <div class="card-tools">
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body table-responsive p-4 pt-1">
+              <table class="table text-nowrap list-table" id="list_table">
+                <thead>
+                  <tr>
+                    <th>Номер заявки</th>
+                    <th>Наименование МСП</th>
+                    <th>Дата подачи</th>
+                    <th>Номер ПП</th>
+                    <th>Крайний срок сдачи</th>
+                      <th>Проверяющий</th>
+                      <th></th>
+                      <!--th></th-->
+                  </tr>
+                </thead>
+                <tbody id="tbody">
+                  {% for order in orders %}
+                    <tr class="user-tr new_order" id="newOrderID_{{ order.id }}">
+                      <td>{{ order.number }}</td>
+                      <td>{{ order.company }}</td>
+                      <td>{{ order.date_of_appliance|date:"d.m.Y" }}</td>
+                      <td>{{ order.pp }}</td>
+                      <td>{{ order.end_date_for_responsible|date:"d.m.Y" }}</td>
+                      <td>
+                        <select class="select-expertMBM form-select">
+                          <option>---</option>
+                          {% for expert in experts %}
+                          <option id="expert_{{  expert.user.id }}">{{ expert.user.first_name }} {{ expert.user.last_name }}</option>
+                        {% endfor %}
+                        </select>
+
+
+                      </td>
+                      <td>
+                        <button type="button" class="btn btn-primary appointExpertMBMToCheckPreliminaryDocs" disabled style="width: 105px;">Назначить</button>
+                          <button type="button" class="btn btn-danger deletePreliminaryCheck" style="width: 130px;">Без проверки</button>
+                      </td>
+                  </tr>
+                  {% endfor %}
+
+
+                </tbody>
+              </table>
+            </div>
+              <!-- /.card-body -->
+          </div>
+
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+
+
+
+
+</section>
+
+        <div class="modal fade" id="modal-delete-check-preliminary" style="display: none;" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content bg-danger">
+              <div class="modal-header">
+                <h4 class="modal-title" id="">Снятие первичной проверки</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Отменить первичную проверку по заявке?</p><br>
+                  <p id="modal-delete-check-preliminary-orderNumber"></p>
+                  <p id="modal-delete-check-preliminary-orderName"></p>
+                  <p id="modal-delete-check-preliminary-orderID" class="d-none"></p>
+              </div>
+              <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-outline-light" data-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-outline-light" id="confirm_delete">Да</button>
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+
+
+
+
+{% endblock %}
+
+{% block script %}
+
+  <script>
+  add_hover_menu('#nav_new_orders_for_experts_to_check')
+    $('#content').fadeIn('fast').removeClass('d-none')
+
+        //назначение эксперта на первичную проверку
+
+      $('#content').on('change', '.select-expertMBM', function(){
+        if($(this).children(":selected").html() == '---'){
+          $('.appointExpertMBMToCheckPreliminaryDocs').prop("disabled", true);
+        }else{
+           $('.appointExpertMBMToCheckPreliminaryDocs').prop("disabled", false);
+        }
+        ////////console.log($(this).children(":selected").html());
+
+      })
+
+    $('.deletePreliminaryCheck').on('click', function () {
+        let orderNumber = $(this).closest('tr').find('td').get(0).innerHTML;
+        let orderName = $(this).closest('tr').find('td').get(1).innerHTML;
+        let orderID = $(this).closest('tr').attr('id').split('_')[1];
+
+        $('#modal-delete-check-preliminary-orderNumber').html(orderNumber)
+        $('#modal-delete-check-preliminary-orderName').html(orderName)
+        $('#modal-delete-check-preliminary-orderID').html(orderID)
+        $('#modal-delete-check-preliminary').modal('show')
+    })
+
+    $('#confirm_delete').on('click', function () {
+        let data = {}
+        $('#modal-delete-check-preliminary').modal('hide')
+        let orderID = $('#modal-delete-check-preliminary-orderID').html()
+        data.orderID = orderID
+        let tr = $('#newOrderID_' + orderID + ' .deletePreliminaryCheck')
+        let tr_to_remove = $('#newOrderID_' + orderID)
+        tr.html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+        $.ajax({
+          headers: { "X-CSRFToken": '{{ csrf_token }}' },
+          url: "{% url 'delete_preliminary_check_from_distribution' %}",
+          type: 'POST',
+          traditional: true,
+          data: data,
+          // processData: false,
+          // contentType: false,
+          error: function(data){
+              toastr.error('Ошибка', data)
+              tr.html('Без проверки')
+          },
+          success:function (response) {
+              if (response > 0){
+                  $('#bage_new_orders_check_admin').html(response)
+              }else {
+                  $('#bage_new_orders_check_admin').html('')
+              }
+              let table = $('#list_table').DataTable();
+
+             table.row(tr_to_remove).remove().draw(false)
+          }
+        });
+
+
+
+    })
+
+
+
+    $('.appointExpertMBMToCheckPreliminaryDocs').on('click', function(){
+        $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+
+        data = {}
+        let expertID = $(this).closest('tr').find('select').children(":selected").attr('id').split('_')[1];
+        let orderID = $(this).closest('tr').attr('id').split('_')[1];
+        let tr_to_remove = $(this).closest('tr')
+        data.expertID = expertID
+        data.orderID = orderID
+        $.ajax({
+          headers: { "X-CSRFToken": '{{ csrf_token }}' },
+          url: "{% url 'appoint_expert_for_order_check' %}",
+          type: 'POST',
+          traditional: true,
+          data: data,
+          // processData: false,
+          // contentType: false,
+          error: function(data){
+              toastr.error('Ошибка', data)
+              $(this).html('Назначить')
+          },
+          success:function (response) {
+              console.log(response)
+              if (Object.keys(response.admin_distribution_preliminary_cnt).length === 0){
+                toastr.success('Эксперт назначен');
+                let table = $('#list_table').DataTable();
+                table.row(tr_to_remove).remove().draw(false)
+                if(response > 0){
+                    $('#bage_new_orders_check_admin').html(response.admin_distribution_preliminary_cnt)
+                }else {
+                    $('#bage_new_orders_check_admin').html('')
+                }
+
+              }else {
+                  toastr.error(response.error);
+                  $('#newOrderID_' + orderID).find('button').css('background-color', 'red').attr('disabled', true).html('Ошибка')
+                  $('#newOrderID_' + orderID).find('select').attr('disabled', true)
+              }
+
+          }
+        });
+
+
+
+  });
+
+  </script>
+
+{% endblock %}

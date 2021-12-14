@@ -1,0 +1,287 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+{% block style %}
+
+{% endblock %}
+
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4>Предварительная проверка заявки</h4>
+        <h5>Заявка - <i id="orderNumber" data-orderid="{{ order.id }}">{{ order.number }}</i>  | Заявитель - <i id="applierName">{{ order.company }}</i> | № ПП - <i id="ppNumber">{{ order.pp }}</i></h5>
+
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content pl-2 pr-2">
+  <div class="container-fluid">
+
+      {% if not order.lotki_after_temp_stop_refuse_date_received %}
+        <div class="row col-md-12 mt-2" id="no_docs_handedover">
+          <div class="col-md-12 form-group">
+            <div class="alert alert-info" role="alert">
+
+              Составьте следующие документы и передайте на подпись: <br>
+              <b>- отрицательное ЭЗ</b>
+              <br>
+
+              <b>- уведомление об отказе</b>
+
+          </div>
+        </div>
+
+      {% else %}
+            {% if not order.lotki_after_temp_stop_refuse_date_signed %}
+            <div class="row col-md-12 mt-2" id="wait_for_docs">
+              <div class="col-md-12 form-group">
+                <div class="alert alert-primary" role="alert">
+                  <b>{{ order.lotki_after_temp_stop_refuse_date_received|date:"d.m.Y" }}</b> Вами был передан на подпись документ со статусом - <b>{{ order.lotki_status.name }}</b>. Ожидайте возврата подписанного документа
+                </div>
+
+              </div>
+            </div>
+            {% else %}
+
+
+            <div class="col-md-12">
+              <!-- general form elements -->
+              <div class="card card-primary">
+                <div class="card-header">
+                  <h3 class="card-title"><?= title?></h3>
+                </div>
+                <!-- /.card-header -->
+                <!-- form start -->
+
+                  <div class="card-body">
+
+                    <?if(data[1][44] !== ''){?>
+                    <div class="row col-md-12">
+                      <div class="form-group col-md-6">
+                        <label for="">Номер уведомления об отказе</label>
+                        <div id=""  class="non-editable-border-styled" name="refuse_documents_inconsistency_comments">{{ notification.notification_number }}</div>
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="">Дата уведомления об отказе</label>
+                        <div id=""  class="non-editable-border-styled">{{ notification.notification_date|date:"d.m.Y" }}</div>
+                      </div>
+
+                    </div>
+                    <?}?>
+
+
+
+                    <div class="row col-md-12 mt-2">
+                      <? if(big_title == 'Уведомление и отрицательное ЭЗ для ДПиИР (отказ - заявка не соответствует/по документам)'){?>
+                      <!--div class="form-group col-md-6">
+                        <label for="refuse_endDate">Крайняя дата сдачи отрицательного ЭЗ и уведомления об отказе</label>
+                        <div id="refuse_endDate"  class="form-control text-danger"><?= data[1][46]?></div>
+
+                      </div-->
+                      <?}?>
+
+
+                      <div class="form-group col-md-6">
+                        <label for="refuse_documents_inconsistency_send_date">
+
+                            Дата отказа
+
+                        </label>
+                        <input id="refuse_documents_inconsistency_send_date"  class="form-control date-time-picker input-to-fill-up" type="text" name="refuse_documents_inconsistency_send_date">
+
+                          <small class="text-danger">Дата отказа по заявке согласно ИАС (не позднее <b>{{ temp_stop.end_date_after_temp_stop|date:"d.m.Y" }}</b>)</small>
+                        </div>
+
+                    </div>
+
+                    <div class="row col-md-12">
+                      <div class="form-group col-md-12">
+                        <label for="refuse_documents_inconsistency_comments">Комментарии по приостановке</label>
+                        <div id="refuse_documents_inconsistency_comments"  class="non-editable-border-styled" name="refuse_documents_inconsistency_comments">{{ temp_stop.description }}</div>
+                      </div>
+
+                    </div>
+                    <div class="row col-md-12">
+                      <div class="form-group col-md-12">
+                        <label for="refuse_documents_inconsistency_comments_new">Комментарии по отказу</label>
+                        <textarea id="refuse_documents_inconsistency_comments_new"  class="form-control summernote" name="refuse_documents_inconsistency_comments_new"></textarea>
+                        <small class="text-danger">Опишите причины отказа</small>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+                  <!-- /.card-body -->
+              </div>
+
+              <div class="card card-warning">
+                <div class="card-header">
+                  <h3 class="card-title">Загрузка файлов</h3>
+                </div>
+                <!-- /.card-header -->
+                <!-- form start -->
+                <div class="card-body">
+
+                  <div class="row col-md-12">
+                      <div class="form-group col-md-6">
+                        <label for="preconclusion-file">Файл отрицательного ЭЗ</label>
+                        <div class="input-group mb-1">
+                            <input type="file" class="form-control input-to-fill-up" id="refuse-documents-inconsistency-conclusion-file" name="refuse-documents-inconsistency-conclusion-file">
+                        </div>
+                        <small class="text-danger">Тип файла - <cite title="Source Title">PDF</cite></small>
+                        <div><small class="text-danger">Имя файла - <cite title="Source Title">любое</cite></small></div>
+                        <div><small class="text-danger">Содержание файла - <cite title="Source Title">Подписанный уполномоченными лицами документ</cite></small></div>
+
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="notification-file">Файл уведомления об отказе</label>
+                        <div class="input-group mb-1">
+                            <input type="file" class="form-control input-to-fill-up" id="refuse-documents-inconsistency-notification-file" name="refuse-documents-inconsistency-notification-file">
+                        </div>
+                        <small class="text-danger">Тип файла - <cite title="Source Title">
+                            PDF
+
+                        </cite></small>
+                        <div><small class="text-danger">Имя файла - <cite title="Source Title">любое</cite></small></div>
+                        <div><small class="text-danger">Содержание файла - <cite title="Source Title">Подписанный уполномоченными лицами документ</cite></small></div>
+
+                      </div>
+
+
+                    </div>
+
+                </div>
+
+              </div>
+
+            {% endif %}
+        {% endif %}
+
+  </div>
+  </section>
+
+          <button type="button" class="btn btn-primary btn-float" id="btn_add_refuse_documents_inconsistency_conclusion_notification"><i class="fas fa-save" style="font-size: 25px;"></i></button>
+
+{% endblock %}
+
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+  <script>
+
+    setSummernote()
+    $('#new_orders_ready_to_proceed_list').addClass('menu-open')
+    $('#temp_stop_menu').addClass('menu-open')
+    $('#refuse_menu').addClass('menu-open')
+
+    setTextToHtml('#refuse_documents_inconsistency_comments')
+
+    $('#content').fadeIn('slow').removeClass('d-none')
+
+
+
+    $('#btn_add_refuse_documents_inconsistency_conclusion_notification').on('click', function(){
+
+
+      var refusePrelimenaryConclusionFile = $('#refuse-documents-inconsistency-conclusion-file');
+      var refusePrelimenaryConclusionFileVal = refusePrelimenaryConclusionFile.val();
+      var refusePrelimenaryNotificationFile = $('#refuse-documents-inconsistency-notification-file');
+      var refusePrelimenaryNotificationFileVal = refusePrelimenaryNotificationFile.val();
+
+      let refusePrelimenaryConclusionFileValSplit = refusePrelimenaryConclusionFileVal.split('.')
+      let refusePrelimenaryConclusionFileValFileType = refusePrelimenaryConclusionFileValSplit[refusePrelimenaryConclusionFileValSplit.length - 1].toLowerCase()
+      let refusePrelimenaryNotificationFileValSplit = refusePrelimenaryNotificationFileVal.split('.')
+      let refusePrelimenaryNotificationFileValFileType = refusePrelimenaryNotificationFileValSplit[refusePrelimenaryNotificationFileValSplit.length - 1].toLowerCase()
+
+
+      var refuseNotificationToDPIIRsendDateEl = $('#refuse_documents_inconsistency_send_date')
+      var refuseNotificationToDPIIRsendDate = refuseNotificationToDPIIRsendDateEl.val()
+      ////////console.log(preconclusionFile.get(0).length);
+        let refuseComments = $('#refuse_documents_inconsistency_comments_new').val()
+
+      var testIsOk = false
+      let dateIsNeeded = false
+      let fileTypeError = false
+
+
+      if(refusePrelimenaryConclusionFile.get(0).files.length > 0 && refusePrelimenaryNotificationFile.get(0).files.length > 0){
+          if(refuseNotificationToDPIIRsendDate !== ''){
+            testIsOk = true
+          }
+        if(refusePrelimenaryConclusionFileValFileType !== 'pdf' || refusePrelimenaryNotificationFileValFileType !== 'pdf'){
+
+          fileTypeError = true
+        }
+
+      }
+
+      if(!testIsOk){
+        toastr.error('Все поля должны быть заполнены');
+        $('#btn_add_refuse_prelimenary_conclusion_notification').html('<i class="fas fa-save" style="font-size: 25px;"></i>');
+        $('#btn_add_refuse_prelimenary_conclusion_notification').prop('disabled', false)
+      }else{
+        if(fileTypeError){
+          toastr.error('Тип файла(ов) не соответствует требованиям');
+          $('#btn_add_refuse_prelimenary_conclusion_notification').html('<i class="fas fa-save" style="font-size: 25px;"></i>');
+          $('#btn_add_refuse_prelimenary_conclusion_notification').prop('disabled', false)
+
+        }else{
+
+          $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+          $(this).prop('disabled', true)
+
+            let data = new FormData()
+            let orderID = $('#orderNumber').attr('data-orderid');
+
+
+            var notificationDate = refuseNotificationToDPIIRsendDate
+            data.append('orderID', orderID);
+            data.append('notification_date', notificationDate);
+            data.append('ez', $('#refuse-documents-inconsistency-conclusion-file')[0].files[0]);
+            data.append('notification', $('#refuse-documents-inconsistency-notification-file')[0].files[0]);
+            data.append('refuse_comments', refuseComments)
+
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'save_remade_order_refuse' %}",
+                data: data,
+                processData: false,
+                contentType: false,
+                error: function(data){
+                  toastr.error('Ошибка', data)
+                },
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                success: function () {
+                    toastr.success('Данные сохранены');
+                    showModalCommonNextStep({
+                      title: 'Следующие шаги',
+                      modal_body: '<b>Дальнейшие действия по заявке отсутствуют</b> <br>' +
+                                  '<b>Документы сохранены в соответствующую папку на сервере</b> <br>',
+                      headerClass: 'bg-danger'
+                    })
+
+                }
+            })
+
+
+
+
+
+      }
+
+      }
+    })
+
+
+
+  </script>
+
+{% endblock %}

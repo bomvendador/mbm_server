@@ -1,0 +1,104 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<section class="content" >
+
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-12">
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">{{ title }}</h3>
+
+            <div class="card-tools">
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body table-responsive p-4 pt-1">
+            <table class="table table-hover text-nowrap list-table" >
+              <thead>
+                <tr>
+                    <th>Номер заявки</th>
+                    <th>Наименование МСП</th>
+                    <th>Дата подачи</th>
+                    <th>Номер ПП</th>
+                    <th>Крайний срок сдачи</th>
+                  <!--th></th-->
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                {% for new_order in orders %}
+                  <tr class="user-tr cursor-pointer order-info" id="orderID_{{ new_order.id }}">
+                      <td>{{ new_order.number }}</td>
+                      <td>{{ new_order.company }}</td>
+                      <td>{{ new_order.date_of_appliance|date:"d.m.Y" }}</td>
+                      <td>{{ new_order.pp }}</td>
+                      <td>{{ new_order.end_date_for_responsible|date:"d.m.Y" }}</td>
+
+<!--                      <?}?>-->
+<!--                    <? }?>-->
+                    <!--td><i class="fas fa-ellipsis-v"></i></td-->
+                </tr>
+               {% endfor %}
+
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+
+</section>
+
+
+{% endblock %}
+
+{% block script %}
+
+  <script>
+    add_hover_menu('#nav_all_orders_list_admin')
+
+
+            //обработка btn-submit-modal-large
+      $('.order-info').on('click', function(){
+
+            let data = {}
+            let orderID = $(this).attr('id').split('_')[1];
+            window.location.href = "{% url 'all_orders_list' %}" + '/' + orderID
+
+              $.ajax({
+                  headers: { "X-CSRFToken": '{{ csrf_token }}' },
+                  url: "{% url 'get_user_role_name' %}",
+                  type: 'POST',
+                  traditional: true,
+                  data: data,
+                  // processData: false,
+                  // contentType: false,
+                  error: function(data){
+                      toastr.error('Ошибка', data)
+                  },
+                  success:function (response) {
+                      console.log(response)
+                      if (response === 'Админ' ||  response === 'Суперадмин'){
+                        window.location.href = "{% url 'all_orders_list' %}" + '/' + orderID
+
+                      }else {
+                          toastr.error('Ваша роль не позволяет просматривать данную информацию', 'Отказ в доступе')
+                      }
+                  }
+              });
+
+      });
+
+
+
+  </script>
+
+{% endblock %}

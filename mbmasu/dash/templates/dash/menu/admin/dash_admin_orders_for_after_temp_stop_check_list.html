@@ -1,0 +1,216 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4 id="big_title">{{ big_title }}</h4>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+
+<section class="content" >
+
+
+<div class="container-fluid pt-4">
+  <div class="row">
+      <div class="col-12">
+
+          <div class="card" id="appoint_expert_for_check_manual">
+            <div class="card-header">
+              <h3 class="card-title">Список заявок</h3>
+
+              <div class="card-tools">
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body table-responsive p-4 pt-1">
+              <table class="table text-nowrap list-table" id="list_table">
+                <thead>
+                  <tr>
+                    <th>Номер заявки</th>
+                    <th>Наименование МСП</th>
+                    <th>Дата подачи</th>
+                    <th>Номер ПП</th>
+                    <th>Крайний срок сдачи</th>
+                  <th>Проверяющий (первичка)</th>
+                  <th>Проверяющий</th>
+                  <th></th>
+                      <!--th></th-->
+                  </tr>
+                </thead>
+                <tbody id="tbody">
+                  {% for order in orders %}
+                    <tr class="user-tr new_order" id="newOrderID_{{ order.id }}">
+                      <td>{{ order.number }}</td>
+                      <td>{{ order.company }}</td>
+                      <td>{{ order.date_of_appliance|date:"d.m.Y" }}</td>
+                      <td>{{ order.pp }}</td>
+                      <td>{{ order.end_date_for_responsible|date:"d.m.Y" }}</td>
+                      <td>{{ order.responsible_preliminary_check_expert.first_name }} {{ order.responsible_preliminary_check_expert.last_name }}</td>
+                      <td>
+                        <select class="select-expertMBM form-select">
+                          <option>---</option>
+                          {% for expert in experts %}
+                          <option id="expert_{{  expert.user.id }}">{{ expert.user.first_name }} {{ expert.user.last_name }}</option>
+                        {% endfor %}
+                        </select>
+
+
+                      </td>
+                      <td>
+                        <button type="button" class="btn btn-primary appointExpertMBMToCheckAfterTempStopDocs" disabled style="width: 105px;">Назначить</button>
+                          <button type="button" class="btn btn-danger deleteAfterTempStopCheck" style="width: 130px;">Без проверки</button>
+
+                      </td>
+                  </tr>
+                  {% endfor %}
+
+
+                </tbody>
+              </table>
+            </div>
+              <!-- /.card-body -->
+          </div>
+
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+
+
+
+
+</section>
+
+        <div class="modal fade" id="modal_delete_check_after_temp_stop" style="display: none;" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content bg-danger">
+              <div class="modal-header">
+                <h4 class="modal-title" id="">Снятие проверки после возобновления</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Отменить проверку после возобновления по заявке?</p><br>
+                  <p id="modal_delete_check_after_temp_stop_orderNumber"></p>
+                  <p id="modal_delete_check_after_temp_stop_orderName"></p>
+                  <p id="modal_delete_check_after_temp_stop_orderID" class="d-none"></p>
+              </div>
+              <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-outline-light" data-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-outline-light" id="confirm_delete">Да</button>
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+
+
+
+{% endblock %}
+
+{% block script %}
+
+  <script>
+  add_hover_menu('#nav_new_orders_for_experts_to_check_after_temp_stop')
+    $('#content').fadeIn('fast').removeClass('d-none')
+
+
+
+  $('.deleteAfterTempStopCheck').on('click', function () {
+        let orderNumber = $(this).closest('tr').find('td').get(0).innerHTML;
+        let orderName = $(this).closest('tr').find('td').get(1).innerHTML;
+        let orderID = $(this).closest('tr').attr('id').split('_')[1];
+
+        $('#modal_delete_check_after_temp_stop_orderNumber').html(orderNumber)
+        $('#modal_delete_check_after_temp_stop_orderName').html(orderName)
+        $('#modal_delete_check_after_temp_stop_orderID').html(orderID)
+        $('#modal_delete_check_after_temp_stop').modal('show')
+    })
+
+      $('#confirm_delete').on('click', function () {
+            let data = {}
+            $('#modal_delete_check_after_temp_stop').modal('hide')
+            let orderID = $('#modal_delete_check_after_temp_stop_orderID').html()
+            data.orderID = orderID
+            let tr = $('#newOrderID_' + orderID + ' .deleteAfterTempStopCheck')
+            let tr_to_remove = $('#newOrderID_' + orderID)
+            tr.html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+            $.ajax({
+              headers: { "X-CSRFToken": '{{ csrf_token }}' },
+              url: "{% url 'delete_after_temp_stop_check_from_distribution' %}",
+              type: 'POST',
+              traditional: true,
+              data: data,
+              // processData: false,
+              // contentType: false,
+              error: function(data){
+                  toastr.error('Ошибка', data)
+                  tr.html('Без проверки')
+              },
+              success:function (response) {
+                  if (response > 0){
+                      $('#bage_new_orders_check_after_temp_stop_admin').html(response)
+                  }else {
+                      $('#bage_new_orders_check_after_temp_stop_admin').html('')
+                  }
+                  let table = $('#list_table').DataTable();
+
+                 table.row(tr_to_remove).remove().draw(false)
+              }
+            });
+
+
+
+        })
+
+
+
+    $('.appointExpertMBMToCheckAfterTempStopDocs').on('click', function(){
+        $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+
+        data = {}
+        let expertID = $(this).closest('tr').find('select').children(":selected").attr('id').split('_')[1];
+        let orderID = $(this).closest('tr').attr('id').split('_')[1];
+        data.expertID = expertID
+        data.orderID = orderID
+        $.ajax({
+          headers: { "X-CSRFToken": '{{ csrf_token }}' },
+          url: "{% url 'appoint_expert_for_order_after_temp_stop_check' %}",
+          type: 'POST',
+          traditional: true,
+          data: data,
+          // processData: false,
+          // contentType: false,
+          error: function(data){
+              toastr.error('Ошибка', data)
+              $(this).html('Назначить')
+          },
+          success:function (response) {
+            toastr.success('Эксперт назначен');
+            $('#newOrderID_' + orderID).remove();
+            if(response > 0){
+                $('#bage_new_orders_check_after_temp_stop_admin').html(response)
+            }else {
+                $('#bage_new_orders_check_after_temp_stop_admin').html('')
+            }
+
+          }
+        });
+
+
+
+  });
+
+  </script>
+
+{% endblock %}

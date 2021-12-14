@@ -1,0 +1,196 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<section class="content" >
+
+
+<div class="container-fluid pt-4">
+  <div class="row">
+      <div class="col-12">
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">{{ title }}</h3>
+
+            <div class="card-tools">
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body table-responsive p-4 pt-1">
+            <table class="table table-hover text-nowrap list-table">
+              <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Кем добавлено</th>
+                    <th>Дата добавления</th>
+                    <!--th></th-->
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                  {% for company in companies %}
+
+                  <tr class="cursor-pointer company" id="company_{{ company.id }}">
+                      <td>{{ company.name }}</td>
+                      <td>{{ company.user.first_name }} {{ company.user.last_name }}</td>
+                      <td>{{ company.added|date:'d.m.Y' }}</td>
+                </tr>
+                {% endfor %}
+
+                <?}?>
+
+
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+
+
+
+
+</section>
+<button type="button" class="btn btn-primary btn-float" id="add_company"><i class="fas fa-plus" style="margin-top: 5px"></i></button>
+
+    <div class="modal fade" id="modal-lg-company" style="display: none;" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="modal_title"></h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body" id="modal-large-body">
+
+
+            <div class="card-body">
+              <div class="form-group">
+                <label for="newCompanyName">Название</label>
+                <input class="form-control" id="newCompanyName" placeholder="Введите название" value="" required>
+              </div>
+            </div>
+
+
+
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+
+            <button type="button" class="btn btn-primary" id="btn-submit-modal-large">Сохранить</button>
+
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+
+{% endblock %}
+
+{% block script %}
+
+  <script>
+    add_hover_menu('#nav_companies')
+
+      $('.company').on('click', function(){
+
+        showLoaderSpinnerContent();
+        let companyID = $(this).attr('id').split('_')[1];
+        window.location.href = "{% url 'companies_list' %}" + '/' + companyID;
+      });
+
+        $('#add_company').on('click', function() {
+            {#document.getElementById('add_company').innerHTML = "<div class=='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>"#}
+            document.getElementById('btn-submit-modal-large').innerHTML = "Сохранить";
+            var data = {}
+
+            $('#modal_title').html('Добавление компании');
+            $('#modal-lg-company').modal('show');
+            {#document.getElementById('add_company').innerHTML = '<i class="fas fa-plus"></i>';#}
+        })
+
+            //обработка btn-submit-modal-large
+      $('#btn-submit-modal-large').on('click', function(){
+        document.getElementById('btn-submit-modal-large').innerHTML = "<div class='d-flex justify-content-center' style='width:78px'><div class='spinner-border' style='width: 23px; height: 23px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>"
+
+          if ($('#newCompanyName').val() !== ''){
+            let data = {}
+            data.company_name = $('#newCompanyName').val()
+
+
+              $.ajax({
+                  headers: { "X-CSRFToken": '{{ csrf_token }}' },
+                  url: "{% url 'save_company' %}",
+                  type: 'POST',
+                  traditional: true,
+                  data: data,
+                  // processData: false,
+                  // contentType: false,
+                  error: function(data){
+                      toastr.error('Ошибка', data['error'])
+                      document.getElementById('add_company').innerHTML = '<i class="fas fa-plus" style="margin-top: 5px"></i>'
+                  },
+                  success:function (response) {
+                      console.log(response)
+                      if (response['success']){
+                        window.location.href = "{% url 'companies_list' %}"
+
+                      }else {
+                          toastr.error(response['error'], 'Ошибка')
+                        document.getElementById('btn-submit-modal-large').innerHTML = "Сохранить";
+                      }
+                  }
+              });
+
+
+
+            {#google.script.run.withFailureHandler(function(error){#}
+            {#      toastr.error(error);#}
+            {#    }).withSuccessHandler(function(url){#}
+            {#      google.script.run.withFailureHandler(function(error){#}
+            {#        toastr.error(error);#}
+            {#        }).withSuccessHandler(function(response){#}
+            {#          //document.getElementById('btn-submit-modal-large').innerHTML = "Сохранить"#}
+            {#          if(response.result === 'success'){#}
+            {#              $('#modal-lg').modal('hide');#}
+            {#              data.unshift(response.id);#}
+            {#              //////console.log(data.length);#}
+            {#              var html = '<tr class="user-tr">';#}
+            {#              for (i=0; i < data.length; i++){#}
+            {#                //////console.log(data[i]);#}
+            {#                html += '<td>' + data[i] + '</td>';#}
+            {#              }#}
+            {#              html += '</tr>';#}
+            {#              $('#tbody').append(html);#}
+            {#              data = [];#}
+            {#              toastr.success(response.text);#}
+            {##}
+            {#          }else{#}
+            {#            toastr.error(response.text);#}
+            {#            document.getElementById('btn-submit-modal-large').innerHTML = "Сохранить";#}
+            {##}
+            {#          }#}
+            {#        }).addNewUser(url, 'пользователи', data);#}
+            {##}
+            {#    }).getTableURL('DBAccess');#}
+
+          }else{
+
+            toastr.error('Введите название');
+            document.getElementById('btn-submit-modal-large').innerHTML = "Сохранить";
+          }
+
+      });
+
+
+
+  </script>
+
+{% endblock %}

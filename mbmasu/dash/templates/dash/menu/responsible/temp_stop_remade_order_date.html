@@ -1,0 +1,181 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+{% block style %}
+
+{% endblock %}
+
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4>Необходимое действие по заявкам: фиксация даты получения доработанной заявки после приостановки</h4>
+        <h5>Заявка - <i id="orderNumber" data-orderid="{{ order.id }}">{{ order.number }}</i>  | Заявитель - <i id="applierName">{{ order.company }}</i> | № ПП - <i id="ppNumber">{{ order.pp }}</i></h5>
+
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content" >
+
+  <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title"><?= title?></h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+
+              <div class="card-body">
+                <div class="row col-md-12 mt-2">
+                  <div class="form-group col-md-6">
+                    <label for="">Крайняя дата получения доработанной заявки</label>
+                    <div id=""  class="form-control text-danger">{{ temp_stop.end_date_for_remade_order|date:"d.m.Y" }}</div>
+
+                  </div>
+
+                </div>
+
+                <div class="row col-md-12 mt-2">
+                  <div class="form-group col-md-12">
+                    <label for="notification_date">Дата получения доработанной заявки от заявителя</label>
+                    <input id="remade_order_by_applier_date"  class="form-control date-time-picker input-to-fill-up" type="text" name="remade_order_by_applier_date">
+
+                    <small class="text-danger">Дата загрузки заявителем дополнительных документов в систему ИАС (не позднее <b>{{ temp_stop.end_date_for_remade_order|date:"d.m.Y" }}</b>)</small>
+
+                  </div>
+                </div>
+
+              </div>
+              <!-- /.card-body -->
+          </div>
+
+
+        </div>
+              <!-- /.card-body -->
+          <!-- /.card -->
+        <!-- /.card -->
+      </div>
+      <!--/.col (right) -->
+    </div>
+    <!-- /.row -->
+  </div>
+
+
+</section>
+
+<button type="button" class="btn btn-primary btn-float" id="btn_add_prelimenary_remadeorder_date"><i class="fas fa-save" style="font-size: 25px;"></i></button>
+
+
+{% endblock %}
+
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+  <script>
+
+
+    $('#new_orders_ready_to_proceed_list').addClass('menu-open')
+    $('#temp_stop_menu').addClass('menu-open')
+    $('#refuse_menu').addClass('menu-open')
+
+    $('#content').fadeIn('slow').removeClass('d-none')
+
+
+
+      //сохранение даты доработанной заявки
+      $('#btn_add_prelimenary_remadeorder_date').on('click', function(){
+
+        let date = $('#remade_order_by_applier_date').val();
+        let orderID = $('#orderNumber').attr('data-orderid');
+        let modalBody = ''
+
+        ////////console.log('date = ', date)
+        if(date == ''){
+          toastr.error('Все поля должны быть заполнены');
+          $(this).prop('disabled', false)
+          $(this).html('<i class="fas fa-save" style="font-size: 25px;"></i>')
+        }else{
+          $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+          $(this).prop('disabled', true)
+          var data = {}
+
+          let end_date_for_response_split = date.split('.');
+            let end_date_for_response = end_date_for_response_split[2] + '-' + end_date_for_response_split[1] + '-' + end_date_for_response_split[0]
+
+            let endDateForConclusionDocs = getWorkingDays(end_date_for_response, 10,0)
+            let endDateForConclusionRespincible = getWorkingDays(end_date_for_response, 5, 0);
+
+          data.orderID = orderID;
+          data.remadeorderDate = date;
+          data.endDateForConclusionDocs = endDateForConclusionDocs;
+          data.endDateForConclusionRespincible = endDateForConclusionRespincible
+
+          $.ajax({
+              headers: { "X-CSRFToken": '{{ csrf_token }}' },
+              url: "{% url 'save_temp_stop_remadeorder_date' %}",
+              type: 'POST',
+              data: data,
+              // processData: false,
+              // contentType: false,
+              error: function(data){
+                  toastr.error('Ошибка', data)
+              },
+              success:function (response) {
+                  let arr = []
+                console.log(response)
+
+                toastr.success('Данные сохранены')
+
+
+
+                    modalBody = '<b>Выполните следующие действия:</b><br/>' +
+                        '<ul class="mt-2">' +
+                        '<li>проанализируйте полученную доработанную заявку и примите решение о дальнейшем статусе</li>' +
+                        '<li>зайдите в пункт меню <b>"Приостановка > Решение по дработке"</b></li>' +
+                        '<li>найдите заявку в списке</li>' +
+                        '<li>нажмите на соответствующую запись в списке</li>' +
+                        '<li>опишите детали предоставленных заявителем материалов и нажмите соответствующую кнопку</li>' +
+                        '<li>в срок до <b>' + endDateForConclusionDocs + '</b> необходимо произвести соответствующие действия в ИАС РПП</li>' +
+
+                        '</ul>'
+
+                  {% if order.check_after_temp_stop_refuse or order.check_after_temp_stop_ez %}
+
+                    modalBody = '<b>Выполните следующие действия:</b><br/>' +
+                        '<ul class="mt-2">' +
+                        '<li>проанализируйте полученную доработанную заявку и примите решение о дальнейшем статусе</li>' +
+                        '<li>зайдите в пункт меню <b>"Приостановка > Проверка"</b></li>' +
+                        '<li>найдите заявку в списке</li>' +
+                        '<li>нажмите на соответствующую запись в списке</li>' +
+                        '<li>загрузите документы на проверку для эксперта</li>' +
+                        '</ul>'
+                  {% endif %}
+
+                    showModalCommonNextStep({
+                        title: 'Следующие шаги',
+                        modal_body: modalBody,
+
+                        headerClass: 'bg-danger'
+                      })
+
+              }
+            });
+
+        }
+
+      })
+
+
+
+  </script>
+
+{% endblock %}

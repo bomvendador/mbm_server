@@ -1,0 +1,139 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+{% block style %}
+
+{% endblock %}
+
+
+{% block content %}
+
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4>Заявка отозвана заявителем</h4>
+        <h5>Заявка - <i id="orderNumber">{{ order.number }}</i>  | Заявитель - <i id="applierName">{{ order.company }}</i></h5>
+
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+
+  <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">Отзыв заявки</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+
+              <div class="card-body">
+
+                <div class="row col-md-12 mt-2">
+                  <div class="form-group mb-0">
+                    <label for="callback_date">Дата отзыва</label>
+                    <input id="callback_date"  class="form-control date-time-picker input-to-fill-up" type="text" name="callback_date">
+                    <small class="text-danger">Дата отзыва заявки согласно ИАС</small>
+
+                  </div>
+                </div>
+
+                <div class="row col-md-12">
+                  <div class="form-group">
+                    <button type="button" class="btn btn-block btn-success mt-4 mb-4" id="btnCallBackOrder">Отозвать заявку</button>
+                  </div>
+                </div>
+
+
+              </div>
+              <!-- /.card-body -->
+          </div>
+
+            </div>
+              <!-- /.card-body -->
+
+
+
+          <!-- /.card -->
+
+
+
+
+        <!-- /.card -->
+      </div>
+      <!--/.col (right) -->
+    </div>
+    <!-- /.row -->
+  </div>
+
+
+  </section>
+
+
+
+{% endblock %}
+
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+  <script>
+
+
+    $('#new_orders_ready_to_proceed_list').addClass('menu-open')
+    $('#temp_stop_menu').addClass('menu-open')
+    $('#refuse_menu').addClass('menu-open')
+
+    $('#content').fadeIn('slow').removeClass('d-none')
+
+
+
+      //сохранение даты приостановки
+      $('#btnCallBackOrder').on('click', function(){
+
+        var date = $('#callback_date').val();
+
+        ////////console.log('date = ', date)
+        if(date === ''){
+          toastr.error('Заполните поле даты');
+        }else{
+          $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+          $(this).prop('disabled', true)
+          var data = {}
+          data.callbackDate = date;
+
+          $.ajax({
+              headers: { "X-CSRFToken": '{{ csrf_token }}' },
+              url: "{% url 'save_order_callback' %}",
+              type: 'POST',
+              data: data,
+              // processData: false,
+              // contentType: false,
+              error: function(data){
+                  toastr.error('Ошибка', data)
+              },
+              success:function (response) {
+
+                showModalCommonNextStep({
+                  title: 'Сохранение даты отзыва заявки',
+                    headerClass: 'bg-success'
+                })
+
+              }
+            });
+
+        }
+
+      })
+
+
+
+  </script>
+
+{% endblock %}

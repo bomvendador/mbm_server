@@ -1,0 +1,296 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+{% block style %}
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4>Предварительная проверка заявки</h4>
+        <h5>Заявка - <i id="orderNumber" data-orderid="{{ order.id }}">{{ order.number }}</i>  | Заявитель - <i id="applierName">{{ order.company }}</i> | № ПП - <i id="ppNumber">{{ order.pp }}</i></h5>
+
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content" >
+
+  <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+
+            {% if check_preliminary_file_to_check_returned %}
+          <div class="card card-warning">
+            <div class="card-header">
+              <h3 class="card-title">Ссылки на документы, возвращенные экспертом на переделку</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+
+              <div class="card-body">
+
+                <div class="row col-md-12">
+
+                  <div class="form-group col-md-12" >
+                    <p><a href="{% url 'download_file' path=check_preliminary_file_to_check_returned.file_1.path %}" target="_blank">{{ check_preliminary_file_to_check_returned.file_1.name }}</a></p>
+                    {% if check_preliminary_file_to_check_returned.file_2 %}
+                      <p><a href="{% url 'download_file' path=check_preliminary_file_to_check_returned.file_2.path %}" target="_blank">{{ check_preliminary_file_to_check_returned.file_2.name }}</a></p>
+                    {% endif %}
+                    </div>
+
+
+                </div>
+
+              </div>
+              <!-- /.card-body -->
+          </div>
+
+            {% endif %}
+
+          <?}?>
+
+
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">Данные о документах</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+
+              <div class="card-body">
+
+                <div class="row col-md-12">
+
+                  <div class="form-group col-md-6 choose-docs-typeSelect" >
+                    <label for="rolesSelect">Выберите тип документа(ов)</label>
+                    <select class="custom-select input-to-fill-up" id="choose-docs-type">
+                          <option>---</option>
+                        {% for order_type_check in orders_type_check %}
+                            {% if order_type_check.name != 'Отриц ЭЗ + Уведомление об отказе (по сроку)' %}
+                                <option >{{ order_type_check.name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                  </div>
+                {% if check_preliminary_file_to_check_returned %}
+                  <div class="form-group col-md-6 choose-docs-typeSelect" >
+                    <label for="rolesSelect">Тип документа(ов) сгласно решению проверяющего</label>
+                      <div class="non-editable-border-styled" id="doc_signed_doc_type">{{ check_preliminary_file_to_check_returned.type }}</div>
+                  </div>
+                {% endif %}
+
+                </div>
+
+              </div>
+              <!-- /.card-body -->
+          </div>
+
+
+          <div class="card card-warning d-none" id="card_files_for_check">
+            <div class="card-header">
+              <h3 class="card-title">Загрузка файлов</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <div class="card-body">
+
+              <div class="row col-md-12">
+                  <div class="form-group col-md-6 d-none" id="doc_1">
+                    <label for="preconclusion-file" id="doc_1_lable"></label>
+                    <div class="input-group mb-1">
+                        <input type="file" class="form-control input-to-fill-up" id="doc_1_file" name="doc_1_file">
+                    </div>
+                    <small class="text-danger">Тип файла - <cite title="Source Title">DOC</cite></small>
+                    <div><small class="text-danger">Имя файла - <cite title="Source Title">любое</cite></small></div>
+
+                  </div>
+                  <div class="form-group col-md-6 d-none" id="doc_2">
+                    <label for="notification-file" id="doc_2_lable"></label>
+                    <div class="input-group mb-1">
+                        <input type="file" class="form-control input-to-fill-up" id="doc_2_file" name="doc_2_file">
+                    </div>
+                    <small class="text-danger">Тип файла - <cite title="Source Title">DOC</cite></small>
+                    <div><small class="text-danger">Имя файла - <cite title="Source Title">любое</cite></small></div>
+
+                  </div>
+
+
+                </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+              <!-- /.card-body -->
+      <!--/.col (right) -->
+    </div>
+    <!-- /.row -->
+  </div>
+
+
+  </section>
+
+
+  <button type="button" class="btn btn-primary btn-float d-none" id="add_docs_for_check_prelimenary"><i class="fas fa-save"  style="font-size: 25px; z-index: 99999;"></i></button>  <?if (showBtn){?>
+
+{% endblock %}
+
+{% block script %}
+  <script>
+
+
+    $('#new_orders_ready_to_proceed_list').addClass('menu-open')
+    $('#temp_stop_menu').addClass('menu-open')
+    $('#refuse_menu').addClass('menu-open')
+
+    $('#content').fadeIn('slow').removeClass('d-none')
+
+
+$('#choose-docs-type').on('change',function(){
+    console.log($(this).val())
+    switch ($(this).val()) {
+        case 'ЭЗ':
+            $('#doc_1').removeClass('d-none')
+            $('#doc_1_lable').html('Файл ЭЗ')
+            $('#doc_2').addClass('d-none')
+            $('#card_files_for_check').removeClass('d-none')
+            $('#add_docs_for_check_prelimenary').removeClass('d-none')
+
+            break;
+        case 'Пред ЭЗ + Уведомление о приостановке':
+            $('#doc_1').removeClass('d-none')
+            $('#doc_1_lable').html('Файл Предварительного ЭЗ')
+            $('#doc_2').removeClass('d-none')
+            $('#doc_2_lable').html('Файл уведомления о приостановке')
+            $('#card_files_for_check').removeClass('d-none')
+            $('#add_docs_for_check_prelimenary').removeClass('d-none')
+
+            break;
+            case 'Отриц ЭЗ + Уведомление об отказе (по сроку)':
+            case 'Отриц ЭЗ + Уведомление об отказе':
+            $('#doc_1').removeClass('d-none')
+            $('#doc_1_lable').html('Файл Отрицательного ЭЗ')
+            $('#doc_2').removeClass('d-none')
+            $('#doc_2_lable').html('Файл уведомления об отказе')
+            $('#card_files_for_check').removeClass('d-none')
+            $('#add_docs_for_check_prelimenary').removeClass('d-none')
+
+            break;
+        case '---':
+            $('#card_files_for_check').addClass('d-none')
+            $('#add_docs_for_check_prelimenary').addClass('d-none')
+
+            break;
+
+        default:
+            break;
+    }
+})
+
+
+
+  $('#add_docs_for_check_prelimenary').on('click', function(){
+
+    //var big_title = $('#big_title').html()
+    var doc_1 = $('#doc_1_file');
+    var doc_2 = $('#doc_2_file');
+    var big_title = $('#big_title').html()
+
+    let cardTitle = $('#cardTitle').html()
+
+    var chooseDocsType = $('#choose-docs-type').val()
+
+    let fileTypeBool = false;
+    let fileIsNotEmptyBool = false;
+    let allFilesLoaded = false
+
+    if(doc_1.get(0).files.length !== 0){
+        fileIsNotEmptyBool = true
+        let doc_1_Val = doc_1.val()
+        let doc_1_Val_Split = doc_1_Val.split('.')
+        let doc_1_FileType = doc_1_Val_Split[doc_1_Val_Split.length - 1].toLowerCase()
+        //console.log('doc_1_FileType - ' + doc_1_FileType)
+        if(doc_1_FileType === 'doc' || doc_1_FileType === 'docx'){
+            fileTypeBool = true;
+        }
+    }
+
+
+    if(chooseDocsType !== 'ЭЗ'){
+        if(doc_2.get(0).files.length !== 0){
+            let doc_2_Val = doc_2.val()
+            let doc_2_Val_Split = doc_2_Val.split('.')
+            let doc_2_FileType = doc_2_Val_Split[doc_2_Val_Split.length - 1].toLowerCase()
+            //console.log('doc_2_FileType - ' + doc_2_FileType)
+            if(doc_2_FileType !== 'doc' && doc_2_FileType !== 'docx'){
+                fileTypeBool = false;
+            }
+        }else{
+            fileIsNotEmptyBool = false
+        }
+    }
+
+    if(!fileIsNotEmptyBool){
+        toastr.error('Файл(ы) отсутствует(ют)')
+    }else{
+        if(!fileTypeBool){
+            toastr.error('Неверный тип файла')
+        }
+    }
+
+
+    if(fileIsNotEmptyBool && fileTypeBool){
+        $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+        $(this).prop('disabled', true)
+
+        let data = new FormData()
+        let orderID = {{ order.id }};
+        data.append('orderID', orderID);
+        data.append('doc_1_file', $('#doc_1_file')[0].files[0]);
+        data.append('doc_2_file', $('#doc_2_file')[0].files[0]);
+        data.append('docType', $("#choose-docs-type").val());
+
+        $.ajax({
+                type: 'POST',
+                url: "{% url 'save_order_new_send_for_check_preliminary' %}",
+                data: data,
+                processData: false,
+                contentType: false,
+                error: function(data){
+                  toastr.error('Ошибка', data)
+                },
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                success: function () {
+                    toastr.success('Данные сохранены');
+                    showModalCommonNextStep({
+                        title: 'Следующие шаги',
+                        modal_body: '<b>Ожидайте окончания проверки документов</b><br>' +
+                                    '<b>После загрузки экспертом финальной версии документов они попадут в категорию "Первичка новые"</b> <br>',
+                        headerClass: 'bg-danger'
+                    })
+
+                }
+            })
+
+    }
+})
+
+
+
+
+
+
+  </script>
+
+{% endblock %}

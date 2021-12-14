@@ -1,0 +1,417 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+{% block style %}
+
+{% endblock %}
+
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4>Предварительная проверка заявки</h4>
+        <h5>Заявка - <i id="orderNumber" data-orderid="{{ order.id }}">{{ order.number }}</i>  | Заявитель - <i id="applierName">{{ order.company }}</i> | № ПП - <i id="ppNumber">{{ order.pp }}</i></h5>
+
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content" >
+
+  <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title"><?= title?></h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+
+              <div class="card-body">
+
+
+                <div class="row col-md-12 mt-2">
+                  <div class="form-group col-md-6">
+                    <label for="prelimenaryCheck_comments">Крайняя дата отправки уведомления</label>
+                    <div id="prelimenaryCheck_comments"  class="form-control text-danger">{{ temp_stop.end_date_for_notification|date:'d.m.Y' }}</div>
+
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="">Дата подгрузки уведомления в ИАС</label>
+                    <div id=""  class="form-control text-danger">{{ temp_stop.date_IAS|date:'d.m.Y' }}</div>
+
+                  </div>
+
+                </div>
+                <div class="row col-md-12">
+
+                  <div class="form-group col-md-6">
+                    <label for="">Номер уведомления</label>
+                    <div id=""  class="form-control">{{ notification.notification_number }}</div>
+
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="">Дата уведомления</label>
+                    <div id=""  class="form-control">{{ notification.notification_date|date:'d.m.Y' }}</div>
+
+                  </div>
+
+                </div>
+                <div class="row col-md-12">
+                  <div class="form-group col-md-12">
+                    <label for="notification_date">Дата отправки уведомления о приостановке заявителю</label>
+                    <input id="notification_date"  class="form-control date-time-picker input-to-fill-up" type="text" name="notification_date">
+                    <small class="text-danger">Дата отправки уведомления согласно ИАС (не позднее <b>{{ temp_stop.end_date_for_notification|date:'d.m.Y' }}</b>)</small>
+
+                  </div>
+
+                </div>
+
+
+              </div>
+              <!-- /.card-body -->
+          </div>
+
+          <div class="card card-warning">
+            <div class="card-header">
+              <h3 class="card-title">Загрузка файлов</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <div class="card-body">
+
+              <div class="row col-md-12">
+                  <div class="form-group col-md-6">
+                    <label for="preconclusion-file">Файл предэкпертизы</label>
+                    <div class="input-group mb-1">
+                        <input type="file" class="form-control input-to-fill-up" id="preconclusion-file" name="preconclusion-file">
+                    </div>
+                    <small class="text-danger">Тип файла - <cite title="Source Title">PDF</cite></small>
+                    <div><small class="text-danger">Имя файла - <cite title="Source Title">любое</cite></small></div>
+                    <div><small class="text-danger">Содержание файла - <cite title="Source Title">Подписанный уполномоченными лицами документ</cite></small></div>
+
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="notification-file">Файл уведомления</label>
+                    <div class="input-group mb-1">
+                        <input type="file" class="form-control input-to-fill-up" id="notification-file" name="notification-file">
+                    </div>
+                    <small class="text-danger">Тип файла - <cite title="Source Title">PDF</cite></small>
+                    <div><small class="text-danger">Имя файла - <cite title="Source Title">любое</cite></small></div>
+                    <div><small class="text-danger">Содержание файла - <cite title="Source Title">Подписанный уполномоченными лицами документ</cite></small></div>
+
+                  </div>
+
+
+                </div>
+
+            </div>
+
+          </div>
+
+
+
+
+
+        </div>
+              <!-- /.card-body -->
+
+
+
+          <!-- /.card -->
+
+
+
+
+        <!-- /.card -->
+      </div>
+      <!--/.col (right) -->
+    </div>
+    <!-- /.row -->
+  </div>
+
+
+  </section>
+  <button type="button" class="btn btn-primary btn-float" id="btn_add_preconclusion_notification"><i class="fas fa-save" style="font-size: 25px;"></i></button>
+
+{% endblock %}
+
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+  <script>
+
+        $('#new_orders_ready_to_proceed_list').addClass('menu-open')
+        $('#temp_stop_menu').addClass('menu-open')
+        $('#refuse_menu').addClass('menu-open')
+
+        $('#content').fadeIn('slow').removeClass('d-none')
+
+      //НАЧАЛО сохранение предэкспертизы/уведомления
+      $('#btn_add_preconclusion_notification').on('click', function(){
+
+          let preconclusionFile = $('#preconclusion-file');
+          let preconclusionFileVal =  preconclusionFile.val()
+          let notificationFile = $('#notification-file');
+          let notificationFileVal = notificationFile.val()
+          let notificationDate = $('#notification_date').val()
+
+          let notificationFileSplit = notificationFileVal.split('.')
+          let notificationFileFileType = notificationFileSplit[notificationFileSplit.length - 1].toLowerCase()
+          let preconclusionFileSplit = preconclusionFileVal.split('.')
+          let preconclusionFileFileType = preconclusionFileSplit[preconclusionFileSplit.length - 1].toLowerCase()
+
+
+
+          ////////console.log(preconclusionFile.get(0).length);
+          let testIsOK = false
+
+
+          if(preconclusionFile.get(0).files.length == 0 || notificationFile.get(0).files.length == 0 || notificationDate == ''){
+            toastr.error('Все поля должны быть заполнены');
+            $('#btn_add_preconclusion_notification').html('<i class="fas fa-save" style="font-size: 25px;"></i>');
+            $(this).prop('disabled', false);
+          }else{
+
+            if(notificationFileFileType !== 'pdf' || preconclusionFileFileType !== 'pdf'){
+              toastr.error('Тип файла(ов) не соответствует требованиям');
+
+            }else{
+              testIsOK = true
+            }
+
+          }
+          let filesizeIsOk = true
+          if(preconclusionFile[0].files[0].size > 6291456 || notificationFile[0].files[0].size > 6291456){
+            filesizeIsOk = false
+            toastr.error('Размер файла не должен превышать 6 Мбайт');
+            $('#btn_add_preconclusion_notification').html('<i class="fas fa-save" style="font-size: 25px;"></i>');
+            $(this).prop('disabled', false);
+
+          }
+
+          if(testIsOK && filesizeIsOk){
+
+            $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+            $(this).prop('disabled', true);
+            var data = new FormData()
+            let orderID = $('#orderNumber').attr('data-orderid');
+
+
+
+            let notificationDateSplit = notificationDate.split('.');
+            let newNotificationDate = notificationDateSplit[2] + '-' + notificationDateSplit[1] + '-' + notificationDateSplit[0]
+
+            let endDateForAdditionalDocsByApplier = getWorkingDays(newNotificationDate, 10,0)
+
+            data.append('orderID', orderID);
+            data.append('pez', $('#preconclusion-file')[0].files[0]);
+            data.append('notification', $('#notification-file')[0].files[0]);
+            data.append('notification_date', notificationDate);
+            data.append('end_date_for_additional_docs_by_applier', endDateForAdditionalDocsByApplier);
+
+
+            {#data.end_date_for_additional_docs_by_applier = endDateForAdditionalDocsByApplier#}
+            {#data.statusType = 'temp_stop'#}
+            {#data.folderType = 'temp_stop'#}
+            {#data.folderType = 'PDF'#}
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'save_pez_notification' %}",
+                data: data,
+                processData: false,
+                contentType: false,
+                error: function(data){
+                  toastr.error('Ошибка', data)
+                },
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                success: function () {
+                    toastr.success('Данные сохранены');
+                    showModalCommonNextStep({
+                        title: 'Следующие шаги',
+                        modal_body: '<b>Выполните следующие действия:</b><br/>' +
+                          '<ul class="mt-2">' +
+                          '<li>ожидайте получения доработанной заявки от заявителя...</li>' +
+                          '<li>в срок до <b>' + endDateForAdditionalDocsByApplier + '</b> включительно заявитель обязан предоставить доработанную заявку</li>' +
+                          '</ul>'+
+                          '<b>В случае получения доработанной заявки:</b><br/>' +
+                          '<ul class="mt-2">' +
+                          '<li>зайдите в пункт меню <b>"Приостановка > Дата доработки"</b></li>' +
+                          '<li>найдите заявку в списке</li>' +
+                          '<li>нажмите на соответствующую запись в списке</li>' +
+                          '<li>выберите дату получения доработанной заявки и сохраните данные</li>' +
+                          '</ul>'+
+                          '<b>В случае отсутствия доработанной заявки:</b><br/>' +
+                          '<ul class="mt-2">' +
+                          '<li>заявка автоматически попадает в категорию <b>"Отказ > По сроку"</b></li>' +
+                          '<li>зайдите в пункт меню <b>"Отказ > По сроку"</b></li>' +
+                          '<li>найдите заявку в списке</li>' +
+                          '<li>нажмите на соответствующую запись в списке</li>' +
+                          '<li>заполните необходимые данные в открывшейся форме</li>' +
+                          '</ul>',
+
+                          headerClass: 'bg-danger'
+                    })
+
+                }
+            })
+
+
+
+
+{#            google.script.run.withFailureHandler(function(error){#}
+{#                toastr.error(error);#}
+{#                $(this).html('<i class="fas fa-save"  style="font-size: 25px;"></i>');#}
+{#                $(this).prop('disabled', true)#}
+{##}
+{#              }).withSuccessHandler(function(response){#}
+{#                  ////////console.log(html)#}
+{#                var folderID = response.folderID;#}
+{#                var filesCnt = response.filesCnt;#}
+{#                var add_data = {}#}
+{##}
+{#                add_data.filesCnt = filesCnt;#}
+{#                add_data.folderID = folderID;#}
+{#                add_data.type = 'newConclusion';#}
+{#                add_data.orderNumber = orderNumber;#}
+{#                add_data.applierName = applierName;#}
+{##}
+{#                add_data.prefix = 'УВ'#}
+{##}
+{#                //////console.log(response.rowIndex);#}
+{##}
+{#                saveFilesToServer(['notification-file'], folderID, function(response){#}
+{#                  add_data.prefix = 'ПЭ'#}
+{##}
+{#                  saveFilesToServer(['preconclusion-file'], folderID, function(response){#}
+{##}
+{#                    //var curNewOrders = parseInt($('.bage-new-orders').html());#}
+{#                   // //////console.log('583 - ', endDateForAdditionalDocsByApplier)#}
+{##}
+{#                    var data = {}#}
+{#                    data.orderNumber = orderNumber#}
+{#                    data.notificationDate = notificationDate#}
+{#                    data.user_login = $('#userLogin').html()#}
+{##}
+{##}
+{#                    google.script.run.withFailureHandler(function(error){#}
+{#                      toastr.error(error);#}
+{#                    }).withSuccessHandler(function(response){#}
+{#                      toastr.success('Данные в таблице сохранены')#}
+{#                      ////////console.log('дфтфаф =', html)#}
+{##}
+{#                      /*#}
+{#                      var bageNoNotification = parseInt($('.bage-orders-temp-stop-no-notification').html()) - 1#}
+{#                      var bageWithNotification = parseInt($('.bage-orders-temp-stop-with-notification').html())#}
+{#                      var newBageWithNotification = bageWithNotification - 1#}
+{#*/#}
+{#                      if(response.status = 'Приостановлено (уведомление отправлено)'){#}
+{#                        bageInOutCount('.bage-orders-temp-stop-no-notification', '.bage-orders-temp-stop-with-notification-before-remade-date')#}
+{#                      }else{#}
+{##}
+{#                        bageInOutCount('.bage-orders-temp-stop-no-notification', '.bage-orders-temp-stop-remadeorder-date')#}
+{##}
+{#                      }#}
+{#/*#}
+{#                      showModalCommonNextStep({#}
+{#                        title: 'Следующие шаги',#}
+{#                        modal_body: '<b>Выполните следующие действия:</b><br/>' +#}
+{#                          '<ul class="mt-2">' +#}
+{#                          '<li>ожидайте получения доработанной заявки от заявителя...</li>' +#}
+{#                          '<li>в срок до <b>' + endDateForAdditionalDocsByApplier + '</b> включительно заявитель обязан предоставить доработанную заявку</li>' +#}
+{#                          '</ul>' +#}
+{#                          '<b>В случае предоставления доработанной заявки до ' + endDateForAdditionalDocsByApplier + ' включительно:</b><br/>' +#}
+{#                          '<ul class="mt-2">' +#}
+{#                          '<li>проанализируйте предоставленную доработанную заявку и примите решение устранены ли причины приостановки</li>' +#}
+{#                          '<li>зайдите в пункт меню <b>"Приостановка > С уведомлением"</b></li>' +#}
+{#                          '<li>найдите заявку в списке</li>' +#}
+{#                          '<li>нажмите на соответствующую запись в списке</li>' +#}
+{#                          '<li>заполните необходимые данные в открывшейся форме</li>' +#}
+{#                          '</ul>'+#}
+{#                          '<b>В случае отсутствия доработанной заявки:</b><br/>' +#}
+{#                          '<ul class="mt-2">' +#}
+{#                          '<li>заявка автоматически попадает в категорию <b>"Отказ > По сроку"</b></li>' +#}
+{#                          '<li>зайдите в пункт меню <b>"Отказ > По сроку"</b></li>' +#}
+{#                          '<li>найдите заявку в списке</li>' +#}
+{#                          '<li>нажмите на соответствующую запись в списке</li>' +#}
+{#                          '<li>заполните необходимые данные в открывшейся форме</li>' +#}
+{#                          '</ul>',#}
+{##}
+{#                          headerClass: 'bg-danger'#}
+{#                      })#}
+{#*/#}
+{#                      showModalCommonNextStep({#}
+{#                        title: 'Следующие шаги',#}
+{#                        modal_body: '<b>Выполните следующие действия:</b><br/>' +#}
+{#                          '<ul class="mt-2">' +#}
+{#                          '<li>ожидайте получения доработанной заявки от заявителя...</li>' +#}
+{#                          '<li>в срок до <b>' + response.endDateForAdditionalDocsByApplier + '</b> включительно заявитель обязан предоставить доработанную заявку</li>' +#}
+{#                          '</ul>'+#}
+{#                          '<b>В случае получения доработанной заявки:</b><br/>' +#}
+{#                          '<ul class="mt-2">' +#}
+{#                          '<li>зайдите в пункт меню <b>"Приостановка > Дата доработки"</b></li>' +#}
+{#                          '<li>найдите заявку в списке</li>' +#}
+{#                          '<li>нажмите на соответствующую запись в списке</li>' +#}
+{#                          '<li>выберите дату получения доработанной заявки и сохраните данные</li>' +#}
+{#                          '</ul>'+#}
+{#                          '<b>В случае отсутствия доработанной заявки:</b><br/>' +#}
+{#                          '<ul class="mt-2">' +#}
+{#                          '<li>заявка автоматически попадает в категорию <b>"Отказ > По сроку"</b></li>' +#}
+{#                          '<li>зайдите в пункт меню <b>"Отказ > По сроку"</b></li>' +#}
+{#                          '<li>найдите заявку в списке</li>' +#}
+{#                          '<li>нажмите на соответствующую запись в списке</li>' +#}
+{#                          '<li>заполните необходимые данные в открывшейся форме</li>' +#}
+{#                          '</ul>',#}
+{##}
+{#                          headerClass: 'bg-danger'#}
+{#                      })#}
+{##}
+{##}
+{##}
+{##}
+{##}
+{##}
+{#                      /*#}
+{#                      if (bageNoNotification == 0){#}
+{#                        $('.bage-orders-temp-stop-no-notification').html('');#}
+{#                      }else{#}
+{#                        $('.bage-orders-temp-stop-no-notification').html(bageNoNotification);#}
+{##}
+{#                      }#}
+{#                      ////////console.log('with-notification - ', $('#bage-orders-temp-stop-with-notification').html())#}
+{#                      if($('.bage-orders-temp-stop-with-notification').html() == ''){#}
+{#                        $('.bage-orders-temp-stop-with-notification').html(1)#}
+{#                      }else{#}
+{#                        $('.bage-orders-temp-stop-with-notification').html(bageWithNotification + 1)#}
+{#                      }#}
+{#*/#}
+{#                      //$('#nav_satistics').click();#}
+{##}
+{#                    }).saveDataToTablesTempStopNotification(data);#}
+{##}
+{##}
+{##}
+{#                  }, add_data);#}
+{##}
+{##}
+{#                }, add_data);#}
+{##}
+{##}
+{#            }).folderForConclusion('', '', data);#}
+
+
+          }
+        })
+
+
+  </script>
+
+{% endblock %}
