@@ -13,7 +13,7 @@ class Role(models.Model):
 
 
 class Company(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, default=None, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=None, null=True)
     added = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=100)
