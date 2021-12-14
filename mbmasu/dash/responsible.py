@@ -1337,12 +1337,12 @@ def save_order_new_send_for_check_preliminary(request):
             check_preliminary_file_to_check_db.user = request.user
             check_preliminary_file_to_check_db.type = doc_type
             doc_1_file = request.FILES['doc_1_file']
-            doc_1_file_name = u'ПЭЗ_приостановка_на проверку_' + file_name.replace(' ', '')
+            doc_1_file_name = u'ПЭЗ_(приостановка_на проверку)_' + file_name.replace(' ', '')
             fs = FileSystemStorage()
             fs.save(doc_1_file_name, doc_1_file)
             check_preliminary_file_to_check_db.file_1 = doc_1_file_name
             doc_2_file = request.FILES['doc_2_file']
-            doc_2_file_name = u'УВ_приостановка_на проверку_' + file_name.replace(' ', '')
+            doc_2_file_name = u'УВ_(приостановка_на проверку)_' + file_name.replace(' ', '')
             fs = FileSystemStorage()
             fs.save(doc_2_file_name, doc_2_file)
             check_preliminary_file_to_check_db.file_2 = doc_2_file_name
@@ -1353,12 +1353,12 @@ def save_order_new_send_for_check_preliminary(request):
             check_preliminary_file_to_check_db.user = request.user
             check_preliminary_file_to_check_db.type = doc_type
             doc_1_file = request.FILES['doc_1_file']
-            doc_1_file_name = u'ОЭЗ(отказ первичный_на проверку)_' + file_name.replace(' ', '')
+            doc_1_file_name = u'ОЭЗ_(отказ первичный_на проверку)_' + file_name.replace(' ', '')
             fs = FileSystemStorage()
             fs.save(doc_1_file_name, doc_1_file)
             check_preliminary_file_to_check_db.file_1 = doc_1_file_name
             doc_2_file = request.FILES['doc_2_file']
-            doc_2_file_name = u'УВ(отказ первичный_на проверку)_' + file_name.replace(' ', '')
+            doc_2_file_name = u'УВ_(отказ первичный_на проверку)_' + file_name.replace(' ', '')
             fs = FileSystemStorage()
             fs.save(doc_2_file_name, doc_2_file)
             check_preliminary_file_to_check_db.file_2 = doc_2_file_name
