@@ -40,9 +40,11 @@
 
                   <div class="form-group col-md-12" >
                       {% for file_to_check in files_to_check %}
-                        <p><a href="{% url 'download_file'%}" class="download_file">{{ file_to_check.file_1.name }}</a></p>
+{#                        <p><a href="{% url 'download_file' path=file_to_check.file_1.path %}" class="download_file">{{ file_to_check.file_1.name }}</a></p>#}
+                        <p><a href="" class="download_file">{{ file_to_check.file_1.name }}</a></p>
                           {% if file_to_check.file_2 %}
-                        <p><a href="{% url 'download_file' %}" class="download_file">{{ file_to_check.file_2.name }}</a></p>
+{#                        <p><a href="{% url 'download_file' path=file_to_check.file_2.path %}" class="download_file">{{ file_to_check.file_2.name }}</a></p>#}
+                        <p><a href="" class="download_file">{{ file_to_check.file_2.name }}</a></p>
                             {% endif %}
                       {% endfor %}
 
