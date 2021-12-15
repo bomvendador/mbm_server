@@ -295,7 +295,8 @@
 
             $('#modal_error').modal('show')
         }else {
-            if((protocol_date === '' || protocol_number === '') && ($('#protocol').length !== 0 && protocol_val === "---" || $('#protocol').length === 0)){
+            let protocol_len = $('#protocol').length
+            if((protocol_date === '' || protocol_number === '') && ((protocol_len !== 0 && protocol_val === "---") || protocol_len === 0)){
                console.log(protocol_date)
                console.log(protocol_number)
                console.log($('#protocol').length)

@@ -932,6 +932,12 @@ def order_info(request, order_id):
     else:
         ez_pdf = None
 
+    try:
+        appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK__order=order)
+    except EZdoc.DoesNotExist:
+        appointed_for_ok = None
+
+
     status_change_history = StatusChange.objects.filter(order=order).order_by('-added')
     print(order)
     context.update({
@@ -956,7 +962,8 @@ def order_info(request, order_id):
         'refuse': refuse,
         'refuse_files': refuse_files,
         'ez_docs': ez_doc,
-        'ez_pdfs': ez_pdf
+        'ez_pdfs': ez_pdf,
+        'appointed_for_ok': appointed_for_ok
     })
     return render(request, 'dash/menu/admin/dash_admin_order_info.html', context)
 

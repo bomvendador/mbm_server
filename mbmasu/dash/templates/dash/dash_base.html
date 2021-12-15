@@ -426,6 +426,12 @@
                       <p>Рассмотрено<span class="badge badge-info right" id="bage_orders_appointed_for_ok_admin">{% if counter.appointed_for_ok > 0 %}{{ counter.appointed_for_ok|default_if_none:"" }}{% endif %}</span></p>
                     </a>
                   </li>
+                  <li class="nav-item menu-link pl-2 cursor-pointer" id="nav_orders_protocols_list">
+                    <a class="nav-link menu-link">
+
+                      <p>Протоколы<span class="badge badge-info right" id="bage_orders_protocols_admin">{% if counter.admin_protocols_orders > 0 %}{{ counter.admin_protocols_orders|default_if_none:"" }}{% endif %}</span></p>
+                    </a>
+                  </li>
 
                 </ul>
 
