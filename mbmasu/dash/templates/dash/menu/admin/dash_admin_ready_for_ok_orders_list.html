@@ -284,6 +284,7 @@
         let checkMaxSum = new RegExp(/^\d+.?\d{0,2}$/);
         let error_arr = []
         let ok_date = $('#ok_date').val()
+        let commissionDate = $('#commission').val()
 
         $('.ready-for-ok-confirmed').each(function () {
             let passed_ok = {}
@@ -316,7 +317,7 @@
 
             $('#modal_error').modal('show')
         }else {
-            if(ok_date === ''){
+            if((ok_date === '' && commissionDate === '---')){
                 toastr.error('Укажите дату комиссии')
             }else {
                 //сохраняем данные
@@ -325,6 +326,9 @@
                 data.next_ok_arr = next_ok_arr
                 data.passed_ok_arr = JSON.stringify(passed_ok_arr)
                 data.ok_date = ok_date
+                if(commissionDate !== '---'){
+                    data.commissionID = $('#commission option:selected').attr('id').split('_')[1]
+                }
                 $.ajax({
                   headers: { "X-CSRFToken": '{{ csrf_token }}' },
                   url: "{% url 'save_ready_for_ok_orders' %}",
