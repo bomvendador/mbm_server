@@ -263,10 +263,10 @@
 
     $('#ok_date').on('change', function () {
         if($(this).val() === ''){
-            $('#commission').prop('disabled', false)
+            $('#commission').prop('disabled', false).addClass('input-to-fill-up')
 
         }else {
-            $('#commission').val('---').prop('disabled', 'disabled')
+            $('#commission').val('---').prop('disabled', 'disabled').removeClass('input-to-fill-up')
         }
     })
 
