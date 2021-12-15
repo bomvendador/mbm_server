@@ -1003,12 +1003,14 @@ def ready_for_ok_orders_list(request):
     context = dash_get_info(request)
     users_profiles = userprofile.objects.all()
     orders = ReadyForOK.objects.filter(appointed_ok=False)
+    commission_dates = CommissionDate.objects.all()
     context.update({
         'big_title': 'Подготовленные для отраслевой комиссии ЭЗ',
         'title': 'Выберите заявки',
         'counter': get_counter(request.user),
         'users_profiles': users_profiles,
-        'orders': orders
+        'orders': orders,
+        'commission_dates': commission_dates
     })
     return render(request, 'dash/menu/admin/dash_admin_ready_for_ok_orders_list.html', context)
 
