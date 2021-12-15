@@ -186,14 +186,16 @@
               </div>
               <div class="modal-body" id="modal_appoint_for_ok_body">
                   <div class="row col-md-12">
-                            <label for="ok_date">Дата проведения ОК</label>
-
                         <div id="ok_date_input" class="form-group col-md-4">
-                             <input id="ok_date"  class="form-control date-time-picker input-to-fill-up" type="text" name="ok_date" value="">
+                            <label for="ok_date">Дата комиссии</label>
+
+                            <div class="input-group mb-12">
+                                 <input id="ok_date"  class="form-control date-time-picker  input-to-fill-up" type="text" name="ok_date" value="">
+
                                 <div class="input-group-append">
                                     <span class="input-group-text" style="cursor: pointer" id="del"><i class="far fa-trash-alt"></i></span>
                                 </div>
-
+                            </div>
                         </div>
 
                         {% if commission_dates %}
@@ -261,10 +263,10 @@
 
     $('#ok_date').on('change', function () {
         if($(this).val() === ''){
-            $('#protocol').prop('disabled', false)
+            $('#commission').prop('disabled', false)
 
         }else {
-            $('#protocol').val('---').prop('disabled', 'disabled')
+            $('#commission').val('---').prop('disabled', 'disabled')
         }
     })
 
