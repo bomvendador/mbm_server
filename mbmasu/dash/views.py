@@ -1048,7 +1048,8 @@ def save_ready_for_ok_orders(request):
         data = request.POST
         next_ok_arr = data.getlist('next_ok_arr')
         passed_ok_arr = data.getlist('passed_ok_arr')
-        ok_date = date_to_db(data['ok_date'])
+        if data.get('ok_date')
+            ok_date = date_to_db(data['ok_date'])
         commission_id = data.get('commissionID')
 
         try:
