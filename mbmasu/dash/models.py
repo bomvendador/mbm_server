@@ -373,6 +373,7 @@ class AppointedForOK(models.Model):
     ready_for_OK = models.ForeignKey(ReadyForOK, on_delete=models.CASCADE, default=None)
     commission_date = models.ForeignKey(CommissionDate, on_delete=models.CASCADE, default=None)
     marked_for_next_ok = models.BooleanField(blank=False, null=True, default=False)
+    protocol_issued = models.BooleanField(blank=False, null=True, default=False)
 
     def __str__(self):
         return self.ready_for_OK.order.number + ' - ' + self.ready_for_OK.order.company

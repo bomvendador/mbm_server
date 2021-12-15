@@ -1119,7 +1119,7 @@ def save_ready_for_ok_orders(request):
 def appointed_for_ok_orders_list(request):
     context = dash_get_info(request)
     users_profiles = userprofile.objects.all()
-    orders = AppointedForOK.objects.filter(Q(marked_for_next_ok=False))
+    orders = AppointedForOK.objects.filter(Q(marked_for_next_ok=False) & Q(protocol_issued=False))
     protocols = Protocol.objects.all()
     context.update({
         'big_title': 'Рассмотренные на ОК заявки',
@@ -1142,6 +1142,8 @@ def save_orders_for_protocol(request):
         protocol_ok_arr = data.getlist('protocol_ok_arr')
         for order in json.loads(protocol_ok_arr[0]):
             appointed_for_ok_db = AppointedForOK.objects.get(id=order['appointed_for_ok_id'])
+            appointed_for_ok_db.protocol_issued = True
+            appointed_for_ok_db.save()
             if data.get('protocolID'):
                 protocol_db = Protocol.objects.get(id=data.get('protocolID'))
             else:
