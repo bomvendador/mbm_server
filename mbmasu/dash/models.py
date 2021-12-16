@@ -404,6 +404,18 @@ class ProtocolOrders(models.Model):
     decision = models.BooleanField(default=False)
     protocol = models.ForeignKey(Protocol, on_delete=models.CASCADE, default=None, null=True)
 
+
+##Выездная проверка
+class OnsiteCheck(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True)
+    added = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    comments = models.TextField(blank=True, null=True)
+    date = models.DateField(auto_now=False, auto_now_add=False)#дата проведния ВП
+    act = models.FileField()
+
+
 ## ОТЗЫВЫ
 class OrderCalledBack(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True)
