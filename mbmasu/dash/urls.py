@@ -30,6 +30,7 @@ urlpatterns = [
     path('all_orders_list', views.all_orders_list, name='all_orders_list'),
     path('all_orders_list/<int:order_id>', views.order_info, name='order_info'),
     path('protocols_orders_list', views.protocols_orders_list, name='protocols_orders_list'),
+    path('onsite_checks_list', views.onsite_checks_list, name='onsite_checks_list'),
 
     path('get_user_role_name', views.get_user_role_name, name='get_user_role_name'),
     path('appoint_expert_for_order_check_list', views.appoint_expert_for_order_check_list,

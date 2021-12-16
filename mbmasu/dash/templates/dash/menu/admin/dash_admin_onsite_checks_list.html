@@ -1,0 +1,134 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'dash/plugins/floatingButton/css/index.css' %}">
+{% endblock %}
+{% block content %}
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4 id="big_title">{{ big_title }}</h4>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+
+
+<section class="content" >
+
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-12">
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">{{ title }}</h3>
+
+            <div class="card-tools">
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body table-responsive p-4 pt-1">
+            <table class="table table-hover text-nowrap" id="table_list">
+              <thead>
+                <tr>
+                    <th>№ п/п</th>
+                    <th>Номер заявки</th>
+                    <th>Наименование МСП</th>
+                    <th>Статус</th>
+                    <th>Ответственный до приостановки</th>
+                    <th>Ответственный после приостановки</th>
+
+                  <!--th></th-->
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                {% for order in orders %}
+                  <tr class="user-tr cursor-pointer" id="orderID_{{ order.id }}">
+                      <td>{{ forloop.counter }}</td>
+                      <td>{{ order.number }}</td>
+                      <td>{{ order.company }}</td>
+                      <td>{{ order.status.name }}</td>
+                      <td>{{ order.responsible_preliminary.first_name }} {{ order.responsible_preliminary.last_name }}</td>
+                      <td>{{ order.responsible_after_temp_stop.first_name }} {{ order.responsible_after_temp_stop.last_name }}</td>
+                </tr>
+               {% endfor %}
+
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+
+</section>
+
+
+
+{% endblock %}
+
+{% block script %}
+
+        <script type="text/javascript" src="{% static 'dash/plugins/floatingButton/js/index.js' %}"></script>
+
+
+  <script>
+
+  add_hover_menu('#nav_orders_protocols_list')
+
+
+    $("#table_list").DataTable({
+      "aoColumnDefs": [{
+      "bSortable": false,
+        "orderable": false,
+      "aTargets": [0]
+        }],
+      "order": [[1, "asc"]],
+
+        "paging": false,
+        "language": {
+        "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Russian.json"
+        },
+        "initComplete": function () {
+        $('.dt-buttons').addClass('padding-top-10')
+        hideLoaderSpinnerContent();
+        $('#content').fadeIn('slow').removeClass('d-none')
+
+        },
+        dom: 'Bfrtip',
+        buttons: [
+        {
+          extend: 'excelHtml5',
+          title: "Экспорт EXCEL - Протокол ОК",
+          exportOptions: {
+                format: {
+                    body: function (data, row, column, node) {
+                        // if it is select
+                        switch (column) {
+                           case 6:
+                                return $(data).text();
+
+                            default:
+                                return data
+
+                        }
+                    }
+                }
+            }
+        },
+        {
+          extend: 'pdfHtml5',
+          title: "Экспорт PDF - Протокол ОК"
+        }]
+    })
+
+
+  </script>
+
+{% endblock %}

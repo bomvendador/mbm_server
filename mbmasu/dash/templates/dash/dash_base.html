@@ -447,30 +447,20 @@
                   </p>
                 </a>
                 <ul class="nav nav-treeview">
-                  <li class="nav-item menu-link pl-2 cursor-pointer" id="nav_orders_ready_for_ok_list">
+                  <li class="nav-item menu-link pl-2 cursor-pointer" id="nav_onsite_checks_list">
                     <a class="nav-link menu-link">
 
-                      <p>Подготовка к ОК<span class="badge badge-info right" id="bage_orders_ready_for_ok_admin">{% if counter.admin_ready_for_ok > 0 %}{{ counter.admin_ready_for_ok|default_if_none:"" }}{% endif %}</span></p>
+                      <p>Список для ВП<span class="badge badge-info right" id="bage_onsite_checks_admin">{% if counter.admin_onsite_checks > 0 %}{{ counter.admin_onsite_checks }}{% endif %}</span></p>
                     </a>
                   </li>
-                  <li class="nav-item menu-link pl-2 cursor-pointer" id="nav_orders_appointed_for_ok_list">
+                  <li class="nav-item menu-link pl-2 cursor-pointer" id="nav_onsite_checks_complete_list">
                     <a class="nav-link menu-link">
 
-                      <p>Рассмотрено<span class="badge badge-info right" id="bage_orders_appointed_for_ok_admin">{% if counter.appointed_for_ok > 0 %}{{ counter.appointed_for_ok|default_if_none:"" }}{% endif %}</span></p>
+                      <p>Совершенные ВП<span class="badge badge-info right" id="bage_onsite_checks_complete_admin">{% if counter.admin_onsite_checks_complete > 0 %}{{ counter.admin_onsite_checks_complete }}{% endif %}</span></p>
                     </a>
                   </li>
-                  <li class="nav-item menu-link pl-2 cursor-pointer" id="nav_orders_protocols_list">
-                    <a class="nav-link menu-link">
-
-                      <p>Протоколы<span class="badge badge-info right" id="bage_orders_protocols_admin">{% if counter.admin_protocols_orders > 0 %}{{ counter.admin_protocols_orders|default_if_none:"" }}{% endif %}</span></p>
-                    </a>
-                  </li>
-
                 </ul>
-
               </li>
-
-
 
            {% endif %}
             {% if user_profile.role.name == 'Эксперт МБМ' or user_profile.role.name == 'Эксперт подрядчика' %}
@@ -1486,6 +1476,9 @@
               break;
            case 'nav_orders_protocols_list':
                 window.location.href = "{% url 'protocols_orders_list' %}";
+              break;
+           case 'nav_onsite_checks_list':
+                window.location.href = "{% url 'onsite_checks_list' %}";
               break;
 
             default:

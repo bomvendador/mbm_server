@@ -111,7 +111,11 @@ class CountersAdmin(models.Model):
     appointed_for_ok = models.IntegerField(default=0, null=True)
 
     #Протоколы
-    admin_protocols_orders =models.IntegerField(default=0, null=True)
+    admin_protocols_orders = models.IntegerField(default=0, null=True)
+
+    #Выездная проверка
+    admin_onsite_checks = models.IntegerField(default=0, null=True)
+    admin_onsite_checks_complete = models.IntegerField(default=0, null=True)
 
     def __str__(self):
         return self.user_role_name
