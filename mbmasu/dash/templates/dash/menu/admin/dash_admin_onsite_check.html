@@ -42,7 +42,6 @@
                   <div class="form-group col-md-4">
                     <label for="notification_date">Дата отправки уведомления о приостановке заявителю</label>
                     <input id="notification_date"  class="form-control date-time-picker input-to-fill-up" type="text" name="notification_date">
-                    <small class="text-danger">Дата отправки уведомления согласно ИАС (не позднее <b>{{ temp_stop.end_date_for_notification|date:'d.m.Y' }}</b>)</small>
 
                   </div>
 
@@ -51,9 +50,6 @@
                     <div class="input-group mb-1">
                         <input type="file" class="form-control input-to-fill-up" id="preconclusion-file" name="preconclusion-file">
                     </div>
-                    <small class="text-danger">Тип файла - <cite title="Source Title">PDF</cite></small>
-                    <div><small class="text-danger">Имя файла - <cite title="Source Title">любое</cite></small></div>
-                    <div><small class="text-danger">Содержание файла - <cite title="Source Title">Подписанный уполномоченными лицами документ</cite></small></div>
 
                   </div>
 
