@@ -39,33 +39,6 @@
 
 
                 <div class="row col-md-12 mt-2">
-                  <div class="form-group col-md-6">
-                    <label for="prelimenaryCheck_comments">Крайняя дата отправки уведомления</label>
-                    <div id="prelimenaryCheck_comments"  class="form-control text-danger">{{ temp_stop.end_date_for_notification|date:'d.m.Y' }}</div>
-
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="">Дата подгрузки уведомления в ИАС</label>
-                    <div id=""  class="form-control text-danger">{{ temp_stop.date_IAS|date:'d.m.Y' }}</div>
-
-                  </div>
-
-                </div>
-                <div class="row col-md-12">
-
-                  <div class="form-group col-md-6">
-                    <label for="">Номер уведомления</label>
-                    <div id=""  class="form-control">{{ notification.notification_number }}</div>
-
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="">Дата уведомления</label>
-                    <div id=""  class="form-control">{{ notification.notification_date|date:'d.m.Y' }}</div>
-
-                  </div>
-
-                </div>
-                <div class="row col-md-12">
                   <div class="form-group col-md-12">
                     <label for="notification_date">Дата отправки уведомления о приостановке заявителю</label>
                     <input id="notification_date"  class="form-control date-time-picker input-to-fill-up" type="text" name="notification_date">
@@ -74,6 +47,16 @@
                   </div>
 
                 </div>
+                    <div class="row col-md-12 mt-2">
+                      <div class="form-group">
+                        <label for="prelimenaryCheck_comments">Комментарии по {% if order.lotki_status.name == 'Приостановка' %}приостановке{% else %}отказу{% endif %}</label>
+                        <textarea class="form-control summernote input-to-fill-up" name="prelimenaryCheck_comments" id="prelimenaryCheck_comments"></textarea>
+                        <small class="text-danger">Опишите причины {% if order.lotki_status.name == 'Приостановка' %}приостановки{% else %}отказа{% endif %} со ссылкой на пункты соответствующего постановления</small>
+
+                      </div>
+
+                    </div>
+
 
 
               </div>
@@ -117,20 +100,9 @@
 
           </div>
 
-
-
-
-
         </div>
               <!-- /.card-body -->
-
-
-
           <!-- /.card -->
-
-
-
-
         <!-- /.card -->
       </div>
       <!--/.col (right) -->
@@ -148,6 +120,7 @@
   <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
   <script>
 
+        setSummernote()
         $('#new_orders_ready_to_proceed_list').addClass('menu-open')
         $('#temp_stop_menu').addClass('menu-open')
         $('#refuse_menu').addClass('menu-open')
