@@ -116,9 +116,14 @@
                 format: {
                     body: function (data, row, column, node) {
                         // if it is select
-                        if (column === 8) {
-                            return $(data).find("option:selected").text()
-                        } else return data
+                        switch (column) {
+                           case 7:
+                                return 1;
+
+                            default:
+                                return data
+
+                        }
                     }
                 }
             }
