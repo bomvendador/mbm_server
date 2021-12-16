@@ -296,11 +296,14 @@ def save_data_preliminary_check(request):
 
         counters_db.save()
 
-        # status_change_db = StatusChange()
-        # status_change_db.user = request.user
-        # status_change_db.order = order
-        # status_change_db.status = order.status
-        # status_change_db.save()
+        counters_admin_db, created = CountersAdmin.objects.get_or_create(user_role_name='Админ')
+        if created:
+            counters_admin_db.save()
+        onsite_check_cnt = Order.objects.filter((Q(onsite_check=True) & Q(onsite_check_complete=False)) &
+                                  Q(status__name__contains='Готово')).count()
+        counters_admin_db.admin_onsite_checks = onsite_check_cnt
+        counters_admin_db.save()
+
         return HttpResponse('ok')
 
 
