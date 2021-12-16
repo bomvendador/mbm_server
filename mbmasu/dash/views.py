@@ -1177,3 +1177,20 @@ def save_orders_for_protocol(request):
 
         return HttpResponse('')
 
+
+# nav_orders_protocols_list
+@login_required(redirect_field_name=None, login_url='/')
+def protocols_orders_list(request):
+    context = dash_get_info(request)
+    users_profiles = userprofile.objects.all()
+    protocols_orders = ProtocolOrders.objects.all()
+    context.update({
+        'big_title': 'Протоколы отраслевых комиссий',
+        'title': 'Выберите заявки',
+        'counter': get_counter(request.user),
+        'users_profiles': users_profiles,
+        'protocols_orders': protocols_orders
+    })
+    return render(request, 'dash/menu/admin/dash_admin_protocols_orders_list.html', context)
+
+
