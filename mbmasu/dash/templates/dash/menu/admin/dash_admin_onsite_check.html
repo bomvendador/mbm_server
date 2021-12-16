@@ -58,7 +58,7 @@
                     <div class="row col-md-12 mt-2">
                       <div class="form-group">
                         <label for="prelimenaryCheck_comments">Комментарии по выездной проверке</label>
-                        <textarea class="form-control summernote" name="prelimenaryCheck_comments" id="prelimenaryCheck_comments"></textarea>
+                        <textarea class="form-control summernote" name="comments" id="comments"></textarea>
                       </div>
 
                     </div>
@@ -89,7 +89,18 @@
   <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
   <script>
 
-        setSummernote()
+        $('.summernote').summernote({
+
+           toolbar: [
+             // [groupName, [list of button]]
+             ['style', ['bold', 'italic', 'underline', 'clear']],
+             ['font', ['strikethrough', 'superscript', 'subscript']],
+             ['fontsize', ['fontsize']],
+             ['color', ['color']],
+             ['para', ['ul', 'ol', 'paragraph']],
+             ['height', ['height']]
+           ]
+         });
         $('#new_orders_ready_to_proceed_list').addClass('menu-open')
         $('#temp_stop_menu').addClass('menu-open')
         $('#refuse_menu').addClass('menu-open')
