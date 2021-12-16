@@ -446,7 +446,23 @@
                   buttons: [
                     {
                       extend: 'excelHtml5',
-                      title: "Экспорт EXCEL - Рассмотрено на ОК"
+                      title: "Экспорт EXCEL - Рассмотрено на ОК",
+                      exportOptions: {
+                            format: {
+                                body: function (data, row, column, node) {
+                                    // if it is select
+                                    switch (column) {
+                                       case 3:
+                                            return $(data).find("option:selected").text();
+
+                                        default:
+                                            return data
+
+                                    }
+                                }
+                            }
+                        }
+
                     },
                     {
                       extend: 'pdfHtml5',
