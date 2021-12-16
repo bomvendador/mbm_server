@@ -39,40 +39,14 @@
 
 
                 <div class="row col-md-12 mt-2">
-                  <div class="form-group col-md-12">
+                  <div class="form-group col-md-4">
                     <label for="notification_date">Дата отправки уведомления о приостановке заявителю</label>
                     <input id="notification_date"  class="form-control date-time-picker input-to-fill-up" type="text" name="notification_date">
                     <small class="text-danger">Дата отправки уведомления согласно ИАС (не позднее <b>{{ temp_stop.end_date_for_notification|date:'d.m.Y' }}</b>)</small>
 
                   </div>
 
-                </div>
-                    <div class="row col-md-12 mt-2">
-                      <div class="form-group">
-                        <label for="prelimenaryCheck_comments">Комментарии по {% if order.lotki_status.name == 'Приостановка' %}приостановке{% else %}отказу{% endif %}</label>
-                        <textarea class="form-control summernote input-to-fill-up" name="prelimenaryCheck_comments" id="prelimenaryCheck_comments"></textarea>
-                        <small class="text-danger">Опишите причины {% if order.lotki_status.name == 'Приостановка' %}приостановки{% else %}отказа{% endif %} со ссылкой на пункты соответствующего постановления</small>
-
-                      </div>
-
-                    </div>
-
-
-
-              </div>
-              <!-- /.card-body -->
-          </div>
-
-          <div class="card card-warning">
-            <div class="card-header">
-              <h3 class="card-title">Загрузка файлов</h3>
-            </div>
-            <!-- /.card-header -->
-            <!-- form start -->
-            <div class="card-body">
-
-              <div class="row col-md-12">
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-8">
                     <label for="preconclusion-file">Файл предэкпертизы</label>
                     <div class="input-group mb-1">
                         <input type="file" class="form-control input-to-fill-up" id="preconclusion-file" name="preconclusion-file">
@@ -82,22 +56,21 @@
                     <div><small class="text-danger">Содержание файла - <cite title="Source Title">Подписанный уполномоченными лицами документ</cite></small></div>
 
                   </div>
-                  <div class="form-group col-md-6">
-                    <label for="notification-file">Файл уведомления</label>
-                    <div class="input-group mb-1">
-                        <input type="file" class="form-control input-to-fill-up" id="notification-file" name="notification-file">
-                    </div>
-                    <small class="text-danger">Тип файла - <cite title="Source Title">PDF</cite></small>
-                    <div><small class="text-danger">Имя файла - <cite title="Source Title">любое</cite></small></div>
-                    <div><small class="text-danger">Содержание файла - <cite title="Source Title">Подписанный уполномоченными лицами документ</cite></small></div>
-
-                  </div>
 
 
                 </div>
+                    <div class="row col-md-12 mt-2">
+                      <div class="form-group">
+                        <label for="prelimenaryCheck_comments">Комментарии по выездной проверке</label>
+                        <textarea class="form-control summernote" name="prelimenaryCheck_comments" id="prelimenaryCheck_comments"></textarea>
+                      </div>
 
-            </div>
+                    </div>
 
+
+
+              </div>
+              <!-- /.card-body -->
           </div>
 
         </div>
