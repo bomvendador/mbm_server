@@ -121,6 +121,11 @@
         }]
     })
 
+    $('.onsite-check-order').on('click', function(){
+        let orderID = $(this).attr('id').split('_')[1];
+        window.location.href = "{% url 'onsite_check' %}" + '/' + orderID;
+     })
+
 
   </script>
 

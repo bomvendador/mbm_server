@@ -1211,3 +1211,17 @@ def onsite_checks_list(request):
     return render(request, 'dash/menu/admin/dash_admin_onsite_checks_list.html', context)
 
 
+# onsite-check-order
+@login_required(redirect_field_name=None, login_url='/')
+def onsite_check(request, order_id):
+    user_ = request.user
+    context = dash_get_info(request)
+    order = Order.objects.get(id=order_id)
+
+    context.update({
+        'big_title': 'Данные выездной проверки',
+        'counter': get_counter(user_),
+        'order': order,
+        'title': 'Информация по возобновлению'
+    })
+    return render(request, 'dash/menu/admin/dash_admin_onsite_check.html', context)
