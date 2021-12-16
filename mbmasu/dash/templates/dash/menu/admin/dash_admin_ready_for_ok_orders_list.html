@@ -454,11 +454,9 @@
                                     // if it is select
                                     switch (column) {
                                        case 3:
-                                           console.log()
                                             return $(data).find("option:selected").text();
                                        case 4:
-                                           console.log($(data).html())
-                                            return $(data).find('input').val();
+                                            return $(data).html();
 
                                         default:
                                             return data
