@@ -54,8 +54,8 @@
                       <td>{{ forloop.counter }}</td>
                       <td>{{ order.appointed_for_ok.ready_for_OK.order.number }}</td>
                       <td>{{ order.appointed_for_ok.ready_for_OK.order.company }}</td>
-                      <td>{{ order.appointed_for_ok.ready_for_OK.order.responsible_preliminary.first_name }}</td>
-                      <td>{{ order.appointed_for_ok.ready_for_OK.order.responsible_preliminary.last_name }}</td>
+                      <td>{{ order.appointed_for_ok.ready_for_OK.order.responsible_preliminary.first_name }} {{ order.appointed_for_ok.ready_for_OK.order.responsible_preliminary.last_name }}</td>
+                      <td>{{ order.appointed_for_ok.ready_for_OK.order.responsible_after_temp_stop.first_name }} {{ order.appointed_for_ok.ready_for_OK.order.responsible_after_temp_stop.last_name }}</td>
                       <td>{{ order.protocol.protocol_number }}</td>
                       <td><p class="d-none">{{ order.protocol.protocol_date|date:"d.m.Y" }}</p>{{ order.protocol.protocol_date|date:"d.m.Y" }}</td>
                       <td>{% if order.decision %}Положительное{% else %}Отрицательное{% endif %}</td>
