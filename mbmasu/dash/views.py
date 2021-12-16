@@ -1200,7 +1200,7 @@ def onsite_checks_list(request):
     context = dash_get_info(request)
     users_profiles = userprofile.objects.all()
     orders = Order.objects.filter((Q(onsite_check=True) & Q(onsite_check_complete=False)) &
-                                  Q(status=OrderStatus.objects.get(name__contains='Готово')))
+                                  Q(status=OrderStatus.objects.filter(name__contains='Готово')))
     context.update({
         'big_title': 'Заявки для осуществления выездной проверки',
         'title': 'Выберите заявку',
