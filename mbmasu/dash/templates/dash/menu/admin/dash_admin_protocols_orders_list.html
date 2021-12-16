@@ -112,6 +112,16 @@
         {
           extend: 'excelHtml5',
           title: "Экспорт EXCEL - Протокол ОК"
+          exportOptions: {
+                format: {
+                    body: function (data, row, column, node) {
+                        // if it is select
+                        if (column === 7) {
+                            return $(data).find("option:selected").text()
+                        } else return data
+                    }
+                }
+            }
         },
         {
           extend: 'pdfHtml5',
