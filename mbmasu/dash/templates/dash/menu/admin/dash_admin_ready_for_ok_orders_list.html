@@ -448,16 +448,15 @@
                       extend: 'excelHtml5',
                       title: "Экспорт EXCEL - Рассмотрено на ОК",
                       exportOptions: {
+                            columns:[0,1,2,3,4],
                             format: {
                                 body: function (data, row, column, node) {
                                     // if it is select
                                     switch (column) {
                                        case 3:
                                             return $(data).find("option:selected").text();
-                                       case 4:
-                                            return $(data).val();
-                                       case 5:
-                                            return $(data).val();
+                                       {#case 4:#}
+                                       {#     return $(data).val();#}
 
                                         default:
                                             return data
