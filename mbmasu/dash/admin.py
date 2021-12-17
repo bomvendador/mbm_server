@@ -8,7 +8,7 @@ from .models import OrderStatus, Order, Applier, RefuseReasonsAfterTempStop, Ref
     CountersLotki, CountersAdmin, LotkiStatusChange, EZdoc, EZpdf, CheckPreliminary, CheckPreliminaryResponsibleExpert, \
     CheckPreliminaryFileToCheck, CheckPreliminaryFileToCheckReturned, CheckPreliminaryFileToCheckFinal, \
     CheckAfterTempStop, CheckAfterTempStopFileToCheck, CheckAfterTempStopFileToCheckFinal, ReadyForOK, CommissionDate, \
-    AppointedForOK, ProtocolOrders, Protocol
+    AppointedForOK, ProtocolOrders, Protocol, OnsiteCheck
 
 # Register your models here.
 
@@ -56,6 +56,7 @@ admin.site.register(CommissionDate)
 admin.site.register(AppointedForOK)
 admin.site.register(ProtocolOrders)
 admin.site.register(Protocol)
+admin.site.register(OnsiteCheck)
 
 
 
