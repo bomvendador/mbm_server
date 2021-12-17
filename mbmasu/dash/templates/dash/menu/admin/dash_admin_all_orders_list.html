@@ -40,8 +40,8 @@
                       <td>{{ order.date_of_appliance|date:"d.m.Y" }}</td>
                       <td>{{ order.pp }}</td>
                       <td>{{ order.end_date_for_responsible|date:"d.m.Y" }}</td>
-                        <td>{{ order.sum|intcomma }}</td>
-                        <td>{{ order.type|truncatewords:10 }}</td>
+                        <td>{{ order.sum_of_appliance|intcomma }}</td>
+                        <td>{{ order.type|truncatechars:10 }}</td>
 <!--                      <?}?>-->
 <!--                    <? }?>-->
                     <!--td><i class="fas fa-ellipsis-v"></i></td-->
