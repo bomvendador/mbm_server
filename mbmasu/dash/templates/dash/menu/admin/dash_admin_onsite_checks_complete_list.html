@@ -123,7 +123,7 @@
 
     $('.onsite-check-order').on('click', function(){
         let orderID = $(this).attr('id').split('_')[1];
-        window.location.href = "{% url 'onsite_checks_list' %}" + '/' + orderID;
+        window.location.href = "{% url 'onsite_checks_complete_list' %}" + '/' + orderID;
      })
 
 
