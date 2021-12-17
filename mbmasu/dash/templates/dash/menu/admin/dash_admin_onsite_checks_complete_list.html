@@ -47,7 +47,7 @@
               </thead>
               <tbody id="tbody">
                 {% for onsite_check_order in onsite_check_orders %}
-                  <tr class="user-tr cursor-pointer onsite-check-order" id="onsite_check_orderID_{{ onsite_check_order.id }}">
+                  <tr class="user-tr cursor-pointer onsite-check-order" id="onsite_check_orderID_{{ onsiteCheckOrder.id }}">
                       <td>{{ forloop.counter }}</td>
                       <td>{{ onsite_check_order.order.number }}</td>
                       <td>{{ onsite_check_order.order.company }}</td>
