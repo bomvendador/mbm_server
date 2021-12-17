@@ -19,7 +19,7 @@
           </div>
           <!-- /.card-header -->
           <div class="card-body table-responsive p-4 pt-1">
-            <table class="table table-hover text-nowrap list-table" >
+            <table class="table table-hover text-nowrap" id="order_table">
               <thead>
                 <tr>
                     <th>Номер заявки</th>
@@ -101,6 +101,33 @@
               });
 
       });
+
+       $("#table_list_appoint_for_ok").DataTable({
+
+           "columnDefs": [
+            {
+                "targets": [ 7 ],
+                "visible": false
+            }],
+           "paging": false,
+          "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Russian.json"
+          },
+          "initComplete": function () {
+
+          },
+          dom: 'Bfrtip',
+          buttons: [
+            {
+              extend: 'excelHtml5',
+              title: "Экспорт EXCEL - Выбрано для протокола ОК"
+            },
+            {
+              extend: 'pdfHtml5',
+              title: "Экспорт PDF - Выбрано для протокола ОК"
+            }]
+        })
+
 
 
 
