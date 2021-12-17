@@ -927,6 +927,7 @@ def order_info(request, order_id):
         ez_doc = EZdoc.objects.filter(order=order)
     except EZdoc.DoesNotExist:
         ez_doc = None
+
     if ez_doc:
         ez_pdf = EZpdf.objects.filter(ez_doc__order=order)
     else:
@@ -934,13 +935,13 @@ def order_info(request, order_id):
 
     try:
         appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK__order=order)
-    except EZdoc.DoesNotExist:
+    except AppointedForOK.DoesNotExist:
         appointed_for_ok = None
 
-    # try:
-    #     appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK__order=order)
-    # except EZdoc.DoesNotExist:
-    #     appointed_for_ok = None
+    try:
+        protocol_orders = ProtocolOrders.objects.filter(appointed_for_ok__ready_for_OK__order=order)
+    except ProtocolOrders.DoesNotExist:
+        protocol_orders = None
 
 
 
@@ -969,7 +970,8 @@ def order_info(request, order_id):
         'refuse_files': refuse_files,
         'ez_docs': ez_doc,
         'ez_pdfs': ez_pdf,
-        'appointed_for_ok': appointed_for_ok
+        'appointed_for_ok': appointed_for_ok,
+        'protocol_orders': protocol_orders
     })
     return render(request, 'dash/menu/admin/dash_admin_order_info.html', context)
 
