@@ -937,6 +937,12 @@ def order_info(request, order_id):
     except EZdoc.DoesNotExist:
         appointed_for_ok = None
 
+    # try:
+    #     appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK__order=order)
+    # except EZdoc.DoesNotExist:
+    #     appointed_for_ok = None
+
+
 
     status_change_history = StatusChange.objects.filter(order=order).order_by('-added')
     print(order)

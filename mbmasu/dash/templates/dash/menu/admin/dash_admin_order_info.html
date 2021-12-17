@@ -585,6 +585,55 @@
             {% endif %}
 
 
+            {% if appointed_for_ok %}
+         <h5 class="mt-4 mb-4 collapse-toggle cursor-pointer">Отраслневая комиссия</h5>
+         <div class="collapse-item" style="display: none">
+
+            <div class="card card-success">
+              <div class="card-header">
+                <h3 class="card-title"></h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+
+                <div class="card-body">
+
+                    <table class="table table-hover text-nowrap" id="table_list">
+                      <thead>
+                        <tr>
+                            <th>№ п/п</th>
+                            <th>Дата ОК</th>
+                            <th>Решение</th>
+                            <th>Сумма</th>
+                            <th>Перенос</th>
+                            <th>Протокол</th>
+
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for order in appointed_for_ok %}
+                          <tr class="user-tr cursor-pointer onsite-check-order" id="onsiteCheckOrderID_{{ order.id }}">
+                              <td>{{ forloop.counter }}</td>
+                              <td>{{ order.commission_date.date|date:"d.m.Y" }}</td>
+                              <td>{% if order.decision %}Положительное{% else %}Отрицательное{% endif %}</td>
+                              <td>{{ order.max_sum }}</td>
+                              <td>{% if order.marked_for_next_ok %}Да{% endif %}</td>
+                              <td>{% if order.protocol_issued %}Да{% endif %}</td>
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+
+         </div>
+            {% endif %}
+
+
 
 
 
