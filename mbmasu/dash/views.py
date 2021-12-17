@@ -1277,3 +1277,19 @@ def save_onsite_check(request):
         counters_admin_db.save()
 
         return HttpResponse('')
+
+
+# nav_onsite_checks_list
+@login_required(redirect_field_name=None, login_url='/')
+def onsite_checks_complete_list(request):
+    context = dash_get_info(request)
+    users_profiles = userprofile.objects.all()
+    orders = Order.objects.filter(Q(onsite_check=True) & Q(onsite_check_complete=True))
+    context.update({
+        'big_title': 'Заявки для осуществления выездной проверки',
+        'title': 'Выберите заявку',
+        'counter': get_counter(request.user),
+        'users_profiles': users_profiles,
+        'orders': orders
+    })
+    return render(request, 'dash/menu/admin/dash_admin_onsite_checks_list.html', context)
