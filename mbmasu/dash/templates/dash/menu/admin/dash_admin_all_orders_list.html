@@ -43,7 +43,7 @@
                       <td>{{ order.end_date_for_responsible|date:"d.m.Y" }}</td>
                         <td>{{ order.sum_of_appliance|intcomma }}</td>
                         <td>{{ order.status.name }}</td>
-                        <td>{% if order.type %}{{ order.type|truncatechars:10 }}{% endif %}</td>
+                        <td class="d-none">{% if order.type %}{{ order.type|truncatechars:10 }}{% endif %}</td>
 <!--                      <?}?>-->
 <!--                    <? }?>-->
                     <!--td><i class="fas fa-ellipsis-v"></i></td-->
