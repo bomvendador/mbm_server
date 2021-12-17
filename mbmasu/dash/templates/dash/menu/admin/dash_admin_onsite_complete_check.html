@@ -1,0 +1,316 @@
+{%extends 'dash/dash_base.html' %}
+{% load static %}
+{% block style %}
+
+{% endblock %}
+
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
+{% block content %}
+
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-12">
+        <h4>Предварительная проверка заявки</h4>
+        <h5>Заявка - <i id="orderNumber" data-orderid="{{ order.id }}">{{ order.number }}</i>  | Заявитель - <i id="applierName">{{ order.company }}</i> | № ПП - <i id="ppNumber">{{ order.pp }}</i></h5>
+
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content" >
+
+  <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title"><?= title?></h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+
+              <div class="card-body">
+
+
+                <div class="row col-md-12 mt-2">
+                  <div class="form-group col-md-4">
+                    <label for="onsite_check_date">Дата проведения проверки</label>
+                    <div class="form-control">{{ order.date|date:"d.m.Y" }}</div>
+
+                  </div>
+
+                  <div class="form-group col-md-8">
+                    <label for="act_file">Акт выездной проверки</label>
+                    <div class="input-group mb-1">
+                        <p><a href="{% url 'download_file' path=order.act.path %}" class="download_file">{{ order.act.name }}</a></p>
+                    </div>
+
+                  </div>
+
+
+                </div>
+                    <div class="row col-md-12 mt-2">
+                      <div class="form-group">
+                        <label for="onsite_check_comments">Комментарии по выездной проверке</label>
+                        <div id="onsite_check_comments" class="form-control  heihgt-auto">{{ order.comments }}</div>
+                      </div>
+
+                    </div>
+
+
+
+              </div>
+              <!-- /.card-body -->
+          </div>
+
+        </div>
+              <!-- /.card-body -->
+          <!-- /.card -->
+        <!-- /.card -->
+      </div>
+      <!--/.col (right) -->
+    </div>
+    <!-- /.row -->
+  </div>
+
+
+  </section>
+  <button type="button" class="btn btn-primary btn-float" id="btn_add_onsite_check"><i class="fas fa-save" style="font-size: 25px;"></i></button>
+
+{% endblock %}
+
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+  <script>
+
+        $('.summernote').summernote({
+
+           toolbar: [
+             // [groupName, [list of button]]
+             ['style', ['bold', 'italic', 'underline', 'clear']],
+             ['font', ['strikethrough', 'superscript', 'subscript']],
+             ['fontsize', ['fontsize']],
+             ['color', ['color']],
+             ['para', ['ul', 'ol', 'paragraph']],
+             ['height', ['height']]
+           ]
+         });
+        $('#new_orders_ready_to_proceed_list').addClass('menu-open')
+        $('#temp_stop_menu').addClass('menu-open')
+        $('#refuse_menu').addClass('menu-open')
+
+        $('#content').fadeIn('slow').removeClass('d-none')
+
+      //НАЧАЛО сохранение предэкспертизы/уведомления
+      $('#btn_add_onsite_check').on('click', function(){
+
+          let actFile = $('#act_file');
+          let actFileVal =  actFile.val()
+          let onsiteCheckDate = $('#onsite_check_date').val()
+          let comments = $('comments').val()
+
+          let actFileSplit = actFileVal.split('.')
+          let actFileType = actFileSplit[actFileSplit.length - 1].toLowerCase()
+
+          ////////console.log(preconclusionFile.get(0).length);
+          let testIsOK = false
+
+
+          if(actFile.get(0).files.length === 0 || onsiteCheckDate === ''){
+            toastr.error('Поля даты и файла должны быть заполнены');
+            $('#btn_add_onsite_check').html('<i class="fas fa-save" style="font-size: 25px;"></i>');
+            $(this).prop('disabled', false);
+          }else{
+
+            if(actFileType !== 'pdf'){
+              toastr.error('Тип файла не соответствует требованиям');
+            }else{
+              testIsOK = true
+            }
+          }
+
+          if(testIsOK){
+
+            $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+            $(this).prop('disabled', true);
+            var data = new FormData()
+            let orderID = $('#orderNumber').attr('data-orderid');
+
+            data.append('orderID', orderID);
+            data.append('act_file', $('#act_file')[0].files[0]);
+            data.append('onsite_check_date', onsiteCheckDate);
+            data.append('comments', comments);
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'save_onsite_check' %}",
+                data: data,
+                processData: false,
+                contentType: false,
+                error: function(data){
+                  toastr.error('Ошибка', data)
+                },
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                success: function () {
+                    toastr.success('Данные сохранены');
+                    $('#nav_onsite_checks_list').click()
+                }
+            })
+
+
+
+
+{#            google.script.run.withFailureHandler(function(error){#}
+{#                toastr.error(error);#}
+{#                $(this).html('<i class="fas fa-save"  style="font-size: 25px;"></i>');#}
+{#                $(this).prop('disabled', true)#}
+{##}
+{#              }).withSuccessHandler(function(response){#}
+{#                  ////////console.log(html)#}
+{#                var folderID = response.folderID;#}
+{#                var filesCnt = response.filesCnt;#}
+{#                var add_data = {}#}
+{##}
+{#                add_data.filesCnt = filesCnt;#}
+{#                add_data.folderID = folderID;#}
+{#                add_data.type = 'newConclusion';#}
+{#                add_data.orderNumber = orderNumber;#}
+{#                add_data.applierName = applierName;#}
+{##}
+{#                add_data.prefix = 'УВ'#}
+{##}
+{#                //////console.log(response.rowIndex);#}
+{##}
+{#                saveFilesToServer(['notification-file'], folderID, function(response){#}
+{#                  add_data.prefix = 'ПЭ'#}
+{##}
+{#                  saveFilesToServer(['preconclusion-file'], folderID, function(response){#}
+{##}
+{#                    //var curNewOrders = parseInt($('.bage-new-orders').html());#}
+{#                   // //////console.log('583 - ', endDateForAdditionalDocsByApplier)#}
+{##}
+{#                    var data = {}#}
+{#                    data.orderNumber = orderNumber#}
+{#                    data.notificationDate = notificationDate#}
+{#                    data.user_login = $('#userLogin').html()#}
+{##}
+{##}
+{#                    google.script.run.withFailureHandler(function(error){#}
+{#                      toastr.error(error);#}
+{#                    }).withSuccessHandler(function(response){#}
+{#                      toastr.success('Данные в таблице сохранены')#}
+{#                      ////////console.log('дфтфаф =', html)#}
+{##}
+{#                      /*#}
+{#                      var bageNoNotification = parseInt($('.bage-orders-temp-stop-no-notification').html()) - 1#}
+{#                      var bageWithNotification = parseInt($('.bage-orders-temp-stop-with-notification').html())#}
+{#                      var newBageWithNotification = bageWithNotification - 1#}
+{#*/#}
+{#                      if(response.status = 'Приостановлено (уведомление отправлено)'){#}
+{#                        bageInOutCount('.bage-orders-temp-stop-no-notification', '.bage-orders-temp-stop-with-notification-before-remade-date')#}
+{#                      }else{#}
+{##}
+{#                        bageInOutCount('.bage-orders-temp-stop-no-notification', '.bage-orders-temp-stop-remadeorder-date')#}
+{##}
+{#                      }#}
+{#/*#}
+{#                      showModalCommonNextStep({#}
+{#                        title: 'Следующие шаги',#}
+{#                        modal_body: '<b>Выполните следующие действия:</b><br/>' +#}
+{#                          '<ul class="mt-2">' +#}
+{#                          '<li>ожидайте получения доработанной заявки от заявителя...</li>' +#}
+{#                          '<li>в срок до <b>' + endDateForAdditionalDocsByApplier + '</b> включительно заявитель обязан предоставить доработанную заявку</li>' +#}
+{#                          '</ul>' +#}
+{#                          '<b>В случае предоставления доработанной заявки до ' + endDateForAdditionalDocsByApplier + ' включительно:</b><br/>' +#}
+{#                          '<ul class="mt-2">' +#}
+{#                          '<li>проанализируйте предоставленную доработанную заявку и примите решение устранены ли причины приостановки</li>' +#}
+{#                          '<li>зайдите в пункт меню <b>"Приостановка > С уведомлением"</b></li>' +#}
+{#                          '<li>найдите заявку в списке</li>' +#}
+{#                          '<li>нажмите на соответствующую запись в списке</li>' +#}
+{#                          '<li>заполните необходимые данные в открывшейся форме</li>' +#}
+{#                          '</ul>'+#}
+{#                          '<b>В случае отсутствия доработанной заявки:</b><br/>' +#}
+{#                          '<ul class="mt-2">' +#}
+{#                          '<li>заявка автоматически попадает в категорию <b>"Отказ > По сроку"</b></li>' +#}
+{#                          '<li>зайдите в пункт меню <b>"Отказ > По сроку"</b></li>' +#}
+{#                          '<li>найдите заявку в списке</li>' +#}
+{#                          '<li>нажмите на соответствующую запись в списке</li>' +#}
+{#                          '<li>заполните необходимые данные в открывшейся форме</li>' +#}
+{#                          '</ul>',#}
+{##}
+{#                          headerClass: 'bg-danger'#}
+{#                      })#}
+{#*/#}
+{#                      showModalCommonNextStep({#}
+{#                        title: 'Следующие шаги',#}
+{#                        modal_body: '<b>Выполните следующие действия:</b><br/>' +#}
+{#                          '<ul class="mt-2">' +#}
+{#                          '<li>ожидайте получения доработанной заявки от заявителя...</li>' +#}
+{#                          '<li>в срок до <b>' + response.endDateForAdditionalDocsByApplier + '</b> включительно заявитель обязан предоставить доработанную заявку</li>' +#}
+{#                          '</ul>'+#}
+{#                          '<b>В случае получения доработанной заявки:</b><br/>' +#}
+{#                          '<ul class="mt-2">' +#}
+{#                          '<li>зайдите в пункт меню <b>"Приостановка > Дата доработки"</b></li>' +#}
+{#                          '<li>найдите заявку в списке</li>' +#}
+{#                          '<li>нажмите на соответствующую запись в списке</li>' +#}
+{#                          '<li>выберите дату получения доработанной заявки и сохраните данные</li>' +#}
+{#                          '</ul>'+#}
+{#                          '<b>В случае отсутствия доработанной заявки:</b><br/>' +#}
+{#                          '<ul class="mt-2">' +#}
+{#                          '<li>заявка автоматически попадает в категорию <b>"Отказ > По сроку"</b></li>' +#}
+{#                          '<li>зайдите в пункт меню <b>"Отказ > По сроку"</b></li>' +#}
+{#                          '<li>найдите заявку в списке</li>' +#}
+{#                          '<li>нажмите на соответствующую запись в списке</li>' +#}
+{#                          '<li>заполните необходимые данные в открывшейся форме</li>' +#}
+{#                          '</ul>',#}
+{##}
+{#                          headerClass: 'bg-danger'#}
+{#                      })#}
+{##}
+{##}
+{##}
+{##}
+{##}
+{##}
+{#                      /*#}
+{#                      if (bageNoNotification == 0){#}
+{#                        $('.bage-orders-temp-stop-no-notification').html('');#}
+{#                      }else{#}
+{#                        $('.bage-orders-temp-stop-no-notification').html(bageNoNotification);#}
+{##}
+{#                      }#}
+{#                      ////////console.log('with-notification - ', $('#bage-orders-temp-stop-with-notification').html())#}
+{#                      if($('.bage-orders-temp-stop-with-notification').html() == ''){#}
+{#                        $('.bage-orders-temp-stop-with-notification').html(1)#}
+{#                      }else{#}
+{#                        $('.bage-orders-temp-stop-with-notification').html(bageWithNotification + 1)#}
+{#                      }#}
+{#*/#}
+{#                      //$('#nav_satistics').click();#}
+{##}
+{#                    }).saveDataToTablesTempStopNotification(data);#}
+{##}
+{##}
+{##}
+{#                  }, add_data);#}
+{##}
+{##}
+{#                }, add_data);#}
+{##}
+{##}
+{#            }).folderForConclusion('', '', data);#}
+
+
+          }
+        })
+
+
+  </script>
+
+{% endblock %}
