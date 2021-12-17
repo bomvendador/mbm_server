@@ -619,7 +619,7 @@
                               <td>{{ forloop.counter }}</td>
                               <td>{{ order.commission_date.date|date:"d.m.Y" }}</td>
                               <td>{% if order.decision %}Положительное{% else %}Отрицательное{% endif %}</td>
-                              <td>{{ order.max_sum }}</td>
+                              <td>{{ order.max_sum|intcomma }}</td>
                               <td>{% if order.marked_for_next_ok %}Да{% endif %}</td>
                               <td>{% if order.protocol_issued %}Да{% endif %}</td>
                         </tr>
