@@ -1,6 +1,6 @@
 {%extends 'dash/dash_base.html' %}
 {% load static %}
-
+{% load humanize %}
 {% block content %}
 
 
@@ -27,18 +27,21 @@
                     <th>Дата подачи</th>
                     <th>Номер ПП</th>
                     <th>Крайний срок сдачи</th>
+                    <th>Запрашиваемая сумма</th>
+                    <th>Тип заявки (первичка)</th>
                   <!--th></th-->
                 </tr>
               </thead>
               <tbody id="tbody">
-                {% for new_order in orders %}
-                  <tr class="user-tr cursor-pointer order-info" id="orderID_{{ new_order.id }}">
-                      <td>{{ new_order.number }}</td>
-                      <td>{{ new_order.company }}</td>
-                      <td>{{ new_order.date_of_appliance|date:"d.m.Y" }}</td>
-                      <td>{{ new_order.pp }}</td>
-                      <td>{{ new_order.end_date_for_responsible|date:"d.m.Y" }}</td>
-
+                {% for order in orders %}
+                  <tr class="user-tr cursor-pointer order-info" id="orderID_{{ order.id }}">
+                      <td>{{ order.number }}</td>
+                      <td>{{ order.company }}</td>
+                      <td>{{ order.date_of_appliance|date:"d.m.Y" }}</td>
+                      <td>{{ order.pp }}</td>
+                      <td>{{ order.end_date_for_responsible|date:"d.m.Y" }}</td>
+                        <td>{{ order.sum|intcomma }}</td>
+                        <td>{{ order.type|truncatewords:10 }}</td>
 <!--                      <?}?>-->
 <!--                    <? }?>-->
                     <!--td><i class="fas fa-ellipsis-v"></i></td-->
