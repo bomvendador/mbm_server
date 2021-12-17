@@ -415,6 +415,9 @@ class OnsiteCheck(models.Model):
     date = models.DateField(auto_now=False, auto_now_add=False)#дата проведния ВП
     act = models.FileField()
 
+    def __str__(self):
+        return str(self.order.number) + ' - ' + str(self.order.company)
+
 
 ## ОТЗЫВЫ
 class OrderCalledBack(models.Model):
