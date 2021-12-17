@@ -40,8 +40,8 @@
 
                 <div class="row col-md-12 mt-2">
                   <div class="form-group col-md-4">
-                    <label for="notification_date">Дата проведения проверки</label>
-                    <input id="notification_date"  class="form-control date-time-picker input-to-fill-up" type="text" name="notification_date">
+                    <label for="onsite_check_date">Дата проведения проверки</label>
+                    <input id="onsite_check_date"  class="form-control date-time-picker input-to-fill-up" type="text" name="onsite_check_date">
 
                   </div>
 
@@ -81,7 +81,7 @@
 
 
   </section>
-  <button type="button" class="btn btn-primary btn-float" id="btn_add_preconclusion_notification"><i class="fas fa-save" style="font-size: 25px;"></i></button>
+  <button type="button" class="btn btn-primary btn-float" id="btn_add_onsite_check"><i class="fas fa-save" style="font-size: 25px;"></i></button>
 
 {% endblock %}
 
@@ -108,77 +108,48 @@
         $('#content').fadeIn('slow').removeClass('d-none')
 
       //НАЧАЛО сохранение предэкспертизы/уведомления
-      $('#btn_add_preconclusion_notification').on('click', function(){
+      $('#btn_add_onsite_check').on('click', function(){
 
-          let preconclusionFile = $('#preconclusion-file');
-          let preconclusionFileVal =  preconclusionFile.val()
-          let notificationFile = $('#notification-file');
-          let notificationFileVal = notificationFile.val()
-          let notificationDate = $('#notification_date').val()
+          let actFile = $('#act_file');
+          let actFileVal =  actFile.val()
+          let onsiteCheckDate = $('#onsite_check_date').val()
+          let comments = $('comments').val()
 
-          let notificationFileSplit = notificationFileVal.split('.')
-          let notificationFileFileType = notificationFileSplit[notificationFileSplit.length - 1].toLowerCase()
-          let preconclusionFileSplit = preconclusionFileVal.split('.')
-          let preconclusionFileFileType = preconclusionFileSplit[preconclusionFileSplit.length - 1].toLowerCase()
-
-
+          let actFileSplit = actFileVal.split('.')
+          let actFileType = actFileSplit[actFileSplit.length - 1].toLowerCase()
 
           ////////console.log(preconclusionFile.get(0).length);
           let testIsOK = false
 
 
-          if(preconclusionFile.get(0).files.length == 0 || notificationFile.get(0).files.length == 0 || notificationDate == ''){
-            toastr.error('Все поля должны быть заполнены');
-            $('#btn_add_preconclusion_notification').html('<i class="fas fa-save" style="font-size: 25px;"></i>');
+          if(actFile.get(0).files.length === 0 || onsiteCheckDate === ''){
+            toastr.error('Поля даты и файла должны быть заполнены');
+            $('#btn_add_onsite_check').html('<i class="fas fa-save" style="font-size: 25px;"></i>');
             $(this).prop('disabled', false);
           }else{
 
-            if(notificationFileFileType !== 'pdf' || preconclusionFileFileType !== 'pdf'){
-              toastr.error('Тип файла(ов) не соответствует требованиям');
-
+            if(actFileType !== 'pdf'){
+              toastr.error('Тип файла не соответствует требованиям');
             }else{
               testIsOK = true
             }
-
-          }
-          let filesizeIsOk = true
-          if(preconclusionFile[0].files[0].size > 6291456 || notificationFile[0].files[0].size > 6291456){
-            filesizeIsOk = false
-            toastr.error('Размер файла не должен превышать 6 Мбайт');
-            $('#btn_add_preconclusion_notification').html('<i class="fas fa-save" style="font-size: 25px;"></i>');
-            $(this).prop('disabled', false);
-
           }
 
-          if(testIsOK && filesizeIsOk){
+          if(testIsOK){
 
             $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
             $(this).prop('disabled', true);
             var data = new FormData()
             let orderID = $('#orderNumber').attr('data-orderid');
 
-
-
-            let notificationDateSplit = notificationDate.split('.');
-            let newNotificationDate = notificationDateSplit[2] + '-' + notificationDateSplit[1] + '-' + notificationDateSplit[0]
-
-            let endDateForAdditionalDocsByApplier = getWorkingDays(newNotificationDate, 10,0)
-
             data.append('orderID', orderID);
-            data.append('pez', $('#preconclusion-file')[0].files[0]);
-            data.append('notification', $('#notification-file')[0].files[0]);
-            data.append('notification_date', notificationDate);
-            data.append('end_date_for_additional_docs_by_applier', endDateForAdditionalDocsByApplier);
-
-
-            {#data.end_date_for_additional_docs_by_applier = endDateForAdditionalDocsByApplier#}
-            {#data.statusType = 'temp_stop'#}
-            {#data.folderType = 'temp_stop'#}
-            {#data.folderType = 'PDF'#}
+            data.append('act_file', $('#act_file')[0].files[0]);
+            data.append('onsite_check_date', onsiteCheckDate);
+            data.append('comments', comments);
 
             $.ajax({
                 type: 'POST',
-                url: "{% url 'save_pez_notification' %}",
+                url: "{% url 'save_onsite_check' %}",
                 data: data,
                 processData: false,
                 contentType: false,
@@ -188,32 +159,7 @@
                 headers: {'X-CSRFToken': '{{ csrf_token }}'},
                 success: function () {
                     toastr.success('Данные сохранены');
-                    showModalCommonNextStep({
-                        title: 'Следующие шаги',
-                        modal_body: '<b>Выполните следующие действия:</b><br/>' +
-                          '<ul class="mt-2">' +
-                          '<li>ожидайте получения доработанной заявки от заявителя...</li>' +
-                          '<li>в срок до <b>' + endDateForAdditionalDocsByApplier + '</b> включительно заявитель обязан предоставить доработанную заявку</li>' +
-                          '</ul>'+
-                          '<b>В случае получения доработанной заявки:</b><br/>' +
-                          '<ul class="mt-2">' +
-                          '<li>зайдите в пункт меню <b>"Приостановка > Дата доработки"</b></li>' +
-                          '<li>найдите заявку в списке</li>' +
-                          '<li>нажмите на соответствующую запись в списке</li>' +
-                          '<li>выберите дату получения доработанной заявки и сохраните данные</li>' +
-                          '</ul>'+
-                          '<b>В случае отсутствия доработанной заявки:</b><br/>' +
-                          '<ul class="mt-2">' +
-                          '<li>заявка автоматически попадает в категорию <b>"Отказ > По сроку"</b></li>' +
-                          '<li>зайдите в пункт меню <b>"Отказ > По сроку"</b></li>' +
-                          '<li>найдите заявку в списке</li>' +
-                          '<li>нажмите на соответствующую запись в списке</li>' +
-                          '<li>заполните необходимые данные в открывшейся форме</li>' +
-                          '</ul>',
-
-                          headerClass: 'bg-danger'
-                    })
-
+                    $('#nav_onsite_checks_list').click()
                 }
             })
 

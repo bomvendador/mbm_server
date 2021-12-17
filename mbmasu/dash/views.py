@@ -12,7 +12,7 @@ from .models import Order, OrderStatus, Applier, PPnumber, ResponsibleForOrderPr
     CheckAfterTempStop, CheckAfterTempStopResponsibleExpert, CheckAfterTempStopFileToCheck, CheckPreliminaryFileToCheck, \
     CheckPreliminaryFileToCheckReturned, CheckPreliminaryFileToCheckFinal, CheckAfterTempStopFileToCheckReturned, \
     CheckAfterTempStopFileToCheckFinal, TempStopFiles, Refuse, NotificationRefuse, RefuseFiles, EZdoc, EZpdf, \
-    ReadyForOK, AppointedForOK, CommissionDate, ProtocolOrders, Protocol
+    ReadyForOK, AppointedForOK, CommissionDate, ProtocolOrders, Protocol, OnsiteCheck
 from django.contrib.auth.models import User
 from .counters import counters
 
@@ -1225,3 +1225,55 @@ def onsite_check(request, order_id):
         'title': 'Информация по возобновлению'
     })
     return render(request, 'dash/menu/admin/dash_admin_onsite_check.html', context)
+
+
+# order-temp-stop-no-notification
+@login_required(redirect_field_name=None, login_url='/')
+def save_onsite_check(request):
+    if request.method == 'POST':
+        data = request.POST
+        order = Order.objects.get(id=data['orderID'])
+
+        date = date_to_db(data['onsite_check_date'])
+        comments = data['comments']
+        file_act = request.FILES['act_file']
+
+        time_split = str(datetime.now().strftime('%H:%M:%S')).split(':')
+        time_for_name = time_split[0] + '_' + time_split[1] + '_' + time_split[2]
+        print(data)
+
+        date_split = str(datetime.now().date()).split('-')
+        date_for_name = date_split[2] + '_' + date_split[1] + '_' + date_split[0]
+
+        file_name = order.number + '_' + order.company.replace('"', '_').strip() + '_' + date_for_name + '__' + time_for_name + '.pdf'
+        print(date_for_name)
+
+        onsite_check_db = OnsiteCheck()
+
+        onsite_check_db.order = order
+        onsite_check_db.date = date
+        onsite_check_db.comments = comments
+        onsite_check_db.user = request.user
+
+        act_name = u'Акт_ВП_' + file_name.replace(' ', '')
+        fs = FileSystemStorage()
+        fs.save(act_name, file_act)
+        onsite_check_db.act = act_name
+
+        onsite_check_db.save()
+
+        order.onsite_check_complete = True
+        order.save()
+
+        counters_admin_db, created = CountersAdmin.objects.get_or_create(user_role_name='Админ')
+        if created:
+            counters_admin_db.save()
+        onsite_check_cnt = Order.objects.filter((Q(onsite_check=True) & Q(onsite_check_complete=False)) &
+                                  Q(status__name__contains='Готово')).count()
+        onsite_check_complete_cnt = Order.objects.filter(Q(onsite_check=True) & Q(onsite_check_complete=True)).count()
+
+        counters_admin_db.admin_onsite_checks = onsite_check_cnt
+        counters_admin_db.admin_onsite_checks_complete = onsite_check_complete_cnt
+        counters_admin_db.save()
+
+        return HttpResponse('')

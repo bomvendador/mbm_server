@@ -32,6 +32,7 @@ urlpatterns = [
     path('protocols_orders_list', views.protocols_orders_list, name='protocols_orders_list'),
     path('onsite_checks_list', views.onsite_checks_list, name='onsite_checks_list'),
     path('onsite_checks_list/<int:order_id>', views.onsite_check, name='onsite_check'),
+    path('save_onsite_check', views.save_onsite_check, name='save_onsite_check'),
 
     path('get_user_role_name', views.get_user_role_name, name='get_user_role_name'),
     path('appoint_expert_for_order_check_list', views.appoint_expert_for_order_check_list,
