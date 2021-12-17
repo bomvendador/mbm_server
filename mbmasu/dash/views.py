@@ -1306,6 +1306,6 @@ def onsite_check_complete(request, order_id):
         'big_title': 'Данные выездной проверки',
         'counter': get_counter(user_),
         'order': onsite_check,
-        'title': 'Информация по возобновлению'
+        'title': ''
     })
     return render(request, 'dash/menu/admin/dash_admin_onsite_complete_check.html', context)
