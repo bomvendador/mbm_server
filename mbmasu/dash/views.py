@@ -1284,12 +1284,12 @@ def save_onsite_check(request):
 def onsite_checks_complete_list(request):
     context = dash_get_info(request)
     users_profiles = userprofile.objects.all()
-    orders = Order.objects.filter(Q(onsite_check=True) & Q(onsite_check_complete=True))
+    orders = OnsiteCheck.objects.all()
     context.update({
-        'big_title': 'Заявки для осуществления выездной проверки',
+        'big_title': 'Выездные проверки осуществлены',
         'title': 'Выберите заявку',
         'counter': get_counter(request.user),
         'users_profiles': users_profiles,
-        'orders': orders
+        'onsite_check_orders': orders
     })
-    return render(request, 'dash/menu/admin/dash_admin_onsite_checks_list.html', context)
+    return render(request, 'dash/menu/admin/dash_admin_onsite_checks_complete_list.html', context)
