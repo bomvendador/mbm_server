@@ -50,13 +50,14 @@
                 {% for order in orders %}
                   <tr class="user-tr cursor-pointer" id="readyForOKID_{{ order.id }}">
                         <td style="text-align:center;"><input type="checkbox" class="checkbox-ready-for-ok" style="transform: scale(1.5)"></td>
-
+                    <div class="appointed-for-ok-div">
                       <td>{{ forloop.counter }}</td>
                       <td><p class="d-none">{{ order.commission_date.date|date:"d.m.Y" }}</p>{{ order.commission_date.date|date:"d.m.Y" }}</td>
                       <td>{{ order.ready_for_OK.order.number }}</td>
                       <td>{{ order.ready_for_OK.order.company }}</td>
                       <td>{% if order.decision %}Положительное{% else %}Отрицательное{% endif %}</td>
                       <td>{% if order.max_sum %}{{ order.max_sum }}{% else %}0.00{% endif %}</td>
+                    </div>
                 </tr>
                {% endfor %}
 
@@ -207,6 +208,12 @@
 
 
   <script>
+
+  $('.appointed-for-ok-div').on('change', function () {
+    console.log($(this).html())
+  })
+
+
 
   add_hover_menu('#nav_orders_appointed_for_ok_list')
     $('#content').fadeIn('fast').removeClass('d-none')
