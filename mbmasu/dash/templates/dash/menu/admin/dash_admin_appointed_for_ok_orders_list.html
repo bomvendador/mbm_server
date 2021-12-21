@@ -56,7 +56,7 @@
                       <td>{{ order.ready_for_OK.order.number }}</td>
                       <td>{{ order.ready_for_OK.order.company }}</td>
                       <td>{% if order.decision %}Положительное{% else %}Отрицательное{% endif %}</td>
-                      <td>{% if order.max_sum %}{{ order.max_sum }}{% endif %}</td>
+                      <td>{% if order.max_sum %}{{ order.max_sum }}{% else %}0.00{% endif %}</td>
                 </tr>
                {% endfor %}
 
