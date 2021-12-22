@@ -53,7 +53,7 @@
                     <div class="appointed-for-ok-div">
                       <td>{{ forloop.counter }}</td>
                       <td><p class="d-none">{{ order.commission_date.date|date:"d.m.Y" }}</p>{{ order.commission_date.date|date:"d.m.Y" }}</td>
-                      <td>{{ order.ready_for_OK.order.number }}</td>
+                      <td class="order_number">{{ order.ready_for_OK.order.number }}</td>
                       <td>{{ order.ready_for_OK.order.company }}</td>
                       <td>{% if order.decision %}Положительное{% else %}Отрицательное{% endif %}</td>
                       <td>{% if order.max_sum %}{{ order.max_sum }}{% else %}0.00{% endif %}</td>
@@ -81,6 +81,34 @@
     </ul>
   </div>
 
+
+        <div class="modal fade" id="modal_upload_protocol_file" style="display: none;" aria-hidden="true">
+          <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+              <div class="modal-header bg-info">
+                <h4 class="modal-title" id="">Добавление файла с результатами (протокол)</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                  <div class="form-group">
+                    <label>Файл XLSX</label>
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" id="input_add_new_protocol_file" name="input_add_new_protocol_file">
+                    </div>
+                  </div>
+
+              </div>
+              <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-default" id="confirm_upload_protocol">Сохранить</button>
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
 
         <div class="modal fade" id="modal-download-ready-for-ok" style="display: none;" aria-hidden="true">
           <div class="modal-dialog">
@@ -118,7 +146,8 @@
               </div>
               <div class="modal-body">
                 <p class="mb-2" id="modal_error_title"></p>
-                  <div id="modal_error_body">
+                  <div class="mb-2" style="border-bottom: 1px solid lightgrey;"></div>
+                  <div class="mb-2" id="modal_error_body">
 
                   </div>
               </div>
@@ -209,6 +238,10 @@
 
 
   <script>
+
+  $('#appoint_for_protocol_xls').on('click', function () {
+    $('#modal_upload_protocol_file').modal('show')
+  })
 
   $('.appointed-for-ok-div').on('change', function () {
     console.log($(this).html())
@@ -478,6 +511,237 @@
           title: "Экспорт PDF - Протокол ОК"
         }]
     })
+
+    function fDate(s) {
+        var d = new Date();
+        s = s.split('.');
+        d.setFullYear(s[2]);
+        d.setMonth(s[1]);
+        d.setDate(s[0]);
+        return d;
+    }
+
+    let table_arr = []
+    $('.user-tr').each(function () {
+        let order_number = $(this).find('.order_number').text()
+        let ok_date = $(this).find('.d-none').text()
+        //console.log(order_number)
+        if(table_arr.length > 0){
+
+            let duplicate_found = false
+
+            table_arr.map(function (el) {
+                if(el[0] === order_number){
+                    console.log(el[0] + ' = ' + order_number)
+                    if(fDate(el[1]) > fDate(ok_date)){
+                        el[1] = ok_date
+                        console.log(ok_date)
+                        console.log(el[0])
+
+                    }
+                    duplicate_found = true
+                }else {
+
+                }
+
+            })
+            if(!duplicate_found){
+                table_arr.push([order_number, ok_date])
+            }
+
+        }else {
+            table_arr.push([order_number, ok_date])
+        }
+    })
+       // console.log(table_arr)
+
+  $('#confirm_upload_protocol').on('click', e =>{
+    $(this).prop('disabled', true)
+    var files = document.getElementById('input_add_new_protocol_file').files;
+    let file_orders_numbers_arr = []
+    if(files.length == 0){
+      toastr.error('Выберите файл')
+        $(this).prop('disabled', false)
+    }else{
+      var data_to_return_array = [];
+      var sheet_obj = {};
+      var ExcelToJSON = function() {
+
+        this.parseExcel = function(file) {
+
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            var data = e.target.result;
+            var workbook = XLSX.read(data, {
+              type: 'binary'
+            });
+            var XL_row_object
+            let dateForConclusion = ''
+            let orders_not_found_arr = []
+            workbook.SheetNames.forEach(function(sheetName) {
+              // Here is your object
+              XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+              XL_row_object.map(row =>{
+              let order_found = false
+                  console.log(row['Номер заявки'] + ' - ' + row['Наименование организации'])
+                table_arr.map(function (el) {
+                    if(el[0] === row['Номер заявки']){
+                        order_found = true
+                    }
+                })
+
+                if(!order_found){
+                    orders_not_found_arr.push(row['Номер заявки'])
+                }
+
+              })
+              ////console.log('ddddd - ', XL_row_object);
+              let json_object = JSON.stringify(XL_row_object);
+              let dd = JSON.parse(json_object, (key, val) =>{
+                ////////console.log(key, val);
+                sheet_obj[key] = val;
+
+              })
+
+
+              data_to_return_array.push(XL_row_object);
+
+              //console.log('Sheet - ' + sheetName + ' данные - ' +  JSON.stringify(XL_row_object));
+
+            })
+
+              if(orders_not_found_arr.length > 0){
+                  console.log('Заявки не найдены')
+                  console.log(orders_not_found_arr)
+                  console.log(data_to_return_array)
+
+               $('#modal_error_body').html('')
+                $('#modal_error_title').html('Указанные ниже заявки отсутствуют в списке рассмотренных. Загрузка результатов протокола с помощью файла возможна при условии присутствия всех заявок в списке рассмотренных')
+
+                orders_not_found_arr.map(function (order_number) {
+                    $('#modal_error_body').append('<p>' + order_number + '</p>')
+                })
+
+                $('#modal_error').modal('show')
+
+              }else {
+            // data_to_return_array.map(e=>{
+            //   console.log(e);
+            //
+            // })
+            // console.log(data_to_return_array);
+
+            // var data2 = new FormData();
+            // data2.append('orders', data_to_return_array);
+
+                var data3 = {'orders' : JSON.stringify(data_to_return_array)}
+                // var data1 = JSON.stringify({orders: data_to_return_array})
+                console.log(data3)
+                $.ajax({
+                  headers: { "X-CSRFToken": '{{ csrf_token }}' },
+                  url: "{% url 'dash_add_xlsx_file' %}",
+                  type: 'POST',
+                  // data: data1,
+                  data: data3,
+                  // processData: false,
+                  // contentType: "application/json; charset=utf-8",
+                  // dataType: "json",
+                  error: function(data){
+                      toastr.error('Ошибка', data)
+                      $('#btn_submit_add_new_orders_xlsx').html('Отправить')
+                  },
+                  success:function (response) {
+                      console.log(response['existing_orders'])
+
+                        $('#modal-default-title').html(response['modalTitle'])
+
+                        $('#modal-large-body-common').append('<h5>Кол-во загруженных заявок: ' + response["cnt"] + '</h5>')
+
+                      if(response['existing_orders']){
+                        $('#modal-large-body-common').append('<h5>Заявки уже существуют в базе данных:</h5>')
+                        response['existing_orders'].map(e=>{
+                          $('#modal-large-body-common').append('<p>' + e[0] + ' - ' + e[1] + '</p>')
+                        })
+
+
+
+                      }
+                        $('#modal-lg-common').modal('show')
+
+                      {#toastr.success('Данные сохранены')#}
+                      // $('#btn_submit_add_new_orders_xlsx').html('Отправить')
+                      // $('#input_add_new_orders_xlsx').val('')
+                      // $('#bage_new_orders_admin').html(data)
+                      // window.location.href = "{% url 'dash_index' %}";
+                  }
+                });
+
+              }
+
+
+
+            // google.script.run.withFailureHandler(function(error){
+            //     //////console.log("855 - " + error);
+            //     toastr.error(error);
+            //
+            //   }).withSuccessHandler(function(newOrdersCnt){
+            //     toastr.success('Данные сохранены');
+            //     document.getElementById('btn_submit_add_new_orders_xlsx').innerHTML = "Отправить"
+            //     $('#input_add_new_orders_xlsx').val('');
+            //     if($('#bage_new_orders_admin').html() == ''){
+            //       var bageNewOrdersCnt = 0
+            //     }else{
+            //       var bageNewOrdersCnt = parseInt($('#bage_new_orders_admin').html());
+            //     }
+            //
+            //
+            //     $('#bage_new_orders_admin').html(bageNewOrdersCnt + newOrdersCnt);
+            //     //////console.log(newOrdersCnt, bageNewOrdersCnt)
+            //
+            //
+            //   }).parseOredersFileXLSX(data_to_return_array, $('#userLogin').html());
+
+        //      return data_to_return
+
+          };
+
+
+          reader.onerror = function(ex) {
+            console.log(ex);
+          };
+
+          reader.readAsBinaryString(file);
+        };
+    };
+
+
+    //////console.log(files.length);
+    //document.getElementById('btn_submit_add_new_orders_xlsx').innerHTML = "<div class=='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>"
+    var xl2json = new ExcelToJSON().parseExcel(files[0]);
+
+
+
+    ////////console.log(xl2json);
+    //  //////console.log(data_to_return_array[0][0]);
+    ////////console.log(xl2json.length);
+    /*
+    JSON.parse(xl2json, function(key, value){
+      //////console.log(key , value);
+    })*/
+
+    /*
+    for(var i=0; i < data_to_return.length; i++){
+      var rowObj = data_to_return[i];
+      var objKeys = Object.keys(rowObj);
+      //////console.log('ddd' , objKeys);
+    }
+  */
+
+    }
+
+  })
+
+
 
 
   </script>

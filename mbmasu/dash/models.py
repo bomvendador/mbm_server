@@ -403,7 +403,7 @@ class ProtocolOrders(models.Model):
     max_sum = models.DecimalField(max_digits=12, decimal_places=2)
     decision = models.BooleanField(default=False)
     protocol = models.ForeignKey(Protocol, on_delete=models.CASCADE, default=None, null=True)
-    points = models.DecimalField(max_digits=12, decimal_places=2)
+    points = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
 
 ##Выездная проверка
