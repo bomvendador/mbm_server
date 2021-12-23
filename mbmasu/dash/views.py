@@ -1088,6 +1088,7 @@ def save_ready_for_ok_orders(request):
             ready_for_OK_db.save()
             appointed_for_OK.ready_for_OK = ready_for_OK_db
             appointed_for_OK.marked_for_next_ok = True
+
             appointed_for_OK.save()
             status_change_without_order_status(ready_for_OK_db.order,
                                                OrderStatus.objects.get(name='Готово (рассмотрено на ОК_перенос)'),

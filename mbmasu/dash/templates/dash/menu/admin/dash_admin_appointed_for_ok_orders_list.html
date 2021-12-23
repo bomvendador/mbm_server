@@ -112,10 +112,10 @@
                       {% if protocols %}
                         <div id="ok_date_input" class="form-group col-md-4">
                             <label for="ok_date">Доступные протоколы</label>
-                            <select class='custom-select input-to-fill-up' id="protocol">
+                            <select class='custom-select input-to-fill-up' id="protocol_xls">
                                 <option selected='selected' >---</option>
                                 {% for protocol in protocols %}
-                                <option id="protocolID_{{ protocol.id }}">{{ protocol.protocol_number }} - {{ protocol.protocol_date|date:"d.m.Y" }}</option>
+                                <option id="protocolIDXLS_{{ protocol.id }}">{{ protocol.protocol_number }} - {{ protocol.protocol_date|date:"d.m.Y" }}</option>
                                 {% endfor %}
                             </select>
                         </div>
