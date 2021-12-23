@@ -320,6 +320,7 @@
         }
     })
     $('#content #ok_number').on('input', function () {
+        console.log($('#content #ok_date').val())
         if($(this).val() === '' && $('#content #ok_date').val() === ''){
             $('#content #protocol').prop('disabled', false)
 
