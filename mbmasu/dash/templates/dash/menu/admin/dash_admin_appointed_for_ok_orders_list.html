@@ -321,6 +321,7 @@
     })
     $('#content #ok_number').on('input', function () {
         console.log($('#ok_date').val())
+        console.log($('#ok_number').val())
         if($(this).val() === '' && $('#content #ok_date').val() === ''){
             $('#content #protocol').prop('disabled', false)
 
