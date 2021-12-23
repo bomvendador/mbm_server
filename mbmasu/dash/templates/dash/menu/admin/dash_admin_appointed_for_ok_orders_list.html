@@ -55,7 +55,16 @@
                       <td><p class="d-none">{{ order.commission_date.date|date:"d.m.Y" }}</p>{{ order.commission_date.date|date:"d.m.Y" }}</td>
                       <td class="order_number">{{ order.ready_for_OK.order.number }}</td>
                       <td>{{ order.ready_for_OK.order.company }}</td>
-                      <td>{% if order.decision %}Положительное{% else %}Отрицательное{% endif %}</td>
+                      <td>{% if order.marked_for_next_ok %}
+                            Перенос
+                          {% else %}
+                              {% if order.decision %}
+                                  Положительное
+                              {% else %}
+                                  Отрицательное
+                              {% endif %}
+                          {% endif %}
+                      </td>
                       <td>{% if order.max_sum %}{{ order.max_sum }}{% else %}0.00{% endif %}</td>
                     </div>
                 </tr>
