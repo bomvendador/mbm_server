@@ -83,77 +83,77 @@
 
 
 
-  <div class="container-fluid pt-4">
-    <div class="row">
-        <div class="col-12">
-  
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title"><?= title2 ?></h3>
-  
-              <div class="card-tools">
-              </div>
-            </div>
-            <!-- /.card-header -->
-            <div class="card-body table-responsive p-4 pt-1">
-              <table class="table text-nowrap list-table" id="">
-                <thead>
-                  <tr>
-                      <th>Фамилия</th>
-                      <th>Имя</th>
-                      <th>Логин</th>
-                      <th>В работе (982)</th>
-                      <th>В работе (741)</th>
-                      <th>В работе (343)</th>
-                      <th>В работе (ИТОГО)</th>
-                      <th>Приостановка (982)</th>
-                      <th>Приостановка (741)</th>
-                      <th>Приостановка (343)</th>
-                      <th>Приостановка (ИТОГО)</th>
-                      <th>Готово (982)</th>
-                      <th>Готово (741)</th>
-                      <th>Готово (343)</th>
-                      <th>Готово (ИТОГО)</th>
-                      <th>Отозванные</th>
-
-                      <!--th></th-->
-                  </tr>
-                </thead>
-                <tbody id="tbodyOrdersByExperts">
-                  <? for (var i =1; i < ordersByExperts.length; i++) {?>
-                    <tr class="">
-                      <td><?= ordersByExperts[i][1] ?></td>
-                      <td><?= ordersByExperts[i][2] ?></td>
-                      <td><?= ordersByExperts[i][0] ?></td>
-                      <!--td class="orders-cnt"  id="expertID_<?= ordersByExperts[i][4]?>"><?= ordersByExperts[i][3] ?></td-->
-                      <td class=""><?= ordersByExperts[i][3] ?></td>
-                      <td class=""><?= ordersByExperts[i][4] ?></td>
-                      <td class=""><?= ordersByExperts[i][5] ?></td>
-                      <td class="font-weight-bold" style="background: gainsboro;"><?= ordersByExperts[i][6] ?></td>
-                      <td class=""><?= ordersByExperts[i][7] ?></td>
-                      <td class=""><?= ordersByExperts[i][8] ?></td>
-                      <td class=""><?= ordersByExperts[i][9] ?></td>
-                      <td class="font-weight-bold" style="background: gainsboro;"><?= ordersByExperts[i][10] ?></td>
-                      <td class=""><?= ordersByExperts[i][11] ?></td>
-                      <td class=""><?= ordersByExperts[i][12] ?></td>
-                      <td class=""><?= ordersByExperts[i][13] ?></td>
-                      <td class="font-weight-bold" style="background: gainsboro;"><?= ordersByExperts[i][14] ?></td>
-                      <td class="font-weight-bold" style="background: gainsboro;"><?= ordersByExperts[i][15] ?></td>
-
-                      <!--td><i class="fas fa-ellipsis-v"></i></td-->
-                  </tr>
-                  <?}?>
-  
-  
-                </tbody>
-              </table>
-            </div>
-            <!-- /.card-body -->
-          </div>
-          <!-- /.card -->
-        </div>
-      </div>
-    </div>
+{#  <div class="container-fluid pt-4">#}
+{#    <div class="row">#}
+{#        <div class="col-12">#}
+{#  #}
+{#          <div class="card">#}
+{#            <div class="card-header">#}
+{#              <h3 class="card-title"><?= title2 ?></h3>#}
+{#  #}
+{#              <div class="card-tools">#}
+{#              </div>#}
+{#            </div>#}
+{#            <!-- /.card-header -->#}
+{#            <div class="card-body table-responsive p-4 pt-1">#}
+{#              <table class="table text-nowrap list-table" id="">#}
+{#                <thead>#}
+{#                  <tr>#}
+{#                      <th>Фамилия</th>#}
+{#                      <th>Имя</th>#}
+{#                      <th>Логин</th>#}
+{#                      <th>В работе (982)</th>#}
+{#                      <th>В работе (741)</th>#}
+{#                      <th>В работе (343)</th>#}
+{#                      <th>В работе (ИТОГО)</th>#}
+{#                      <th>Приостановка (982)</th>#}
+{#                      <th>Приостановка (741)</th>#}
+{#                      <th>Приостановка (343)</th>#}
+{#                      <th>Приостановка (ИТОГО)</th>#}
+{#                      <th>Готово (982)</th>#}
+{#                      <th>Готово (741)</th>#}
+{#                      <th>Готово (343)</th>#}
+{#                      <th>Готово (ИТОГО)</th>#}
+{#                      <th>Отозванные</th>#}
+{##}
+{#                      <!--th></th-->#}
+{#                  </tr>#}
+{#                </thead>#}
+{#                <tbody id="tbodyOrdersByExperts">#}
+{#                  <? for (var i =1; i < ordersByExperts.length; i++) {?>#}
+{#                    <tr class="">#}
+{#                      <td><?= ordersByExperts[i][1] ?></td>#}
+{#                      <td><?= ordersByExperts[i][2] ?></td>#}
+{#                      <td><?= ordersByExperts[i][0] ?></td>#}
+{#                      <!--td class="orders-cnt"  id="expertID_<?= ordersByExperts[i][4]?>"><?= ordersByExperts[i][3] ?></td-->#}
+{#                      <td class=""><?= ordersByExperts[i][3] ?></td>#}
+{#                      <td class=""><?= ordersByExperts[i][4] ?></td>#}
+{#                      <td class=""><?= ordersByExperts[i][5] ?></td>#}
+{#                      <td class="font-weight-bold" style="background: gainsboro;"><?= ordersByExperts[i][6] ?></td>#}
+{#                      <td class=""><?= ordersByExperts[i][7] ?></td>#}
+{#                      <td class=""><?= ordersByExperts[i][8] ?></td>#}
+{#                      <td class=""><?= ordersByExperts[i][9] ?></td>#}
+{#                      <td class="font-weight-bold" style="background: gainsboro;"><?= ordersByExperts[i][10] ?></td>#}
+{#                      <td class=""><?= ordersByExperts[i][11] ?></td>#}
+{#                      <td class=""><?= ordersByExperts[i][12] ?></td>#}
+{#                      <td class=""><?= ordersByExperts[i][13] ?></td>#}
+{#                      <td class="font-weight-bold" style="background: gainsboro;"><?= ordersByExperts[i][14] ?></td>#}
+{#                      <td class="font-weight-bold" style="background: gainsboro;"><?= ordersByExperts[i][15] ?></td>#}
+{##}
+{#                      <!--td><i class="fas fa-ellipsis-v"></i></td-->#}
+{#                  </tr>#}
+{#                  <?}?>#}
+{#  #}
+{#  #}
+{#                </tbody>#}
+{#              </table>#}
+{#            </div>#}
+{#            <!-- /.card-body -->#}
+{#          </div>#}
+{#          <!-- /.card -->#}
+{#        </div>#}
+{#      </div>#}
+{#    </div>#}
 
 </section>
 
