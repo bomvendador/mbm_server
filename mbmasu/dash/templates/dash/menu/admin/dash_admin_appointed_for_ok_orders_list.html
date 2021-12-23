@@ -291,9 +291,9 @@
     })
 
     $('#del').on('click', function () {
-        $('#ok_date').val('')
-        if($('#ok_number').val() === ''){
-            $('#protocol').prop('disabled', false)
+        $('#content #ok_date').val('')
+        if($('#content #ok_number').val() === ''){
+            $('#content #protocol').prop('disabled', false)
 
         }
     })
