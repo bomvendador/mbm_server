@@ -1042,10 +1042,12 @@ def ready_for_ok_orders_download(request):
             os.mkdir(files_path)
         for ready_for_ok_id in arr:
             ready_for_ok_db = ReadyForOK.objects.get(id=ready_for_ok_id)
+            temp_stop_files = TempStopFiles.objects.filter(temp_stop__notification=NotificationTempStop.objects.filter(order=ready_for_ok_db.order).latest('added')).latest('added')
             file_path_order = files_path + ready_for_ok_db.order.number
             os.mkdir(file_path_order)
             copy(ready_for_ok_db.pdf_file.path, file_path_order)
             copy(ready_for_ok_db.doc_file.path, file_path_order)
+            copy(temp_stop_files.file_notification.path, file_path_order)
         path_to_zip = make_archive(files_path, "zip", files_path)
         print(os.path.basename(path_to_zip))
         # response = HttpResponse(FileWrapper(open(path_to_zip, 'rb')), content_type='application/zip')
