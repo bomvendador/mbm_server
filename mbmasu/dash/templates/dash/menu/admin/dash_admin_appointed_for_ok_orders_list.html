@@ -299,7 +299,7 @@
     })
 
 
-    $('#protocol').on('change', function () {
+    $('#content').on('change', '#protocol',function () {
         console.log('iiiiii')
         if($(this).val() !== '---'){
             $('#ok_number').attr('disabled', true).removeClass('input-to-fill-up').val('')
