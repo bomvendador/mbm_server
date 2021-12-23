@@ -461,8 +461,8 @@
                 let order_sum = $(this).closest('tr').find('td')[6].innerHTML
                 let order_id = $(this).closest('tr').attr('id').split('_')[1]
                 let td_decision = ''
-                console.log(order_decision)
-                if(order_decision === 'Перенос'){
+                console.log(order_decision.replace(/\s/g,''))
+                if(order_decision.replace(/\s/g,'') === 'Перенос'){
                     td_decision =
                     "<td>" +
                     "<select class='custom-select input-to-fill-up choose-conclusion-decision' data-decision='Положительное'>" +
