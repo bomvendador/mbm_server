@@ -312,7 +312,7 @@
 
     $('#content').on('change', '#ok_date', function () {
         console.log('fffffff')
-        if($(this).val() === '' && $('#ok_number').val() === ''){
+        if($(this).val() === '' && $('#content #ok_number').val() === ''){
             $('#content #protocol').prop('disabled', false)
 
         }else {
@@ -320,7 +320,7 @@
         }
     })
     $('#content #ok_number').on('input', function () {
-        if($(this).val() === '' && $('#ok_date').val() === ''){
+        if($(this).val() === '' && $('#content #ok_date').val() === ''){
             $('#content #protocol').prop('disabled', false)
 
         }else {
