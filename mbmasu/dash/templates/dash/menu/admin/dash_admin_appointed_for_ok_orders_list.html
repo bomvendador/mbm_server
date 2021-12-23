@@ -202,8 +202,8 @@
               <div class="modal-body" id="modal_appoint_for_ok_body">
                   <div class="row col-md-12">
                         <div id="ok_date_input" class="form-group col-md-4">
-                            <label for="ok_number">Номер протокола</label>
-                             <input id="ok_number"  class="form-control input-to-fill-up" type="text" name="ok_number" value="">
+                            <label for="protocol_number">Номер протокола</label>
+                             <input id="protocol_number"  class="form-control input-to-fill-up" type="text" name="protocol_number" value="">
                         </div>
                         <div id="ok_date_input" class="form-group col-md-4">
                                 <label for="ok_date">Дата протокола</label>
@@ -319,9 +319,9 @@
             $('#content #protocol').val('---').prop('disabled', 'disabled')
         }
     })
-    $('#content #ok_number').on('input', function () {
+    $('#content #protocol_number').on('input', function () {
         console.log($('#ok_date').val())
-        console.log($('#ok_number').val())
+        console.log($('#protocol_number').val())
         if($(this).val() === '' && $('#content #ok_date').val() === ''){
             $('#content #protocol').prop('disabled', false)
 
