@@ -313,18 +313,18 @@
     $('#ok_date').on('change', function () {
         console.log('fffffff')
         if($(this).val() === '' && $('#ok_number').val() === ''){
-            $('#protocol').prop('disabled', false)
+            $('#content #protocol').prop('disabled', false)
 
         }else {
-            $('#protocol').val('---').prop('disabled', 'disabled')
+            $('#content #protocol').val('---').prop('disabled', 'disabled')
         }
     })
-    $('#ok_number').on('input', function () {
+    $('#content #ok_number').on('input', function () {
         if($(this).val() === '' && $('#ok_date').val() === ''){
-            $('#protocol').prop('disabled', false)
+            $('#content #protocol').prop('disabled', false)
 
         }else {
-            $('#protocol').val('---').prop('disabled', 'disabled')
+            $('#content #protocol').val('---').prop('disabled', 'disabled')
         }
     })
 
