@@ -465,7 +465,7 @@
                 if(order_decision.replace(/\s/g,'') === 'Перенос'){
                     td_decision =
                     "<td>" +
-                    "<select class='custom-select input-to-fill-up choose-conclusion-decision' data-decision='Положительное'>" +
+                    "<select class='custom-select choose-conclusion-decision' data-decision='Положительное' disabled>" +
                     "<option selected='selected'>Перенос</option>" +
                     "</select>" +
                     "</td>"
@@ -493,17 +493,32 @@
 
                 }
 
+                if(order_decision.replace(/\s/g,'') === 'Перенос'){
+
+                    let tr_order = "<tr class='ready-for-ok-confirmed' id='orderIDReadyForOK_" + order_id + "'>" +
+                        "<td>" + cnt + "</td>" +
+                        "<td>" + order_number + "</td>" +
+                        "<td>" + order_company + "</td>" +
+                        td_decision +
+                        "<td>" +
+                        "<p class='d-none'>" + order_sum + "</p><input type='text' class='form-control sum' data-sum='" + order_sum + "' value='" + order_sum + "' disabled>" +
+                        "</td>" +
+                        "</tr>"
+
+                }else {
+                    let tr_order = "<tr class='ready-for-ok-confirmed' id='orderIDReadyForOK_" + order_id + "'>" +
+                        "<td>" + cnt + "</td>" +
+                        "<td>" + order_number + "</td>" +
+                        "<td>" + order_company + "</td>" +
+                        td_decision +
+                        "<td>" +
+                        "<p class='d-none'>" + order_sum + "</p><input type='text' class='form-control input-to-fill-up sum' data-sum='" + order_sum + "' value='" + order_sum + "'>" +
+                        "</td>" +
+                        "</tr>"
+
+                }
 
 
-                let tr_order = "<tr class='ready-for-ok-confirmed' id='orderIDReadyForOK_" + order_id + "'>" +
-                    "<td>" + cnt + "</td>" +
-                    "<td>" + order_number + "</td>" +
-                    "<td>" + order_company + "</td>" +
-                    td_decision +
-                    "<td>" +
-                    "<p class='d-none'>" + order_sum + "</p><input type='text' class='form-control input-to-fill-up sum' data-sum='" + order_sum + "' value='" + order_sum + "'>" +
-                    "</td>" +
-                    "</tr>"
                 tr += tr_order
             })
             $('#tbody_appoint_for_ok').html(tr)
