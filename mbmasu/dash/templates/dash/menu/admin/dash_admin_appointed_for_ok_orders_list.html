@@ -310,7 +310,7 @@
         }
     })
 
-    $('#ok_date').on('change', function () {
+    $('#content').on('change', '#ok_date', function () {
         console.log('fffffff')
         if($(this).val() === '' && $('#ok_number').val() === ''){
             $('#content #protocol').prop('disabled', false)
@@ -332,13 +332,13 @@
         let protocol_ok_arr = []
         let checkMaxSum = new RegExp(/^\d+.?\d{0,2}$/);
         let error_arr = []
-        let protocol_val = $('#protocol').val()
-        let protocol_date = $('#ok_date').val()
-        let protocol_number = $('#ok_number').val()
+        let protocol_val = $('#content #protocol').val()
+        let protocol_date = $('#content #ok_date').val()
+        let protocol_number = $('#content #ok_number').val()
         let data = {}
 
-        if($('#protocol').length !== 0 && protocol_val !== "---"){
-            data.protocolID = $('#protocol option:selected').attr('id').split('_')[1]
+        if($('#content #protocol').length !== 0 && protocol_val !== "---"){
+            data.protocolID = $('#content #protocol option:selected').attr('id').split('_')[1]
             console.log('fdfdfd')
         }
         $('.ready-for-ok-confirmed').each(function () {
@@ -367,11 +367,11 @@
 
             $('#modal_error').modal('show')
         }else {
-            let protocol_len = $('#protocol').length
+            let protocol_len = $('#content #protocol').length
             if((protocol_date === '' || protocol_number === '') && ((protocol_len !== 0 && protocol_val === "---") || protocol_len === 0)){
                console.log(protocol_date)
                console.log(protocol_number)
-               console.log($('#protocol').length)
+               console.log($('#content #protocol').length)
                 toastr.error('Укажите номер и дату протокола')
             }else {
                 if(!checkMaxSum.test(protocol_number) && protocol_number !== ''){
