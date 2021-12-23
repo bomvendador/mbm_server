@@ -290,7 +290,7 @@
       }
     })
 
-    $('#del').on('click', function () {
+    $('#content').on('click', '#del',function () {
         $('#content #ok_date').val('')
         if($('#content #ok_number').val() === ''){
             $('#content #protocol').prop('disabled', false)
