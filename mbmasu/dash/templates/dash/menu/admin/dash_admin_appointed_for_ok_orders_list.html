@@ -492,10 +492,10 @@
                     }
 
                 }
-
+                let tr_order = ''
                 if(order_decision.replace(/\s/g,'') === 'Перенос'){
 
-                    let tr_order = "<tr class='ready-for-ok-confirmed' id='orderIDReadyForOK_" + order_id + "'>" +
+                    tr_order = "<tr class='ready-for-ok-confirmed' id='orderIDReadyForOK_" + order_id + "'>" +
                         "<td>" + cnt + "</td>" +
                         "<td>" + order_number + "</td>" +
                         "<td>" + order_company + "</td>" +
@@ -506,7 +506,7 @@
                         "</tr>"
 
                 }else {
-                    let tr_order = "<tr class='ready-for-ok-confirmed' id='orderIDReadyForOK_" + order_id + "'>" +
+                    tr_order = "<tr class='ready-for-ok-confirmed' id='orderIDReadyForOK_" + order_id + "'>" +
                         "<td>" + cnt + "</td>" +
                         "<td>" + order_number + "</td>" +
                         "<td>" + order_company + "</td>" +
