@@ -302,11 +302,11 @@
     $('#content').on('change', '#protocol',function () {
         console.log('iiiiii')
         if($(this).val() !== '---'){
-            $('#ok_number').attr('disabled', true).removeClass('input-to-fill-up').val('')
-            $('#ok_date').attr('disabled', true).removeClass('input-to-fill-up').val('')
+            $('#content #ok_number').attr('disabled', true).removeClass('input-to-fill-up').val('')
+            $('#content #ok_date').attr('disabled', true).removeClass('input-to-fill-up').val('')
         }else {
-            $('#ok_number').attr('disabled', false).addClass('input-to-fill-up').val('')
-            $('#ok_date').attr('disabled', false).addClass('input-to-fill-up').val('')
+            $('#content #ok_number').attr('disabled', false).addClass('input-to-fill-up').val('')
+            $('#content #ok_date').attr('disabled', false).addClass('input-to-fill-up').val('')
         }
     })
 
