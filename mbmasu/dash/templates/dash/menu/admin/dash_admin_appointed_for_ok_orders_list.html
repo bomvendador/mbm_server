@@ -92,6 +92,36 @@
                 </button>
               </div>
               <div class="modal-body">
+                    <div class="row col-md-12">
+                        <div id="ok_date_input" class="form-group col-md-4">
+                            <label for="ok_number">Номер протокола</label>
+                             <input id="ok_number"  class="form-control input-to-fill-up" type="text" name="ok_number" value="">
+                        </div>
+                        <div id="ok_date_input" class="form-group col-md-4">
+                                <label for="ok_date">Дата протокола</label>
+
+                            <div class="input-group mb-12">
+                                 <input id="ok_date"  class="form-control date-time-picker  input-to-fill-up" type="text" name="ok_date" value="">
+
+                                <div class="input-group-append">
+                                    <span class="input-group-text" style="cursor: pointer" id="del"><i class="far fa-trash-alt"></i></span>
+                                </div>
+                            </div>
+                        </div>
+
+                      {% if protocols %}
+                        <div id="ok_date_input" class="form-group col-md-4">
+                            <label for="ok_date">Доступные протоколы</label>
+                            <select class='custom-select input-to-fill-up' id="protocol">
+                                <option selected='selected' >---</option>
+                                {% for protocol in protocols %}
+                                <option id="protocolID_{{ protocol.id }}">{{ protocol.protocol_number }} - {{ protocol.protocol_date|date:"d.m.Y" }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                      {% endif %}
+                    </div>
+
                   <div class="form-group">
                     <label>Файл XLSX</label>
                     <div class="input-group mb-3">
@@ -596,12 +626,6 @@
 
               })
               ////console.log('ddddd - ', XL_row_object);
-              let json_object = JSON.stringify(XL_row_object);
-              let dd = JSON.parse(json_object, (key, val) =>{
-                ////////console.log(key, val);
-                sheet_obj[key] = val;
-
-              })
 
 
               data_to_return_array.push(XL_row_object);
@@ -625,21 +649,13 @@
                 $('#modal_error').modal('show')
 
               }else {
-            // data_to_return_array.map(e=>{
-            //   console.log(e);
-            //
-            // })
-            // console.log(data_to_return_array);
-
-            // var data2 = new FormData();
-            // data2.append('orders', data_to_return_array);
 
                 var data3 = {'orders' : JSON.stringify(data_to_return_array)}
                 // var data1 = JSON.stringify({orders: data_to_return_array})
                 console.log(data3)
                 $.ajax({
                   headers: { "X-CSRFToken": '{{ csrf_token }}' },
-                  url: "{% url 'dash_add_xlsx_file' %}",
+                  url: "{% url 'save_orders_for_protocol_file' %}",
                   type: 'POST',
                   // data: data1,
                   data: data3,

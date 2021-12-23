@@ -1202,6 +1202,70 @@ def protocols_orders_list(request):
     return render(request, 'dash/menu/admin/dash_admin_protocols_orders_list.html', context)
 
 
+# @login_required(redirect_field_name=None, login_url='/')
+# def save_orders_for_protocol_file(request):
+#     if request.method == 'POST':
+#         data = request.POST
+#         orders = json.loads(data['orders'])
+#         # print(orders[0][0]['Номер заявки'])
+#         # print(orders)
+#         #982-ПП
+#         cnt = 0
+#         existing_orders = []
+#         response = {}
+#         for order in orders[0]:
+#             appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK=ReadyForOK.objects.get(order__number=order['Номер заявки'],
+#                                                              commission_date=CommissionDate.objects.filter().earliest('date')))
+#             protocol_order = ProtocolOrders()
+#             protocol_order.user = request.user
+#             protocol_order
+#             new_order.added = datetime.now
+#             new_order.number = order['Номер заявки']
+#             new_order.date_of_appliance = order['Дата завершения (фактическая)']
+#             new_order.pp = PPnumber.objects.get(name=order['Номер НПА'])
+#             new_order.sum_of_appliance = order['Сумма запрашиваемой субсидии, рублей'].replace(',', '.')
+#             new_order.status = OrderStatus.objects.get(name='Новая')
+#             new_order.end_date = order['Крайняя дата ЭЗ']
+#             new_order.end_date_for_responsible = order['Крайняя дата ЭЗ для эксперта']
+#             new_order.aim = order['Цель поддержки']
+#             new_order.company = order['Наименование заявителя']
+#             new_order.company_inn = order['ИНН заявителя']
+#             new_order.service_name = order['Наименование сервиса']
+#             new_order.save()
+#
+#             new_order_applier = Applier()
+#             new_order_applier.user = request.user
+#             new_order_applier.order = new_order
+#             new_order_applier.applier_email = order['Email заявителя']
+#             new_order_applier.applier_tel = order['Телефон заявителя']
+#             new_order_applier.applier_fio = order['ФИО заявителя']
+#             new_order_applier.save()
+#             cnt = cnt + 1
+#
+#             status_change_db = StatusChange()
+#             status_change_db.user = request.user
+#             status_change_db.order = new_order
+#             status_change_db.status = OrderStatus.objects.get(name='Новая')
+#             status_change_db.save()
+#
+#         if len(existing_orders) > 0:
+#             response['existing_orders'] = existing_orders
+#
+#         new_orders_cnt = Order.objects.filter(status=OrderStatus.objects.get(name='Новая')).count()
+#         counter_db, created = CountersAdmin.objects.get_or_create(user_role_name='Админ')
+#         if created:
+#             counter_db.save()
+#         print('new_orders_cnt - ' + str(new_orders_cnt))
+#         counter_db.new_orders = new_orders_cnt
+#         counter_db.all_orders = Order.objects.all().count()
+#         counter_db.save()
+#
+#
+#         response['modalTitle'] = 'Данные по загрузке'
+#         response['cnt'] = cnt
+#         return JsonResponse(response)
+
+
 # nav_onsite_checks_list
 @login_required(redirect_field_name=None, login_url='/')
 def onsite_checks_list(request):

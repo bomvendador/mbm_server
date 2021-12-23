@@ -27,6 +27,7 @@ urlpatterns = [
          name='appoint_expert_for_order_after_temp_stop_check_list'),
     path('save_ready_for_ok_orders', views.save_ready_for_ok_orders, name='save_ready_for_ok_orders'),
     path('save_orders_for_protocol', views.save_orders_for_protocol, name='save_orders_for_protocol'),
+    path('save_orders_for_protocol_file', views.save_orders_for_protocol_file, name='save_orders_for_protocol_file'),
     path('all_orders_list', views.all_orders_list, name='all_orders_list'),
     path('all_orders_list/<int:order_id>', views.order_info, name='order_info'),
     path('protocols_orders_list', views.protocols_orders_list, name='protocols_orders_list'),
