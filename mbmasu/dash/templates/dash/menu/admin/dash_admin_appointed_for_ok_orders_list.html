@@ -461,25 +461,39 @@
                 let order_sum = $(this).closest('tr').find('td')[6].innerHTML
                 let order_id = $(this).closest('tr').attr('id').split('_')[1]
                 let td_decision = ''
-                if(order_decision === 'Положительное'){
+
+                if(order_decision === 'Перенос'){
                     td_decision =
                     "<td>" +
                     "<select class='custom-select input-to-fill-up choose-conclusion-decision' data-decision='Положительное'>" +
-                    "<option selected='selected' >Положительное</option>" +
-                    "<option>Отрицательное</option>" +
+                    "<option selected='selected'>Перенос</option>" +
                     "</select>" +
                     "</td>"
 
                 }else {
-                    td_decision =
-                    "<td>" +
-                    "<select class='custom-select input-to-fill-up choose-conclusion-decision' data-decision='Отрицательное'>" +
-                    "<option>Положительное</option>" +
-                    "<option selected='selected' >Отрицательное</option>" +
-                    "</select>" +
-                    "</td>"
+                    if(order_decision === 'Положительное'){
+                        td_decision =
+                        "<td>" +
+                        "<select class='custom-select input-to-fill-up choose-conclusion-decision' data-decision='Положительное'>" +
+                        "<option selected='selected'>Положительное</option>" +
+                        "<option>Отрицательное</option>" +
+                        "</select>" +
+                        "</td>"
+
+                    }else {
+                        td_decision =
+                        "<td>" +
+                        "<select class='custom-select input-to-fill-up choose-conclusion-decision' data-decision='Отрицательное'>" +
+                        "<option>Положительное</option>" +
+                        "<option selected='selected' >Отрицательное</option>" +
+                        "</select>" +
+                        "</td>"
+
+                    }
 
                 }
+
+
 
                 let tr_order = "<tr class='ready-for-ok-confirmed' id='orderIDReadyForOK_" + order_id + "'>" +
                     "<td>" + cnt + "</td>" +
