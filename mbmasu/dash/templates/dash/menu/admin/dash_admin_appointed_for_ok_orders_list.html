@@ -677,6 +677,9 @@
             data.protocolID = $('#protocol_xls option:selected').attr('id').split('_')[1]
             console.log($('#protocol_xls option:selected').attr('id').split('_')[1])
         }
+        console.log(protocol_val)
+        console.log(protocol_date)
+        console.log(protocol_number)
     if(!((protocol_date === '' && protocol_number === '') && (protocol_val !== "---")) || !((protocol_date !== '' && protocol_number !== '') && (protocol_val === "---"))){
         toastr.error('Данные о протоколе должны быть указаны')
     }else {
