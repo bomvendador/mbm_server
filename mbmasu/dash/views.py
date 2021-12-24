@@ -1226,6 +1226,7 @@ def save_orders_for_protocol_file(request):
             print(protocol_db.id)
         else:
             protocol_db = Protocol()
+            print()
         for order in orders[0]:
             # appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK=ReadyForOK.objects.get(order__number=order['Номер заявки'],
             #                                                  commission_date=CommissionDate.objects.filter().earliest('date')))
