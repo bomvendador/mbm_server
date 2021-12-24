@@ -1226,12 +1226,16 @@ def save_orders_for_protocol_file(request):
             print(protocol_db.id)
         else:
             protocol_db = Protocol()
+            protocol_db.user = request.user
+            protocol_db.protocol_date = date_to_db(data.get('protocol_date'))
+            protocol_db.protocol_number = date_to_db(data.get('protocol_number'))
+            protocol_db.save()
             print(data.get('protocol_number'))
             print(data.get('protocol_date'))
         for order in orders[0]:
-            # appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK=ReadyForOK.objects.get(order__number=order['Номер заявки'],
-            #                                                  commission_date=CommissionDate.objects.filter().earliest('date')))
+            appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK=ReadyForOK.objects.get(order__number=order['Номер заявки'])).earliest('commission_date')
             protocol_order_db = ProtocolOrders()
+            protocol_order_db.protocol = protocol_db
             protocol_order_db.user = request.user
     #         protocol_order
     #         new_order.added = datetime.now
