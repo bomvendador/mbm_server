@@ -339,6 +339,38 @@
         }
     })
 
+    $('#content').on('change', '#protocol_xls',function () {
+        if($(this).val() !== '---'){
+            $('#protocol_number_xls').attr('disabled', true).removeClass('input-to-fill-up').val('')
+            $('#protocol_date_xls').attr('disabled', true).removeClass('input-to-fill-up').val('')
+        }else {
+            $('#protocol_number_xls').attr('disabled', false).addClass('input-to-fill-up').val('')
+            $('#protocol_date_xls').attr('disabled', false).addClass('input-to-fill-up').val('')
+        }
+    })
+
+    $('#content').on('change', '#protocol_date_xls', function () {
+        if($(this).val() === '' && $('#protocol_number_xls').val() === ''){
+            $('#content #protocol_xls').prop('disabled', false)
+
+        }else {
+            $('#content #protocol_xls').val('---').prop('disabled', 'disabled')
+        }
+    })
+    $('#protocol_number_xls').on('input', function () {
+        console.log($('#protocol_date_xls').val())
+        console.log($('#protocol_number_xls').val())
+        if($(this).val() === '' && $('#protocol_date_xls').val() === ''){
+            $('#content #protocol_xls').prop('disabled', false)
+
+        }else {
+            $('#content #protocol_xls').val('---').prop('disabled', 'disabled')
+        }
+    })
+
+
+
+
     $('#save_passed_ok').on('click', function () {
         let protocol_ok_arr = []
         let checkMaxSum = new RegExp(/^\d+.?\d{0,2}$/);
