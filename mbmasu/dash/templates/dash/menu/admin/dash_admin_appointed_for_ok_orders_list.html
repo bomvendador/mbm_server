@@ -113,7 +113,7 @@
                                  <input id="protocol_date_xls"  class="form-control date-time-picker  input-to-fill-up" type="text" name="protocol_date_xls" value="">
 
                                 <div class="input-group-append">
-                                    <span class="input-group-text" style="cursor: pointer" id="del"><i class="far fa-trash-alt"></i></span>
+                                    <span class="input-group-text" style="cursor: pointer" id="del_xls"><i class="far fa-trash-alt"></i></span>
                                 </div>
                             </div>
                         </div>
@@ -303,6 +303,14 @@
         $('#protocol_date').val('')
         if($('#protocol_number').val() === ''){
             $('#content #protocol').prop('disabled', false)
+
+        }
+    })
+
+    $('#content').on('click', '#del_xls',function () {
+        $('#protocol_date_xls').val('')
+        if($('#protocol_number_xls').val() === ''){
+            $('#content #protocol_xls').prop('disabled', false)
 
         }
     })
