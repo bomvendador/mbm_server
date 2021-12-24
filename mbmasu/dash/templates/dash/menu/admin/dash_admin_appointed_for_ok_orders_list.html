@@ -673,10 +673,6 @@
         let protocol_number = $('#protocol_number_xls').val()
         let data = {}
 
-        if($('#protocol_xls').length !== 0 && protocol_val !== "---"){
-            data.protocolID = $('#protocol_xls option:selected').attr('id').split('_')[1]
-            console.log($('#protocol_xls option:selected').attr('id').split('_')[1])
-        }
         console.log('protocol_val - ' + protocol_val)
         console.log('protocol_date - ' + protocol_date)
         console.log('protocol_number - ' + protocol_number)
@@ -764,6 +760,11 @@
                                 'protocol_number': protocol_number,
                                 'protocol_number': protocol_number,
                                 }
+                    if($('#protocol_xls').length !== 0 && protocol_val !== "---"){
+                        data3.protocolID = $('#protocol_xls option:selected').attr('id').split('_')[1]
+                        console.log($('#protocol_xls option:selected').attr('id').split('_')[1])
+                    }
+
                     // var data1 = JSON.stringify({orders: data_to_return_array})
                     console.log(data3)
                     $.ajax({

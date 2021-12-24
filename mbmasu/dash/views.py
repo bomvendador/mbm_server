@@ -1213,17 +1213,22 @@ def save_orders_for_protocol_file(request):
     if request.method == 'POST':
         data = request.POST
         orders = json.loads(data['orders'])
+
     #     # print(orders[0][0]['Номер заявки'])
-        print(orders)
+        print(data)
     #     #982-ПП
     #     cnt = 0
     #     existing_orders = []
     #     response = {}
-    #     for order in orders[0]:
-    #         appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK=ReadyForOK.objects.get(order__number=order['Номер заявки'],
-    #                                                          commission_date=CommissionDate.objects.filter().earliest('date')))
-    #         protocol_order = ProtocolOrders()
-    #         protocol_order.user = request.user
+
+        # if
+        #     protocol_db =
+
+        for order in orders[0]:
+            appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK=ReadyForOK.objects.get(order__number=order['Номер заявки'],
+                                                             commission_date=CommissionDate.objects.filter().earliest('date')))
+            protocol_order_db = ProtocolOrders()
+            protocol_order_db.user = request.user
     #         protocol_order
     #         new_order.added = datetime.now
     #         new_order.number = order['Номер заявки']
