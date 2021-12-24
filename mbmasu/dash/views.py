@@ -1221,12 +1221,14 @@ def save_orders_for_protocol_file(request):
     #     existing_orders = []
     #     response = {}
 
-        # if
-        #     protocol_db =
-
+        if data.get('protocolID'):
+            protocol_db = Protocol.objects.get(id=data.get('protocolID'))
+            print(protocol_db.id)
+        else:
+            protocol_db = Protocol()
         for order in orders[0]:
-            appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK=ReadyForOK.objects.get(order__number=order['Номер заявки'],
-                                                             commission_date=CommissionDate.objects.filter().earliest('date')))
+            # appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK=ReadyForOK.objects.get(order__number=order['Номер заявки'],
+            #                                                  commission_date=CommissionDate.objects.filter().earliest('date')))
             protocol_order_db = ProtocolOrders()
             protocol_order_db.user = request.user
     #         protocol_order
