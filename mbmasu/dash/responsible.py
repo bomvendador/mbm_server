@@ -1213,13 +1213,6 @@ def save_ez_pdf(request):
 
         counters_db.save()
 
-        counters_admin_db, created = CountersAdmin.objects.get_or_create(user_role_name='Админ')
-        if created:
-            counters_admin_db.save()
-        admin_ready_for_ok_cnt = ReadyForOK.objects.filter(appointed_ok=False).count()
-        counters_admin_db.admin_ready_for_ok = admin_ready_for_ok_cnt
-        counters_admin_db.save()
-
         try:
             ReadyForOK.objects.filter(order=order).delete()
             ready_for_ok_db = ReadyForOK()
@@ -1240,6 +1233,8 @@ def save_ez_pdf(request):
         onsite_check_cnt = Order.objects.filter((Q(onsite_check=True) & Q(onsite_check_complete=False)) &
                                   Q(status__name__contains='Готово')).count()
         counters_admin_db.admin_onsite_checks = onsite_check_cnt
+        admin_ready_for_ok_cnt = ReadyForOK.objects.filter(appointed_ok=False).count()
+        counters_admin_db.admin_ready_for_ok = admin_ready_for_ok_cnt
         counters_admin_db.save()
 
         return HttpResponse('')
