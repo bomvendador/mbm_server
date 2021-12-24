@@ -680,7 +680,14 @@
         console.log('protocol_val - ' + protocol_val)
         console.log('protocol_date - ' + protocol_date)
         console.log('protocol_number - ' + protocol_number)
-    if(!((protocol_date === '' && protocol_number === '') && (protocol_val !== "---")) || !((protocol_date !== '' && protocol_number !== '') && (protocol_val === "---"))){
+
+      let test_ok = false
+
+      if(((protocol_date === '' && protocol_number === '') && (protocol_val !== "---")) || ((protocol_date !== '' && protocol_number !== '') && (protocol_val === "---"))){
+          test_ok = true
+      }
+
+    if(test_ok){
         toastr.error('Данные о протоколе должны быть указаны')
     }else {
 
