@@ -1233,7 +1233,7 @@ def save_orders_for_protocol_file(request):
             print(data.get('protocol_number'))
             print(data.get('protocol_date'))
         for order in orders[0]:
-            appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK=ReadyForOK.objects.get(order__number=order['Номер заявки'])).earliest('commission_date')
+            appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK=ReadyForOK.objects.get(order__number=order['Номер заявки'])).earliest('commission_date__date')
             protocol_order_db = ProtocolOrders()
             protocol_order_db.protocol = protocol_db
             protocol_order_db.user = request.user
