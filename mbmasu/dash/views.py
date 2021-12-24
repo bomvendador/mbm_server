@@ -1045,7 +1045,7 @@ def ready_for_ok_orders_download(request):
             try:
                 temp_stop_files = TempStopFiles.objects.filter(temp_stop__notification=NotificationTempStop.objects.filter(order=ready_for_ok_db.order).latest('added')).latest('added')
                 copy(temp_stop_files.file_notification.path, file_path_order)
-            except TempStopFiles.DoesNotExist:
+            except NotificationTempStop.DoesNotExist:
                 temp_stop_files = None
             file_path_order = files_path + ready_for_ok_db.order.number
             os.mkdir(file_path_order)
