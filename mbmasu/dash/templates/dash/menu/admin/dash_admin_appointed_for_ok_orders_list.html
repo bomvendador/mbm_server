@@ -103,14 +103,14 @@
               <div class="modal-body">
                     <div class="row col-md-12">
                         <div id="ok_date_input" class="form-group col-md-4">
-                            <label for="ok_number">Номер протокола</label>
-                             <input id="ok_number"  class="form-control input-to-fill-up" type="text" name="ok_number" value="">
+                            <label for="protocol_number_xls">Номер протокола</label>
+                             <input id="protocol_number_xls"  class="form-control input-to-fill-up" type="text" name="protocol_number_xls" value="">
                         </div>
                         <div id="ok_date_input" class="form-group col-md-4">
-                                <label for="ok_date">Дата протокола</label>
+                                <label for="protocol_date_xls">Дата протокола</label>
 
                             <div class="input-group mb-12">
-                                 <input id="ok_date"  class="form-control date-time-picker  input-to-fill-up" type="text" name="ok_date" value="">
+                                 <input id="protocol_date_xls"  class="form-control date-time-picker  input-to-fill-up" type="text" name="protocol_date_xls" value="">
 
                                 <div class="input-group-append">
                                     <span class="input-group-text" style="cursor: pointer" id="del"><i class="far fa-trash-alt"></i></span>
@@ -120,7 +120,7 @@
 
                       {% if protocols %}
                         <div id="ok_date_input" class="form-group col-md-4">
-                            <label for="ok_date">Доступные протоколы</label>
+                            <label for="protocol_xls">Доступные протоколы</label>
                             <select class='custom-select input-to-fill-up' id="protocol_xls">
                                 <option selected='selected' >---</option>
                                 {% for protocol in protocols %}
@@ -627,175 +627,197 @@
        // console.log(table_arr)
 
   $('#confirm_upload_protocol').on('click', e =>{
-    $(this).prop('disabled', true)
-    var files = document.getElementById('input_add_new_protocol_file').files;
-    let file_orders_numbers_arr = []
-    if(files.length == 0){
-      toastr.error('Выберите файл')
-        $(this).prop('disabled', false)
-    }else{
-      var data_to_return_array = [];
-      var sheet_obj = {};
-      var ExcelToJSON = function() {
 
-        this.parseExcel = function(file) {
+        let protocol_val = $('#protocol_xls').val()
+        let protocol_date = $('#protocol_date_xls').val()
+        let protocol_number = $('#protocol_number_xls').val()
+        let data = {}
 
-          var reader = new FileReader();
-          reader.onload = function(e) {
-            var data = e.target.result;
-            var workbook = XLSX.read(data, {
-              type: 'binary'
-            });
-            var XL_row_object
-            let dateForConclusion = ''
-            let orders_not_found_arr = []
-            workbook.SheetNames.forEach(function(sheetName) {
-              // Here is your object
-              XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
-              XL_row_object.map(row =>{
-              let order_found = false
-                  console.log(row['Номер заявки'] + ' - ' + row['Наименование организации'])
-                table_arr.map(function (el) {
-                    if(el[0] === row['Номер заявки']){
-                        order_found = true
-                    }
-                })
-
-                if(!order_found){
-                    orders_not_found_arr.push(row['Номер заявки'])
-                }
-
-              })
-              ////console.log('ddddd - ', XL_row_object);
-
-
-              data_to_return_array.push(XL_row_object);
-
-              //console.log('Sheet - ' + sheetName + ' данные - ' +  JSON.stringify(XL_row_object));
-
-            })
-
-              if(orders_not_found_arr.length > 0){
-                  console.log('Заявки не найдены')
-                  console.log(orders_not_found_arr)
-                  console.log(data_to_return_array)
-
-               $('#modal_error_body').html('')
-                $('#modal_error_title').html('Указанные ниже заявки отсутствуют в списке рассмотренных. Загрузка результатов протокола с помощью файла возможна при условии присутствия всех заявок в списке рассмотренных')
-
-                orders_not_found_arr.map(function (order_number) {
-                    $('#modal_error_body').append('<p>' + order_number + '</p>')
-                })
-
-                $('#modal_error').modal('show')
-
-              }else {
-
-                var data3 = {'orders' : JSON.stringify(data_to_return_array)}
-                // var data1 = JSON.stringify({orders: data_to_return_array})
-                console.log(data3)
-                $.ajax({
-                  headers: { "X-CSRFToken": '{{ csrf_token }}' },
-                  url: "{% url 'save_orders_for_protocol_file' %}",
-                  type: 'POST',
-                  // data: data1,
-                  data: data3,
-                  // processData: false,
-                  // contentType: "application/json; charset=utf-8",
-                  // dataType: "json",
-                  error: function(data){
-                      toastr.error('Ошибка', data)
-                      $('#btn_submit_add_new_orders_xlsx').html('Отправить')
-                  },
-                  success:function (response) {
-                      console.log(response['existing_orders'])
-
-                        $('#modal-default-title').html(response['modalTitle'])
-
-                        $('#modal-large-body-common').append('<h5>Кол-во загруженных заявок: ' + response["cnt"] + '</h5>')
-
-                      if(response['existing_orders']){
-                        $('#modal-large-body-common').append('<h5>Заявки уже существуют в базе данных:</h5>')
-                        response['existing_orders'].map(e=>{
-                          $('#modal-large-body-common').append('<p>' + e[0] + ' - ' + e[1] + '</p>')
-                        })
+        if($('#protocol_xls').length !== 0 && protocol_val !== "---"){
+            data.protocolID = $('#protocol_xls option:selected').attr('id').split('_')[1]
+            console.log($('#protocol_xls option:selected').attr('id').split('_')[1])
+        }
+    if(!((protocol_date === '' && protocol_number === '') && (protocol_val !== "---")) || !((protocol_date !== '' && protocol_number !== '') && (protocol_val === "---"))){
+        toastr.error('Номер дата протокола должны быть указаны')
+    }else {
 
 
 
-                      }
-                        $('#modal-lg-common').modal('show')
 
-                      {#toastr.success('Данные сохранены')#}
-                      // $('#btn_submit_add_new_orders_xlsx').html('Отправить')
-                      // $('#input_add_new_orders_xlsx').val('')
-                      // $('#bage_new_orders_admin').html(data)
-                      // window.location.href = "{% url 'dash_index' %}";
-                  }
+
+
+        $(this).prop('disabled', true)
+        var files = document.getElementById('input_add_new_protocol_file').files;
+        let file_orders_numbers_arr = []
+        if(files.length == 0){
+          toastr.error('Выберите файл')
+            $(this).prop('disabled', false)
+        }else{
+          var data_to_return_array = [];
+          var sheet_obj = {};
+          var ExcelToJSON = function() {
+
+            this.parseExcel = function(file) {
+
+              var reader = new FileReader();
+              reader.onload = function(e) {
+                var data = e.target.result;
+                var workbook = XLSX.read(data, {
+                  type: 'binary'
                 });
+                var XL_row_object
+                let dateForConclusion = ''
+                let orders_not_found_arr = []
+                workbook.SheetNames.forEach(function(sheetName) {
+                  // Here is your object
+                  XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                  XL_row_object.map(row =>{
+                  let order_found = false
+                      console.log(row['Номер заявки'] + ' - ' + row['Наименование организации'])
+                    table_arr.map(function (el) {
+                        if(el[0] === row['Номер заявки']){
+                            order_found = true
+                        }
+                    })
 
-              }
+                    if(!order_found){
+                        orders_not_found_arr.push(row['Номер заявки'])
+                    }
 
-
-
-            // google.script.run.withFailureHandler(function(error){
-            //     //////console.log("855 - " + error);
-            //     toastr.error(error);
-            //
-            //   }).withSuccessHandler(function(newOrdersCnt){
-            //     toastr.success('Данные сохранены');
-            //     document.getElementById('btn_submit_add_new_orders_xlsx').innerHTML = "Отправить"
-            //     $('#input_add_new_orders_xlsx').val('');
-            //     if($('#bage_new_orders_admin').html() == ''){
-            //       var bageNewOrdersCnt = 0
-            //     }else{
-            //       var bageNewOrdersCnt = parseInt($('#bage_new_orders_admin').html());
-            //     }
-            //
-            //
-            //     $('#bage_new_orders_admin').html(bageNewOrdersCnt + newOrdersCnt);
-            //     //////console.log(newOrdersCnt, bageNewOrdersCnt)
-            //
-            //
-            //   }).parseOredersFileXLSX(data_to_return_array, $('#userLogin').html());
-
-        //      return data_to_return
-
-          };
+                  })
+                  ////console.log('ddddd - ', XL_row_object);
 
 
-          reader.onerror = function(ex) {
-            console.log(ex);
-          };
+                  data_to_return_array.push(XL_row_object);
 
-          reader.readAsBinaryString(file);
+                  //console.log('Sheet - ' + sheetName + ' данные - ' +  JSON.stringify(XL_row_object));
+
+                })
+
+                  if(orders_not_found_arr.length > 0){
+                      console.log('Заявки не найдены')
+                      console.log(orders_not_found_arr)
+                      console.log(data_to_return_array)
+
+                   $('#modal_error_body').html('')
+                    $('#modal_error_title').html('Указанные ниже заявки отсутствуют в списке рассмотренных. Загрузка результатов протокола с помощью файла возможна при условии присутствия всех заявок в списке рассмотренных')
+
+                    orders_not_found_arr.map(function (order_number) {
+                        $('#modal_error_body').append('<p>' + order_number + '</p>')
+                    })
+
+                    $('#modal_error').modal('show')
+
+                  }else {
+
+                    var data3 = {'orders' : JSON.stringify(data_to_return_array),
+                                'protocol_number': protocol_number,
+                                'protocol_number': protocol_number,
+                                }
+                    // var data1 = JSON.stringify({orders: data_to_return_array})
+                    console.log(data3)
+                    $.ajax({
+                      headers: { "X-CSRFToken": '{{ csrf_token }}' },
+                      url: "{% url 'save_orders_for_protocol_file' %}",
+                      type: 'POST',
+                      // data: data1,
+                      data: data3,
+                      // processData: false,
+                      // contentType: "application/json; charset=utf-8",
+                      // dataType: "json",
+                      error: function(data){
+                          toastr.error('Ошибка', data)
+                          $('#btn_submit_add_new_orders_xlsx').html('Отправить')
+                      },
+                      success:function (response) {
+                          console.log(response['existing_orders'])
+
+                            $('#modal-default-title').html(response['modalTitle'])
+
+                            $('#modal-large-body-common').append('<h5>Кол-во загруженных заявок: ' + response["cnt"] + '</h5>')
+
+                          if(response['existing_orders']){
+                            $('#modal-large-body-common').append('<h5>Заявки уже существуют в базе данных:</h5>')
+                            response['existing_orders'].map(e=>{
+                              $('#modal-large-body-common').append('<p>' + e[0] + ' - ' + e[1] + '</p>')
+                            })
+
+
+
+                          }
+                            $('#modal-lg-common').modal('show')
+
+                          {#toastr.success('Данные сохранены')#}
+                          // $('#btn_submit_add_new_orders_xlsx').html('Отправить')
+                          // $('#input_add_new_orders_xlsx').val('')
+                          // $('#bage_new_orders_admin').html(data)
+                          // window.location.href = "{% url 'dash_index' %}";
+                      }
+                    });
+
+                  }
+
+
+
+                // google.script.run.withFailureHandler(function(error){
+                //     //////console.log("855 - " + error);
+                //     toastr.error(error);
+                //
+                //   }).withSuccessHandler(function(newOrdersCnt){
+                //     toastr.success('Данные сохранены');
+                //     document.getElementById('btn_submit_add_new_orders_xlsx').innerHTML = "Отправить"
+                //     $('#input_add_new_orders_xlsx').val('');
+                //     if($('#bage_new_orders_admin').html() == ''){
+                //       var bageNewOrdersCnt = 0
+                //     }else{
+                //       var bageNewOrdersCnt = parseInt($('#bage_new_orders_admin').html());
+                //     }
+                //
+                //
+                //     $('#bage_new_orders_admin').html(bageNewOrdersCnt + newOrdersCnt);
+                //     //////console.log(newOrdersCnt, bageNewOrdersCnt)
+                //
+                //
+                //   }).parseOredersFileXLSX(data_to_return_array, $('#userLogin').html());
+
+            //      return data_to_return
+
+              };
+
+
+              reader.onerror = function(ex) {
+                console.log(ex);
+              };
+
+              reader.readAsBinaryString(file);
+            };
         };
-    };
 
 
-    //////console.log(files.length);
-    //document.getElementById('btn_submit_add_new_orders_xlsx').innerHTML = "<div class=='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>"
-    var xl2json = new ExcelToJSON().parseExcel(files[0]);
+        //////console.log(files.length);
+        //document.getElementById('btn_submit_add_new_orders_xlsx').innerHTML = "<div class=='d-flex justify-content-center'><div class='spinner-border' style='width: 25px; height: 25px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>"
+        var xl2json = new ExcelToJSON().parseExcel(files[0]);
 
 
 
-    ////////console.log(xl2json);
-    //  //////console.log(data_to_return_array[0][0]);
-    ////////console.log(xl2json.length);
-    /*
-    JSON.parse(xl2json, function(key, value){
-      //////console.log(key , value);
-    })*/
+        ////////console.log(xl2json);
+        //  //////console.log(data_to_return_array[0][0]);
+        ////////console.log(xl2json.length);
+        /*
+        JSON.parse(xl2json, function(key, value){
+          //////console.log(key , value);
+        })*/
 
-    /*
-    for(var i=0; i < data_to_return.length; i++){
-      var rowObj = data_to_return[i];
-      var objKeys = Object.keys(rowObj);
-      //////console.log('ddd' , objKeys);
+        /*
+        for(var i=0; i < data_to_return.length; i++){
+          var rowObj = data_to_return[i];
+          var objKeys = Object.keys(rowObj);
+          //////console.log('ddd' , objKeys);
+        }
+      */
+
+        }
     }
-  */
-
-    }
-
   })
 
 
