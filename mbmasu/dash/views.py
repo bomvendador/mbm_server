@@ -1210,11 +1210,11 @@ def protocols_orders_list(request):
 
 @login_required(redirect_field_name=None, login_url='/')
 def save_orders_for_protocol_file(request):
-    # if request.method == 'POST':
-    #     data = request.POST
-    #     orders = json.loads(data['orders'])
+    if request.method == 'POST':
+        data = request.POST
+        orders = json.loads(data['orders'])
     #     # print(orders[0][0]['Номер заявки'])
-    #     # print(orders)
+        print(orders)
     #     #982-ПП
     #     cnt = 0
     #     existing_orders = []
