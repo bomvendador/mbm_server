@@ -1216,7 +1216,7 @@ def save_ez_pdf(request):
         counters_admin_db, created = CountersAdmin.objects.get_or_create(user_role_name='Админ')
         if created:
             counters_admin_db.save()
-        admin_ready_for_ok_cnt = Order.objects.filter(status=OrderStatus.objects.get(name='Готово для ОК')).count()
+        admin_ready_for_ok_cnt = ReadyForOK.objects.filter(appointed_ok=False).count()
         counters_admin_db.admin_ready_for_ok = admin_ready_for_ok_cnt
         counters_admin_db.save()
 
