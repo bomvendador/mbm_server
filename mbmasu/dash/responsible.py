@@ -117,7 +117,7 @@ def order_ready_to_proceed(request, order_id):
                         context.update({
                             'notification': notification
                         })
-                if (order.lotki_after_temp_stop_refuse_date_received is not None and order.lotki_after_temp_stop_refuse_date_signed is not None) \
+                if (order.lotki_preliminary_refuse_date_received is not None and order.lotki_preliminary_refuse_date_signed is not None) \
                         or order.responsible_preliminary_profile.role.name == 'Эксперт МБМ':
                     if order.lotki_status.name == 'Отказ':
                         notification = NotificationRefuse.objects.filter(order=order).latest('added')
