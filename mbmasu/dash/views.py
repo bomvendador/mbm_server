@@ -1140,7 +1140,8 @@ def save_ready_for_ok_orders(request):
         if created:
             counters_admin_db.save()
         admin_ready_for_ok_cnt = Order.objects.filter(status=OrderStatus.objects.get(name='Готово для ОК')).count()
-        admin_appointed_for_ok_cnt = AppointedForOK.objects.filter(Q(protocol_issued=False)).count()
+        admin_appointed_for_ok_cnt = AppointedForOK.objects.filter(Q(protocol_issued=False) | (Q(protocol_issued=True)
+                                                                   & Q(marked_for_next_ok=True))).count()
         counters_admin_db.admin_ready_for_ok = admin_ready_for_ok_cnt
         counters_admin_db.appointed_for_ok = admin_appointed_for_ok_cnt
         counters_admin_db.save()
@@ -1254,7 +1255,10 @@ def save_orders_for_protocol_file(request):
             print(data.get('protocol_number'))
             print(data.get('protocol_date'))
         for order in orders[0]:
-            appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK=ReadyForOK.objects.get(order__number=order['Номер заявки'])).earliest('commission_date__date')
+            ready_for_ok_db = ReadyForOK.objects.filter(order__number=order['Номер заявки']).latest('added')
+            ready_for_ok_db.appointed_ok = False
+            ready_for_ok_db.save()
+            appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK=ready_for_ok_db).earliest('commission_date__date')
             print(appointed_for_ok.ready_for_OK.order.company)
             print(appointed_for_ok.commission_date.date)
             protocol_order_db = ProtocolOrders()
@@ -1264,7 +1268,11 @@ def save_orders_for_protocol_file(request):
             protocol_order_db.max_sum = order['Рекомендуемая сумма субсидии, руб.']
             protocol_order_db.decision = order['Решение']
             protocol_order_db.points = order['Балл']
-
+            protocol_order_db.save()
+            if order['Решение'] == 'Перенос':
+                appointed_for_ok.marked_for_next_ok = True
+            appointed_for_ok.protocol_issued = True
+            appointed_for_ok.save()
     #         protocol_order
     #         new_order.added = datetime.now
     #         new_order.number = order['Номер заявки']
@@ -1298,14 +1306,17 @@ def save_orders_for_protocol_file(request):
     #     if len(existing_orders) > 0:
     #         response['existing_orders'] = existing_orders
     #
-    #     new_orders_cnt = Order.objects.filter(status=OrderStatus.objects.get(name='Новая')).count()
-    #     counter_db, created = CountersAdmin.objects.get_or_create(user_role_name='Админ')
-    #     if created:
-    #         counter_db.save()
-    #     print('new_orders_cnt - ' + str(new_orders_cnt))
-    #     counter_db.new_orders = new_orders_cnt
-    #     counter_db.all_orders = Order.objects.all().count()
-    #     counter_db.save()
+        counters_admin_db, created = CountersAdmin.objects.get_or_create(user_role_name='Админ')
+        if created:
+            counters_admin_db.save()
+        admin_ready_for_ok_cnt = Order.objects.filter(status=OrderStatus.objects.get(name='Готово для ОК')).count()
+        admin_appointed_for_ok_cnt = AppointedForOK.objects.filter(Q(protocol_issued=False) | (Q(protocol_issued=True)
+                                                                   & Q(marked_for_next_ok=True))).count()
+        admin_protocols_orders_cnt = AppointedForOK.objects.filter(Q(protocol_issued=True) & Q(marked_for_next_ok=False)).count()
+        counters_admin_db.admin_ready_for_ok = admin_ready_for_ok_cnt
+        counters_admin_db.appointed_for_ok = admin_appointed_for_ok_cnt
+        counters_admin_db.admin_protocols_orders = admin_protocols_orders_cnt
+        counters_admin_db.save()
     #
     #
     #     response['modalTitle'] = 'Данные по загрузке'

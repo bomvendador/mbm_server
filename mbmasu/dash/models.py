@@ -357,7 +357,6 @@ class ReadyForOK(models.Model):
     marked_for_next_ok = models.BooleanField(default=False)
     appointed_ok = models.BooleanField(blank=False, null=True, default=False)
 
-
     def __str__(self):
         return self.order.number + ' - ' + self.order.company
 
