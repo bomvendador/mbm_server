@@ -1058,16 +1058,18 @@ def ready_for_ok_orders_download(request):
         files_path = os.path.join(settings.MEDIA_ROOT, u"готово для ОК/")
         if not os.path.exists(files_path):
             os.mkdir(files_path)
+            print(files_path)
         for ready_for_ok_id in arr:
             ready_for_ok_db = ReadyForOK.objects.get(id=ready_for_ok_id)
             file_path_order = files_path + ready_for_ok_db.order.number
+
+            os.mkdir(file_path_order)
 
             try:
                 temp_stop_files = TempStopFiles.objects.filter(temp_stop__notification=NotificationTempStop.objects.filter(order=ready_for_ok_db.order).latest('added')).latest('added')
                 copy(temp_stop_files.file_notification.path, file_path_order)
             except ObjectDoesNotExist:
                 temp_stop_files = None
-            os.mkdir(file_path_order)
             copy(ready_for_ok_db.pdf_file.path, file_path_order)
             copy(ready_for_ok_db.doc_file.path, file_path_order)
         path_to_zip = make_archive(files_path, "zip", files_path)
