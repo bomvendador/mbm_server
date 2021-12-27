@@ -406,7 +406,7 @@ class ProtocolOrders(models.Model):
     modified = models.DateTimeField(auto_now=True)
     appointed_for_ok = models.ForeignKey(AppointedForOK, on_delete=models.CASCADE)
     max_sum = models.DecimalField(max_digits=12, decimal_places=2)
-    decision = models.BooleanField(default=False)
+    decision = models.CharField(max_length=100, blank=True, null=True, default=None)
     protocol = models.ForeignKey(Protocol, on_delete=models.CASCADE, default=None, null=True)
     points = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
