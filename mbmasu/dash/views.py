@@ -1250,7 +1250,7 @@ def save_orders_for_protocol_file(request):
             protocol_db = Protocol()
             protocol_db.user = request.user
             protocol_db.protocol_date = date_to_db(data.get('protocol_date'))
-            protocol_db.protocol_number = date_to_db(data.get('protocol_number'))
+            protocol_db.protocol_number = data.get('protocol_number')
             protocol_db.save()
             print(data.get('protocol_number'))
             print(data.get('protocol_date'))
