@@ -39,7 +39,7 @@ def new_orders_preliminary_list(request):
                                       (Q(check_preliminary_refuse=False) | Q(check_preliminary_ez=False) | Q(check_preliminary_temp_stop=False))) &
                                       (Q(lotki_preliminary_temp_stop_date_received__isnull=True) & Q(lotki_preliminary_refuse_date_received__isnull=True)) &
                                       Q(type__isnull=False)) |
-                                       (Q(responsible_preliminary_profile__role__name='Эксперт МБМ') & (Q(lotki_preliminary_temp_stop_date_received__isnull=True) |
+                                       (Q(responsible_preliminary_profile__role__name='Эксперт МБМ') & (Q(lotki_preliminary_temp_stop_date_received__isnull=True) &
                                                                                                          Q(lotki_preliminary_refuse_date_received__isnull=True)))
                                        ))
     print(new_orders)
