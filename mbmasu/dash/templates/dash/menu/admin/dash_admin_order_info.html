@@ -739,7 +739,7 @@
                               <td>{{ forloop.counter }}</td>
                               <td>{{ order.protocol.protocol_number }}</td>
                               <td>{{ order.protocol.protocol_date|date:"d.m.Y" }}</td>
-                              <td>{% if order.decision %}Положительное{% else %}Отрицательное{% endif %}</td>
+                              <td>{{ order.decision }}</td>
                               <td>{{ order.max_sum|intcomma }}</td>
                         </tr>
                        {% endfor %}
