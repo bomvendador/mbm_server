@@ -506,7 +506,7 @@
                 <div class="card-body">
 
                   <div class="row col-md-12 mt-2">
-                    <table class="table text-nowrap list-table" >
+                    <table class="table text-nowrap list-table-reason" >
                       <thead>
                         <tr>
                             <th>Наименовение причины</th>
@@ -1521,6 +1521,32 @@
     }
 
 })
+
+
+       $(".list-table-reason").DataTable({
+          "paging": false,
+          "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Russian.json"
+          },
+           "columnDefs": [
+                { "width": "50%", "targets": 0 }
+            ],
+          dom: 'Bfrtip',
+          buttons: [
+            {
+              extend: 'excelHtml5',
+              title: "Экспорт EXCEL - " + table_name
+            },
+            {
+              extend: 'pdfHtml5',
+              title: "Экспорт PDF - " + table_name
+            }]
+        })
+
+      }
+
+
+
 
 
     </script>
