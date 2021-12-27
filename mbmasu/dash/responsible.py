@@ -837,6 +837,7 @@ def save_order_refuse_preliminary(request):
         file_notification = request.FILES['notification']
         notification_sent_date = data['notification_date']
         refuse_db.date_IAS = date_to_db(notification_sent_date)
+        refuse_db.notification_sent_date = date_to_db(notification_sent_date)
 
         ez_name = u'ЭЗ_(первичный отказ)_' + file_name.replace(' ', '')
         fs = FileSystemStorage()
