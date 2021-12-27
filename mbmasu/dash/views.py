@@ -1256,9 +1256,6 @@ def save_orders_for_protocol_file(request):
             print(data.get('protocol_date'))
         for order in orders[0]:
             ready_for_ok_db = ReadyForOK.objects.filter(order__number=order['Номер заявки']).latest('added')
-            ready_for_ok_db.appointed_ok = False
-            ready_for_ok_db.marked_for_next_ok = True
-            ready_for_ok_db.save()
             appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK=ready_for_ok_db).earliest('commission_date__date')
             print(appointed_for_ok.ready_for_OK.order.company)
             print(appointed_for_ok.commission_date.date)
@@ -1272,6 +1269,10 @@ def save_orders_for_protocol_file(request):
             protocol_order_db.save()
             if order['Решение'] == 'Перенос':
                 appointed_for_ok.marked_for_next_ok = True
+                ready_for_ok_db.appointed_ok = False
+                ready_for_ok_db.marked_for_next_ok = True
+                ready_for_ok_db.save()
+
             appointed_for_ok.protocol_issued = True
             appointed_for_ok.save()
     #         protocol_order
