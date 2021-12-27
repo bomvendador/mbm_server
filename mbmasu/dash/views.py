@@ -1077,7 +1077,7 @@ def ready_for_ok_orders_download(request):
         # response = HttpResponse(FileWrapper(open(path_to_zip, 'rb')), content_type='application/zip')
         # response['Content-Disposition'] = 'attachment; filename=222.zip'
         rmtree(files_path)
-        os.remove(settings.MEDIA_ROOT + '/' + os.path.basename(path_to_zip))
+        # os.remove(settings.MEDIA_ROOT + '/' + os.path.basename(path_to_zip))
 
         return HttpResponse(os.path.basename(path_to_zip))
 
