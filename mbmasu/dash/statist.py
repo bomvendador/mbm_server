@@ -38,7 +38,10 @@ def new_orders_preliminary_list(request):
                                                & (Q(check_preliminary_files_for_check_uploaded=True) & Q(check_preliminary_finals_files_uploaded=True))) |
                                       (Q(check_preliminary_refuse=False) | Q(check_preliminary_ez=False) | Q(check_preliminary_temp_stop=False))) &
                                       (Q(lotki_preliminary_temp_stop_date_received__isnull=True) & Q(lotki_preliminary_refuse_date_received__isnull=True)) &
-                                      Q(type__isnull=False)) | Q(responsible_preliminary_profile__role__name='Эксперт МБМ')))
+                                      Q(type__isnull=False)) |
+                                       (Q(responsible_preliminary_profile__role__name='Эксперт МБМ') & (Q(lotki_preliminary_temp_stop_date_received__isnull=False) |
+                                                                                                         Q(lotki_preliminary_refuse_date_received__isnull=False)))
+                                       ))
     print(new_orders)
     context.update({
         'new_orders': new_orders,
