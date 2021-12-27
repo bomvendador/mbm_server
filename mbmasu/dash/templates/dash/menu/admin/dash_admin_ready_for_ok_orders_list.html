@@ -317,7 +317,7 @@
 
             $('#modal_error').modal('show')
         }else {
-            if((ok_date === '' && commissionDate === '---')){
+            if((ok_date === '' && (commissionDate === '---' || commissionDate === ''))){
                 toastr.error('Укажите дату комиссии')
             }else {
                 //сохраняем данные
