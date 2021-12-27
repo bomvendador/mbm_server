@@ -559,7 +559,7 @@ class CheckAfterTempStopFileToCheck(models.Model):
     added = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     check_after_temp_stop = models.ForeignKey(CheckAfterTempStop, on_delete=models.CASCADE, default=None)
-    type = models.CharField(max_length=100)
+    type = models.CharField(max_length=200)
     file_1 = models.FileField(upload_to='', default=None)
     file_2 = models.FileField(upload_to='', default=None)
 
