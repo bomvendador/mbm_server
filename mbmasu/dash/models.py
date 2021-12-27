@@ -4,6 +4,7 @@ from django.utils import timezone
 
 from datetime import datetime
 
+from login.models import UserProfile
 
 # Create your models here.
 
@@ -126,8 +127,12 @@ class Order(models.Model):
                       related_name='created_by')
     responsible_preliminary = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True,
                       related_name='responsible_preliminary')
+    responsible_preliminary_profile = models.ForeignKey(UserProfile, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True,
+                      related_name='responsible_preliminary_profile')
     responsible_after_temp_stop = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True,
                       related_name='responsible_after_temp_stop')
+    responsible_after_temp_stop_profile = models.ForeignKey(UserProfile, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True,
+                      related_name='responsible_after_temp_stop_profile')
     responsible_preliminary_check_expert = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True,
                       related_name='responsible_preliminary_check_expert')
     responsible_after_temp_stop_check_expert = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True,

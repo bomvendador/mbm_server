@@ -301,7 +301,7 @@ def appoint_responsible_for_order_list(request):
     user_profile = context['user_profile']
 
     new_orders = Order.objects.filter(status=OrderStatus.objects.get(name='Новая'))
-    responsibles = User.objects.all()
+    responsibles = UserProfile.objects.filter(Q(role__name='Эксперт МБМ') | Q(role__name='Эксперт подрядчика'))
     context.update({
         'new_orders': new_orders,
         'responsibles': responsibles

@@ -48,7 +48,7 @@
                     <td>
                       <select class="select-expertMBM form-select">
                         <option>---</option>
-                        {% for responsible in responsibles %}
+                        {% for responsible in responsibles.user %}
                         <option id="user_{{ responsible.id }}">{{ responsible.last_name }} {{ responsible.first_name }}</option>
                         {% endfor %}
                       </select>
