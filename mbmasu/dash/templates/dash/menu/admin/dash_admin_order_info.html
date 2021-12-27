@@ -480,7 +480,7 @@
                       </thead>
                       <tbody id="tbody">
                         {% for refuse_reason in refuse_reasons_preliminary %}
-                          <tr class="">
+                          <tr class="col-md-6">
                                <td>{{ refuse_reason.refuse_reason.description }}</td>
                                <td>{{ refuse_reason.user.first_name }} {{ refuse_reason.user.last_name }}</td>
                               <td>{{ refuse_reason.added|date:"d.m.Y H:i" }}</td>
@@ -517,7 +517,7 @@
                       </thead>
                       <tbody id="tbody">
                         {% for refuse_reason in refuse_reasons_after_temp_stop %}
-                          <tr class="">
+                          <tr class="col-md-6">
                                <td>{{ refuse_reason.refuse_reason.description }}</td>
                                <td>{{ refuse_reason.user.first_name }} {{ refuse_reason.user.last_name }}</td>
                               <td>{{ refuse_reason.added|date:"d.m.Y H:i" }}</td>
