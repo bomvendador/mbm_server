@@ -34,11 +34,11 @@ def new_orders_preliminary_list(request):
     user_profile = context['user_profile']
     user_role = user_profile.role.name
     new_orders = Order.objects.filter(Q(status=OrderStatus.objects.get(name='Регистрация/На предварительной проверке')) &
-                                      (((Q(check_preliminary_refuse=True) | Q(check_preliminary_ez=True) | Q(check_preliminary_temp_stop=True))
+                                      (((((Q(check_preliminary_refuse=True) | Q(check_preliminary_ez=True) | Q(check_preliminary_temp_stop=True))
                                                & (Q(check_preliminary_files_for_check_uploaded=True) & Q(check_preliminary_finals_files_uploaded=True))) |
                                       (Q(check_preliminary_refuse=False) | Q(check_preliminary_ez=False) | Q(check_preliminary_temp_stop=False))) &
                                       (Q(lotki_preliminary_temp_stop_date_received__isnull=True) & Q(lotki_preliminary_refuse_date_received__isnull=True)) &
-                                      Q(type__isnull=False))
+                                      Q(type__isnull=False)) | Q(responsible_preliminary__role_name='Эксперт МБМ')))
     print(new_orders)
     context.update({
         'new_orders': new_orders,
