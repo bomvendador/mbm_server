@@ -679,7 +679,7 @@
 
       let test_ok = false
 
-      if(((protocol_date === '' && protocol_number === '') && (protocol_val !== "---")) || ((protocol_date !== '' && protocol_number !== '') && (protocol_val === "---"))){
+      if(((protocol_date === '' && protocol_number === '') && (protocol_val !== "---" && $('#protocol_xls').length > 0)) || ((protocol_date !== '' && protocol_number !== '') && (protocol_val === "---" || $('#protocol_xls').length === 0))){
           test_ok = true
       }
 
