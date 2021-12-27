@@ -517,6 +517,7 @@ def save_user(request):
         user_.set_password(user_password)
         user_.first_name = user_firstname
         user_.last_name = user_lastname
+        user_.role_name = user_role
         user_.save()
         user_profile.role = Role.objects.get(name=user_role)
         user_profile.tel = user_tel
