@@ -58,7 +58,7 @@
                       <td>{{ order.appointed_for_ok.ready_for_OK.order.responsible_after_temp_stop.first_name }} {{ order.appointed_for_ok.ready_for_OK.order.responsible_after_temp_stop.last_name }}</td>
                       <td>{{ order.protocol.protocol_number }}</td>
                       <td><p class="d-none">{{ order.protocol.protocol_date|date:"d.m.Y" }}</p>{{ order.protocol.protocol_date|date:"d.m.Y" }}</td>
-                      <td>{% if order.decision %}Положительное{% else %}{% if order.appointed_for_ok.marked_for_next_ok %}Перенос{% else %}Отрицательное{% endif %}{% endif %}</td>
+                      <td>{{ order.decision }}</td>
                       <td>{{ order.max_sum }}</td>
                 </tr>
                {% endfor %}
