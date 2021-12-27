@@ -327,6 +327,8 @@ def appoint_responsible_for_order(request):
             responsible_after_temp_stop_db = ResponsibleForOrderAfterTempStop()
             order_db.responsible_preliminary = responsible_user
             order_db.responsible_after_temp_stop = responsible_user
+            order_db.responsible_preliminary_profile = UserProfile.objects.get(user=responsible_user)
+            order_db.responsible_after_temp_stop_profile = UserProfile.objects.get(user=responsible_user)
             order_db.save()
             responsible_preliminary_db.responsible = responsible_user
             responsible_after_temp_stop_db.responsible = responsible_user
@@ -338,6 +340,7 @@ def appoint_responsible_for_order(request):
 
         else:
             order_db.responsible_preliminary = responsible_user
+            order_db.responsible_preliminary_profile = UserProfile.objects.get(user=responsible_user)
             order_db.save()
             responsible_preliminary_db.responsible = responsible_user
             responsible_preliminary_db.order = order_db
