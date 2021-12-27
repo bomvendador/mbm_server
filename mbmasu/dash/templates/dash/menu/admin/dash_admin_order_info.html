@@ -458,6 +458,79 @@
                  </div>
                 </div>
             </div>
+            {% if refuse_reasons_preliminary %}
+            <div class="card card-danger">
+              <div class="card-header">
+                <h3 class="card-title">Причины первичного отказа</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+
+                <div class="card-body">
+
+                  <div class="row col-md-12 mt-2">
+                    <table class="table text-nowrap list-table" >
+                      <thead>
+                        <tr>
+                            <th>Наименовение причины</th>
+                            <th>Кем создано</th>
+                            <th>Когда создано</th>
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for refuse_reason in refuse_reasons_preliminary %}
+                          <tr class="">
+                               <td>{{ refuse_reason.refuse_reason.description }}</td>
+                               <td>{{ refuse_reason.user.first_name }} {{ refuse_reason.user.last_name }}</td>
+                              <td>{{ refuse_reason.added|date:"d.m.Y H:i" }}</td>
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+                 </div>
+                </div>
+            </div>
+
+            {% endif %}
+
+            {% if refuse_reasons_after_temp_stop %}
+            <div class="card card-danger">
+              <div class="card-header">
+                <h3 class="card-title">Причины отказа после возобновления</h3>
+              </div>
+              <!-- /.card-header -->
+              <!-- form start -->
+
+                <div class="card-body">
+
+                  <div class="row col-md-12 mt-2">
+                    <table class="table text-nowrap list-table" >
+                      <thead>
+                        <tr>
+                            <th>Наименовение причины</th>
+                            <th>Кем создано</th>
+                            <th>Когда создано</th>
+                          <!--th></th-->
+                        </tr>
+                      </thead>
+                      <tbody id="tbody">
+                        {% for refuse_reason in refuse_reasons_after_temp_stop %}
+                          <tr class="">
+                               <td>{{ refuse_reason.refuse_reason.description }}</td>
+                               <td>{{ refuse_reason.user.first_name }} {{ refuse_reason.user.last_name }}</td>
+                              <td>{{ refuse_reason.added|date:"d.m.Y H:i" }}</td>
+                        </tr>
+                       {% endfor %}
+
+                      </tbody>
+                    </table>
+                 </div>
+                </div>
+            </div>
+
+            {% endif %}
 
 
             <div class="card card-danger">

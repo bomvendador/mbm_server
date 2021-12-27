@@ -12,7 +12,8 @@ from .models import Order, OrderStatus, Applier, PPnumber, ResponsibleForOrderPr
     CheckAfterTempStop, CheckAfterTempStopResponsibleExpert, CheckAfterTempStopFileToCheck, CheckPreliminaryFileToCheck, \
     CheckPreliminaryFileToCheckReturned, CheckPreliminaryFileToCheckFinal, CheckAfterTempStopFileToCheckReturned, \
     CheckAfterTempStopFileToCheckFinal, TempStopFiles, Refuse, NotificationRefuse, RefuseFiles, EZdoc, EZpdf, \
-    ReadyForOK, AppointedForOK, CommissionDate, ProtocolOrders, Protocol, OnsiteCheck
+    ReadyForOK, AppointedForOK, CommissionDate, ProtocolOrders, Protocol, OnsiteCheck, \
+    RefuseReasonsAfterTempStopByOrders, RefuseReasonsPreliminaryByOrders
 from django.contrib.auth.models import User
 from .counters import counters
 
@@ -928,6 +929,17 @@ def order_info(request, order_id):
         refuse_files = None
 
     try:
+        refuse_reasons_after_temp_stop = RefuseReasonsAfterTempStopByOrders.objects.filter(order=order)
+    except ObjectDoesNotExist:
+        refuse_reasons_after_temp_stop = None
+
+    try:
+        refuse_reasons_preliminary = RefuseReasonsPreliminaryByOrders.objects.filter(order=order)
+    except ObjectDoesNotExist:
+        refuse_reasons_preliminary = None
+
+
+    try:
         ez_doc = EZdoc.objects.filter(order=order)
     except EZdoc.DoesNotExist:
         ez_doc = None
@@ -975,7 +987,9 @@ def order_info(request, order_id):
         'ez_docs': ez_doc,
         'ez_pdfs': ez_pdf,
         'appointed_for_ok': appointed_for_ok,
-        'protocol_orders': protocol_orders
+        'protocol_orders': protocol_orders,
+        'refuse_reasons_after_temp_stop': refuse_reasons_after_temp_stop,
+        'refuse_reasons_preliminary': refuse_reasons_preliminary
     })
     return render(request, 'dash/menu/admin/dash_admin_order_info.html', context)
 
