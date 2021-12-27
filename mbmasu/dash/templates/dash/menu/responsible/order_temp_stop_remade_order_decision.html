@@ -56,7 +56,8 @@
           </div>
         {% endif %}
 
-            {% if check_after_temp_stop_file_to_check_final.type == 'ЭЗ' or not check_after_temp_stop_file_to_check_final and check_after_temp_stop_file_to_check.type == 'ЭЗ' %}
+            {% if order.responsible_after_temp_stop_profile.role-name == 'Эксперт МБМ' %}
+
           <div class="card card-success">
             <div class="card-header" style="background-color: #198754!important">
               <h3 class="card-title">Результат проверки доработанной заявки - ПОЛОЖИТЕЛЬНО/ЭЗ</h3>
@@ -65,42 +66,6 @@
             <!-- form start -->
 
               <div class="card-body">
-
-
-                <!--div class="row col-md-12 mt-2">
-                  <div class="form-group col-md-6">
-                    <label for="">Крайняя дата получения доработанной заявки</label>
-                    <div id=""  class="form-control text-danger"><?= data[1][26]?></div>
-
-                  </div>
-
-                </div>
-
-
-
-
-                <div class="row col-md-12 mt-2">
-                  <div class="form-group col-md-12">
-                    <label for="notification_date">Дата получения доработанной заявки от заявителя</label>
-                    <input id="remade_order_by_applier_date"  class="form-control date-time-picker input-to-fill-up" type="text" name="remade_order_by_applier_date">
-
-                    <small class="text-danger">Дата загрузки заявителем дополнительных документов в систему ИАС (не позднее <b><?= data[1][26]?></b>)</small>
-
-                  </div>
-
-
-                </div>
-                <div class="row col-md-12">
-                  <div class="form-group col-md-12">
-                    <label for="remade_order_documents_comments">Комментарии по доработанной заявке</label>
-                    <textarea id="remade_order_documents_comments"  class="form-control summernote input-to-fill-up" name="remade_order_documents_comments"></textarea>
-                    <small class="text-danger">Опишите детали предоставленных заявителем материалов</small>
-
-                  </div>
-
-                </div-->
-
-
                 <div class="row col-md-12">
                   <div class="col-md-12">
                     <button type="button" class="btn btn-block btn-success btnAfterTempStopDecision" id="btnRemadeOrderOK">Причины приостановки устранены</button>
@@ -114,7 +79,7 @@
               </div>
               <!-- /.card-body -->
           </div>
-            {% else %}
+
           <div class="card card-danger">
             <div class="card-header">
               <h3 class="card-title">Результат проверки доработанной заявки - ОТКАЗ</h3>
@@ -173,8 +138,129 @@
           </div>
 
 
-            {% endif %}
 
+
+            {% else %}
+
+                    {% if check_after_temp_stop_file_to_check_final.type == 'ЭЗ' or not check_after_temp_stop_file_to_check_final and check_after_temp_stop_file_to_check.type == 'ЭЗ' %}
+                  <div class="card card-success">
+                    <div class="card-header" style="background-color: #198754!important">
+                      <h3 class="card-title">Результат проверки доработанной заявки - ПОЛОЖИТЕЛЬНО/ЭЗ</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <!-- form start -->
+
+                      <div class="card-body">
+
+
+                        <!--div class="row col-md-12 mt-2">
+                          <div class="form-group col-md-6">
+                            <label for="">Крайняя дата получения доработанной заявки</label>
+                            <div id=""  class="form-control text-danger"><?= data[1][26]?></div>
+
+                          </div>
+
+                        </div>
+
+
+
+
+                        <div class="row col-md-12 mt-2">
+                          <div class="form-group col-md-12">
+                            <label for="notification_date">Дата получения доработанной заявки от заявителя</label>
+                            <input id="remade_order_by_applier_date"  class="form-control date-time-picker input-to-fill-up" type="text" name="remade_order_by_applier_date">
+
+                            <small class="text-danger">Дата загрузки заявителем дополнительных документов в систему ИАС (не позднее <b><?= data[1][26]?></b>)</small>
+
+                          </div>
+
+
+                        </div>
+                        <div class="row col-md-12">
+                          <div class="form-group col-md-12">
+                            <label for="remade_order_documents_comments">Комментарии по доработанной заявке</label>
+                            <textarea id="remade_order_documents_comments"  class="form-control summernote input-to-fill-up" name="remade_order_documents_comments"></textarea>
+                            <small class="text-danger">Опишите детали предоставленных заявителем материалов</small>
+
+                          </div>
+
+                        </div-->
+
+
+                        <div class="row col-md-12">
+                          <div class="col-md-12">
+                            <button type="button" class="btn btn-block btn-success btnAfterTempStopDecision" id="btnRemadeOrderOK">Причины приостановки устранены</button>
+                            <small class="text-danger">После нажатия заявка попадает в категорию "ЭЗ/Список ЭЗ DOC"</small>
+
+                          </div>
+                        </div>
+
+
+
+                      </div>
+                      <!-- /.card-body -->
+                  </div>
+                    {% else %}
+                  <div class="card card-danger">
+                    <div class="card-header">
+                      <h3 class="card-title">Результат проверки доработанной заявки - ОТКАЗ</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <!-- form start -->
+
+                      <div class="card-body">
+
+
+                        <div class="row col-md-12 mt-2">
+                          <div class="col-md-12">
+                            <button type="button" class="btn btn-block btn-danger btnAfterTempStopDecision" id="btnRemadeOrderRefuseNoDocs">Отказать в финансировании</button>
+                          <small class="text-danger">После нажатия заявка попадает в категорию "Отказ/По документам"</small>
+
+                          </div>
+                          <!--div class="col-md-6">
+                            <button type="button" class="btn btn-block btn-warning btnRemadeOrderRefuse" id="btnRemadeOrderRefuseWrongDocs">Документы представлены в неполном объеме/не соответствуют запросу</button>
+                            <small class="text-danger">После нажатия заявка попадает в категорию <?if (data[1][16] == '982-ПП'){?>"ЭЗ/Список ЭЗ DOC"<?}else{?>"Отказ/По документам"<?}?></small>
+
+                          </div-->
+
+
+                        </div>
+
+
+
+
+                        <div class="row col-md-12 mt-3">
+                          <!-- <h5>Причины отказа</h5> -->
+                          <div class="col-md-12 form-group">
+                            <button type="button" class="btn btn-block btn-info" id="btnAfterTempStopCheckRefuseReasons">Указать причины отказа</button>
+                            <!-- <div><small class="text-danger">Кнопка нажимается в случае принятия экспертом решения о приостановке<br>После нажатия заявка попадает в категорию "Приостановка > Дата приостановки"</small></div> -->
+                          </div>
+
+                        </div>
+
+
+                        <div class="row col-md-12 mt-2 d-none" id="refuse_reasons_table">
+                          <div class="col-md-12 form-group">
+
+                            <table class="table">
+                              <thead>
+                                <tr>
+                                  <th>Список причин отказа</th>
+                                  <th></th>
+                                </tr>
+                              </thead>
+                              <tbody id="refuse_reasons_tbody">
+                              </tbody>
+                            </table>
+                          </div>
+
+                        </div>
+                      </div>
+                  </div>
+
+
+                    {% endif %}
+                {% endif %}
 
 
 
