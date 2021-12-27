@@ -1474,6 +1474,34 @@
 {% block script %}
     <script>
 
+       $(".list-table-reason").DataTable({
+          "paging": false,
+          "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Russian.json"
+          },
+           "columnDefs": [
+                { "width": "50%", "targets": 0 }
+            ],
+            "initComplete": function () {
+                console.log('load')
+          },
+
+          dom: 'Bfrtip',
+          buttons: [
+            {
+              extend: 'excelHtml5',
+              title: "Экспорт EXCEL - "
+            },
+            {
+              extend: 'pdfHtml5',
+              title: "Экспорт PDF - "
+            }]
+        })
+
+
+
+
+
     $('#section_content').on('click', '.collapse-toggle', function () {
         $(this).next('.collapse-item').slideToggle(500);
     })
@@ -1522,30 +1550,6 @@
 
 })
 
-
-       $(".list-table-reason").DataTable({
-          "paging": false,
-          "language": {
-            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Russian.json"
-          },
-           "columnDefs": [
-                { "width": "100px", "targets": 0 }
-            ],
-            "initComplete": function () {
-                console.log('load')
-          },
-
-          dom: 'Bfrtip',
-          buttons: [
-            {
-              extend: 'excelHtml5',
-              title: "Экспорт EXCEL - "
-            },
-            {
-              extend: 'pdfHtml5',
-              title: "Экспорт PDF - "
-            }]
-        })
 
 
 
