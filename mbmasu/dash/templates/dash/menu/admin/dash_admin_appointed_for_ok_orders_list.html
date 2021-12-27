@@ -781,28 +781,28 @@
                           $('#btn_submit_add_new_orders_xlsx').html('Отправить')
                       },
                       success:function (response) {
-                          console.log(response['existing_orders'])
-
-                            $('#modal-default-title').html(response['modalTitle'])
-
-                            $('#modal-large-body-common').append('<h5>Кол-во загруженных заявок: ' + response["cnt"] + '</h5>')
-
-                          if(response['existing_orders']){
-                            $('#modal-large-body-common').append('<h5>Заявки уже существуют в базе данных:</h5>')
-                            response['existing_orders'].map(e=>{
-                              $('#modal-large-body-common').append('<p>' + e[0] + ' - ' + e[1] + '</p>')
-                            })
-
-
-
-                          }
-                            $('#modal-lg-common').modal('show')
+                          {#console.log(response['existing_orders'])#}
+                          {##}
+                          {#  $('#modal-default-title').html(response['modalTitle'])#}
+                          {##}
+                          {#  $('#modal-large-body-common').append('<h5>Кол-во загруженных заявок: ' + response["cnt"] + '</h5>')#}
+                          {##}
+                          {#if(response['existing_orders']){#}
+                          {#  $('#modal-large-body-common').append('<h5>Заявки уже существуют в базе данных:</h5>')#}
+                          {#  response['existing_orders'].map(e=>{#}
+                          {#    $('#modal-large-body-common').append('<p>' + e[0] + ' - ' + e[1] + '</p>')#}
+                          {#  })#}
+                          {##}
+                          {##}
+                          {##}
+                          {#}#}
+                          {#  $('#modal-lg-common').modal('show')#}
 
                           {#toastr.success('Данные сохранены')#}
                           // $('#btn_submit_add_new_orders_xlsx').html('Отправить')
                           // $('#input_add_new_orders_xlsx').val('')
                           // $('#bage_new_orders_admin').html(data)
-                          // window.location.href = "{% url 'dash_index' %}";
+                          window.location.href = "{% url 'dash_index' %}";
                       }
                     });
 
