@@ -326,7 +326,7 @@
                 data.next_ok_arr = next_ok_arr
                 data.passed_ok_arr = JSON.stringify(passed_ok_arr)
                 data.ok_date = ok_date
-                if(commissionDate !== '---'){
+                if(commissionDate !== '---' && $('#commission').length > 0){
                     data.commissionID = $('#commission option:selected').attr('id').split('_')[1]
                 }
                 $.ajax({
