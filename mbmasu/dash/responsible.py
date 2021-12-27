@@ -138,7 +138,7 @@ def order_ready_to_proceed(request, order_id):
                     check_preliminary_file_to_check=CheckPreliminaryFileToCheck.objects.filter(
                         check_preliminary=CheckPreliminary.objects.filter(order=order).latest('added')).latest(
                         'added')).latest('added')
-            except CheckPreliminary.DoesNotExist:
+            except CheckPreliminary.DoesNotExist or CheckPreliminary.DoesNotExist:
                 check_preliminary_file_to_check_final = None
 
             context.update({
