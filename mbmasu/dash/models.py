@@ -384,7 +384,7 @@ class AppointedForOK(models.Model):
     protocol_issued = models.BooleanField(blank=False, null=True, default=False)
 
     def __str__(self):
-        return self.ready_for_OK.order.number + ' - ' + self.ready_for_OK.order.company
+        return self.ready_for_OK.order.number + ' - ' + self.ready_for_OK.order.company + ' - ' + str(self.added)
 
 
 class Protocol(models.Model):
