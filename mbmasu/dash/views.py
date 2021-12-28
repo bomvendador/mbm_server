@@ -1259,14 +1259,7 @@ def save_orders_for_protocol_file(request):
             appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK=ready_for_ok_db).earliest('commission_date__date')
             print(appointed_for_ok.ready_for_OK.order.company)
             print(appointed_for_ok.commission_date.date)
-            protocol_order_db = ProtocolOrders()
-            protocol_order_db.protocol = protocol_db
-            protocol_order_db.user = request.user
-            protocol_order_db.appointed_for_ok = appointed_for_ok
-            protocol_order_db.max_sum = order['Рекомендуемая сумма субсидии, руб.']
-            protocol_order_db.decision = order['Решение']
-            protocol_order_db.points = order['Балл']
-            protocol_order_db.save()
+            print(appointed_for_ok.added)
             if order['Решение'] == 'Перенос':
                 appointed_for_ok.marked_for_next_ok = True
                 ready_for_ok_db.appointed_ok = False
@@ -1280,6 +1273,14 @@ def save_orders_for_protocol_file(request):
 
             appointed_for_ok.protocol_issued = True
             appointed_for_ok.save()
+            protocol_order_db = ProtocolOrders()
+            protocol_order_db.protocol = protocol_db
+            protocol_order_db.user = request.user
+            protocol_order_db.appointed_for_ok = appointed_for_ok
+            protocol_order_db.max_sum = order['Рекомендуемая сумма субсидии, руб.']
+            protocol_order_db.decision = order['Решение']
+            protocol_order_db.points = order['Балл']
+            protocol_order_db.save()
     #         protocol_order
     #         new_order.added = datetime.now
     #         new_order.number = order['Номер заявки']
