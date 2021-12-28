@@ -1202,11 +1202,15 @@ def save_orders_for_protocol(request):
         counters_admin_db, created = CountersAdmin.objects.get_or_create(user_role_name='Админ')
         if created:
             counters_admin_db.save()
-        admin_appointed_for_ok_cnt = Order.objects.filter(status=OrderStatus.objects.get(name='Готово (рассмотрено на ОК)')).count()
-        admin_protocol_orders_cnt = Order.objects.filter(status=OrderStatus.objects.get(name=u'Готово (протокол выпущен)')).count()
+        admin_ready_for_ok_cnt = ReadyForOK.objects.filter(appointed_ok=False)
 
+        admin_appointed_for_ok_cnt = AppointedForOK.objects.filter(Q(protocol_issued=False) | (Q(protocol_issued=True)
+                                                                   & Q(marked_for_next_ok=True))).count()
+        # AppointedForOK.objects.filter(Q(protocol_issued=False))
+        admin_protocols_orders_cnt = AppointedForOK.objects.filter(Q(protocol_issued=True) & Q(marked_for_next_ok=False)).count()
+        counters_admin_db.admin_ready_for_ok = admin_ready_for_ok_cnt
         counters_admin_db.appointed_for_ok = admin_appointed_for_ok_cnt
-        counters_admin_db.admin_protocols_orders = admin_protocol_orders_cnt
+        counters_admin_db.admin_protocols_orders = admin_protocols_orders_cnt
         counters_admin_db.save()
 
         return HttpResponse('')
@@ -1318,7 +1322,7 @@ def save_orders_for_protocol_file(request):
 
         admin_appointed_for_ok_cnt = AppointedForOK.objects.filter(Q(protocol_issued=False) | (Q(protocol_issued=True)
                                                                    & Q(marked_for_next_ok=True))).count()
-        AppointedForOK.objects.filter(Q(protocol_issued=False))
+        # AppointedForOK.objects.filter(Q(protocol_issued=False))
         admin_protocols_orders_cnt = AppointedForOK.objects.filter(Q(protocol_issued=True) & Q(marked_for_next_ok=False)).count()
         counters_admin_db.admin_ready_for_ok = admin_ready_for_ok_cnt
         counters_admin_db.appointed_for_ok = admin_appointed_for_ok_cnt
