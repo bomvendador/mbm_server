@@ -1280,6 +1280,7 @@ def save_orders_for_protocol_file(request):
             protocol_order_db.max_sum = order['Рекомендуемая сумма субсидии, руб.']
             protocol_order_db.decision = order['Решение']
             protocol_order_db.points = order['Балл']
+            protocol_order_db.reasons = order['Причины переноса/отказа']
             protocol_order_db.save()
     #         protocol_order
     #         new_order.added = datetime.now

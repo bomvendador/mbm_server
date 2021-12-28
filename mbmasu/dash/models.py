@@ -408,6 +408,7 @@ class ProtocolOrders(models.Model):
     decision = models.CharField(max_length=100, blank=True, null=True, default=None)
     protocol = models.ForeignKey(Protocol, on_delete=models.CASCADE, default=None, null=True)
     points = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    reasons = models.TextField(blank=True, null=True)
 
 
 ##Выездная проверка
