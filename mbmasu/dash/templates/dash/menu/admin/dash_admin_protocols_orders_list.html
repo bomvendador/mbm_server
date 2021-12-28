@@ -32,7 +32,7 @@
           </div>
           <!-- /.card-header -->
           <div class="card-body table-responsive p-4 pt-1">
-            <table class="table table-hover text-nowrap" id="table_list">
+            <table class="table table-hover" id="table_list">
               <thead>
                 <tr>
                     <th>№ п/п</th>
@@ -44,6 +44,7 @@
                     <th>Дата протокола</th>
                     <th>Решение</th>
                     <th>Сумма</th>
+                    <th>Причина переноса/Отказа</th>
 
                   <!--th></th-->
                 </tr>
@@ -60,6 +61,7 @@
                       <td><p class="d-none">{{ order.protocol.protocol_date|date:"d.m.Y" }}</p>{{ order.protocol.protocol_date|date:"d.m.Y" }}</td>
                       <td>{{ order.decision }}</td>
                       <td>{{ order.max_sum }}</td>
+                      <td>{{ order.reasons }}</td>
                 </tr>
                {% endfor %}
 
