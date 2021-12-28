@@ -688,6 +688,7 @@
     }else {
 
         $(this).html("<div class='d-flex justify-content-center'><div class='spinner-border' style='width: 20px; height: 20px;' role='status'><span class='visually-hidden'>Loading...</span></div></div>")
+        console.log($(this).html())
         $(this).prop('disabled', true)
         var files = document.getElementById('input_add_new_protocol_file').files;
         let file_orders_numbers_arr = []
