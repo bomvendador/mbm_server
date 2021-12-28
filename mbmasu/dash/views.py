@@ -1256,7 +1256,7 @@ def save_orders_for_protocol_file(request):
             print(data.get('protocol_date'))
         for order in orders[0]:
             ready_for_ok_db = ReadyForOK.objects.filter(order__number=order['Номер заявки']).latest('added')
-            appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK=ready_for_ok_db).earliest('commission_date__date')
+            appointed_for_ok = AppointedForOK.objects.filter(ready_for_OK=ready_for_ok_db).latest('added')
             print(appointed_for_ok.ready_for_OK.order.company)
             print(appointed_for_ok.commission_date.date)
             print(appointed_for_ok.added)
