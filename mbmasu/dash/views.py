@@ -1320,10 +1320,8 @@ def save_orders_for_protocol_file(request):
             counters_admin_db.save()
         admin_ready_for_ok_cnt = ReadyForOK.objects.filter(appointed_ok=False)
 
-        admin_appointed_for_ok_cnt = AppointedForOK.objects.filter(Q(protocol_issued=False) | (Q(protocol_issued=True)
-                                                                   & Q(marked_for_next_ok=True))).count()
-        # AppointedForOK.objects.filter(Q(protocol_issued=False))
-        admin_protocols_orders_cnt = AppointedForOK.objects.filter(Q(protocol_issued=True) & Q(marked_for_next_ok=False)).count()
+        admin_appointed_for_ok_cnt = AppointedForOK.objects.filter(Q(protocol_issued=False)).count()
+        admin_protocols_orders_cnt = ProtocolOrders.objects.all().count()
         counters_admin_db.admin_ready_for_ok = admin_ready_for_ok_cnt
         counters_admin_db.appointed_for_ok = admin_appointed_for_ok_cnt
         counters_admin_db.admin_protocols_orders = admin_protocols_orders_cnt
