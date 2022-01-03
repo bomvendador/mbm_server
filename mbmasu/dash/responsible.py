@@ -1813,7 +1813,7 @@ def orders_temp_stop_with_notification_check(request, order_id):
         order_type_check = OrderTypeCheck.objects.all()
         try:
             check_after_temp_stop_file_to_check_returned = CheckAfterTempStopFileToCheckReturned.objects.filter(check_after_temp_stop_file_to_check=CheckAfterTempStopFileToCheck.objects.filter(check_after_temp_stop=CheckAfterTempStop.objects.filter(order=order).latest('added')).latest('added')).latest('added')
-        except CheckAfterTempStop.DoesNotExist:
+        except ObjectDoesNotExist:
             check_after_temp_stop_file_to_check_returned = None
         context.update({
             'counter': get_counter(user_),
